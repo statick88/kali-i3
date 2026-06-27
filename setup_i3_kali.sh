@@ -205,13 +205,12 @@ secondary = #FF006E
 alert = #7B2CBF
 
 [bar/main]
-module-margin-right = 2
-padding-right = 4
-padding-right = 4
-module-margin-right = 2
 width = 100%
 height = 28
 radius = 0
+
+padding-right = 4
+module-margin-right = 2
 font-0 = "FiraCode Nerd Font:size=10"
 background = #0A0A0A
 foreground = #E0E0E0
@@ -439,7 +438,6 @@ GTK4
 step_deploy_wallpapers() {
     header "Deploy Wallpaper (NEON MINIMAL)"
 
-    local images=("${descargas}"/*.png "${descargas}"/*.jpg "${descargas}"/*.jpeg "${descargas}"/*.webp 2>/dev/null)
     local cfg_dir="${TARGET_HOME}/.config"
     local wallpaper="${cfg_dir}/wallpaper.png"
     local descargas="${TARGET_HOME}/Descargas"
@@ -447,9 +445,12 @@ step_deploy_wallpapers() {
     run_as_user "mkdir -p ${cfg_dir}"
 
     if [[ -d "${descargas}" ]]; then
+        local images=()
+        while IFS= read -r -d '' file; do
+            images+=("${file}")
+        done < <(find "${descargas}" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) -print0 2>/dev/null | sort -z)
 
         if [[ ${#images[@]} -gt 0 ]]; then
-        local images=("${descargas}"/*.png "${descagas}"/*.jpg "${descagas}"/*.jpeg "${descagas}"/*.webp 2>/dev/null)
             run_as_user "cp '${images[0]}' '${wallpaper}'"
             chown "${TARGET_UID}:${TARGET_GID}" "${wallpaper}" 2>/dev/null || true
             ok "Wallpaper deployed from ~/Descargas: $(basename "${images[0]}")"
