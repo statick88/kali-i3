@@ -47,7 +47,7 @@ test_c_reset() {
 test_c_neon_cyan() {
     local val
     val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${C_NEON_CYAN}\"" 2>/dev/null)
-    [[ "${val}" == '\033[38;5;51m' ]] && pass "C_NEON_CYAN is defined correctly" || fail "C_NEON_CYAN has wrong value: ${val}"
+    [[ "${val}" == '\033[38;5;45m' ]] && pass "C_NEON_CYAN is defined correctly" || fail "C_NEON_CYAN has wrong value: ${val}"
 }
 
 # =============================================================================
@@ -56,7 +56,7 @@ test_c_neon_cyan() {
 test_c_neon_pink() {
     local val
     val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${C_NEON_PINK}\"" 2>/dev/null)
-    [[ "${val}" == '\033[38;5;206m' ]] && pass "C_NEON_PINK is defined correctly" || fail "C_NEON_PINK has wrong value: ${val}"
+    [[ "${val}" == '\033[38;5;168m' ]] && pass "C_NEON_PINK is defined correctly" || fail "C_NEON_PINK has wrong value: ${val}"
 }
 
 # =============================================================================
@@ -65,7 +65,7 @@ test_c_neon_pink() {
 test_c_neon_purple() {
     local val
     val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${C_NEON_PURPLE}\"" 2>/dev/null)
-    [[ "${val}" == '\033[38;5;135m' ]] && pass "C_NEON_PURPLE is defined correctly" || fail "C_NEON_PURPLE has wrong value: ${val}"
+    [[ "${val}" == '\033[38;5;97m' ]] && pass "C_NEON_PURPLE is defined correctly" || fail "C_NEON_PURPLE has wrong value: ${val}"
 }
 
 # =============================================================================
@@ -74,7 +74,7 @@ test_c_neon_purple() {
 test_c_neon_green() {
     local val
     val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${C_NEON_GREEN}\"" 2>/dev/null)
-    [[ "${val}" == '\033[38;5;48m' ]] && pass "C_NEON_GREEN is defined correctly" || fail "C_NEON_GREEN has wrong value: ${val}"
+    [[ "${val}" == '\033[38;5;40m' ]] && pass "C_NEON_GREEN is defined correctly" || fail "C_NEON_GREEN has wrong value: ${val}"
 }
 
 # =============================================================================
@@ -83,7 +83,7 @@ test_c_neon_green() {
 test_c_neon_red() {
     local val
     val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${C_NEON_RED}\"" 2>/dev/null)
-    [[ "${val}" == '\033[38;5;197m' ]] && pass "C_NEON_RED is defined correctly" || fail "C_NEON_RED has wrong value: ${val}"
+    [[ "${val}" == '\033[38;5;160m' ]] && pass "C_NEON_RED is defined correctly" || fail "C_NEON_RED has wrong value: ${val}"
 }
 
 # =============================================================================
