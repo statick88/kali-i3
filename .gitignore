@@ -1,0 +1,35 @@
+# Shell scripts
+*.log
+*.bak
+*.swp
+*~
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Shellcheck
+.shellcheck/
+
+# Temporary files
+*.tmp
+*.temp
+/tmp/
+
+# Config backups
+*.orig
+*.backup
+
+# Archives
+*.tar
+*.gz
+*.zip
+*.7z
+
+# IDE/Editor
+.idea/
+.vscode/
+*.sublime-*
+
+# SDD infrastructure
+openspec/
