@@ -672,7 +672,7 @@ step_install_security_suite() {
     header "Install Security Tools Suite (NEON)"
 
     apt_install_if_missing \
-        metasploit-framework nmap masscan rustscan \
+        metasploit-framework nmap masscan \
         gobuster ffuf \
         dnsutils smbclient \
         responder wireshark \
@@ -846,9 +846,8 @@ step_deploy_hexstrike_mcp_config() {
   "enabled": true,
   "tools": [
     "nmap_scan",
-    "fermodbuster",
+    "feroxbuster",
     "masscan",
-    "rustscan",
     "gobuster_dir",
     "ffuf_fuzz",
     "sqlmap_scan",
@@ -883,9 +882,8 @@ CLAUDE_MCP
       "url": "http://localhost:8888",
       "tools": [
         "nmap_scan",
-        "fermodbuster",
+        "feroxbuster",
         "masscan",
-        "rustscan",
         "gobuster_dir",
         "ffuf_fuzz",
         "sqlmap_scan",
