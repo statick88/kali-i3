@@ -29,7 +29,7 @@ parse_args() {
                 exit 0
                 ;;
             -h|--help)
-                echo "Usage: sudo $0 [--version]"
+                echo "Usage: sudo ${SCRIPT_NAME} [--version]"
                 echo "  --version  Show version"
                 exit 0
                 ;;
