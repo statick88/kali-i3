@@ -635,9 +635,7 @@ step_switch_display_manager() {
     header "Switch Display Manager: LightDM -> SDDM (NEON)"
 
     apt_install_if_missing sddm
-    run_as_root "systemctl enable sddm"
-    run_as_root "systemctl disable lightdm" 2>/dev/null || true
-    run_as_root "systemctl stop lightdm" 2>/dev/null || true
+    run_as_root "systemctl enable sddm" || true
 
     run_as_root "mkdir -p /etc/sddm.conf.d"
     cat > /etc/sddm.conf.d/kali-i3.conf <<'SDDMCONF'
@@ -705,7 +703,7 @@ step_install_gentle_ai() {
     header "Install gentle-ai CLI (NEON) - Go Install"
 
     if cmd_exists go; then
-        run_as_user "go install github.com/Gentleman-Programming/gentle-ai/cmd/gentle-ai@latest"
+        run_as_user "go install github.com/gentleman-programming/gentle-ai/cmd/gentle-ai@latest"
         local go_bin="$(sudo -u "${TARGET_USER}" -H bash -c 'echo $HOME/go/bin')/gentle-ai"
         ok "gentle-ai CLI installed to ${go_bin}"
     else
@@ -811,7 +809,7 @@ step_install_hexstrike_ai() {
 
     local hexstrike_dir="${TARGET_HOME}/tools/hexstrike-ai"
     local sec_tools=(
-        nmap masscan rustscan gobuster fermodbuster ffuf nuclei
+        nmap masscan gobuster ffuf nuclei
         sqlmap hydra john hashcat
     )
 
