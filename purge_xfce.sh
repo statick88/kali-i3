@@ -107,8 +107,7 @@ stop_display_manager() {
     step "Stopping display manager..."
     run_as_root "systemctl stop lightdm 2>/dev/null || true"
     run_as_root "systemctl disable lightdm 2>/dev/null || true"
-    run_as_root "systemctl stop sddm 2>/dev/null || true"
-    ok "Display manager stopped"
+    ok "Display manager stopped (lightdm stopped, sddm preserved for i3-wm)"
 }
 
 kill_xfce_processes() {

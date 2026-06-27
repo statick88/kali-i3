@@ -1,0 +1,215 @@
+Starting test run...
+Report will be saved to: /tmp/kali-i3-test-report-396565
+
+[1m[0;34m=== Running: test-approval-purge.sh ===[0m
+
+=== Approval Tests: purge_xfce.sh (post-refactor) ===
+
+[0;32mPASS[0m: purge_xfce.sh passes bash -n
+[0;32mPASS[0m: Script sources lib/common.sh
+[0;32mPASS[0m: Script sources lib/user.sh
+[0;32mPASS[0m: Script sources lib/state.sh
+[0;32mPASS[0m: log() not defined inline (correctly extracted)
+[0;32mPASS[0m: info() not defined inline (correctly extracted)
+[0;32mPASS[0m: ok() not defined inline (correctly extracted)
+[0;32mPASS[0m: warn() not defined inline (correctly extracted)
+[0;32mPASS[0m: err() not defined inline (correctly extracted)
+[0;32mPASS[0m: step() not defined inline (correctly extracted)
+[0;32mPASS[0m: show_progress() not defined inline (correctly extracted)
+[0;32mPASS[0m: load_state() not defined inline (correctly extracted)
+[0;32mPASS[0m: save_state() not defined inline (correctly extracted)
+[0;32mPASS[0m: run_as_root() not defined inline (correctly extracted)
+[0;32mPASS[0m: run_as_user() not defined inline (correctly extracted)
+[0;32mPASS[0m: C_RESET not defined inline (correctly extracted)
+[0;32mPASS[0m: C_NEON_* not defined inline (correctly extracted)
+[0;32mPASS[0m: TARGET_USER not defined inline (correctly extracted)
+[0;32mPASS[0m: Script keeps pkg_installed() inline
+[0;32mPASS[0m: Script has main() function
+[0;32mPASS[0m: Script calls main "$@"
+
+=== Results: 21/21 passed, 0 failed ===
+
+[1m[0;34m=== Running: test-approval-setup.sh ===[0m
+
+=== Approval Tests: setup_i3_kali.sh (post-refactor) ===
+
+[0;32mPASS[0m: --help exits 0
+[0;32mPASS[0m: --help shows Usage
+[0;32mPASS[0m: --help shows --user-only
+[0;32mPASS[0m: --help shows --skip-security
+[0;32mPASS[0m: --help shows --gentle-ai
+[0;32mPASS[0m: --help shows --hexstrike-ai
+[0;32mPASS[0m: --help shows --version
+[0;32mPASS[0m: --version shows version from CHANGELOG
+[0;32mPASS[0m: setup_i3_kali.sh passes bash -n
+[0;32mPASS[0m: Script sources lib/common.sh
+[0;32mPASS[0m: Script sources lib/user.sh
+[0;32mPASS[0m: Script sources lib/state.sh
+[0;32mPASS[0m: Script sources lib/apt.sh
+[0;32mPASS[0m: log() not defined inline (correctly extracted)
+[0;32mPASS[0m: info() not defined inline (correctly extracted)
+[0;32mPASS[0m: ok() not defined inline (correctly extracted)
+[0;32mPASS[0m: warn() not defined inline (correctly extracted)
+[0;32mPASS[0m: err() not defined inline (correctly extracted)
+[0;32mPASS[0m: step() not defined inline (correctly extracted)
+[0;32mPASS[0m: header() not defined inline (correctly extracted)
+[0;32mPASS[0m: die() not defined inline (correctly extracted)
+[0;32mPASS[0m: show_progress() not defined inline (correctly extracted)
+[0;32mPASS[0m: load_state() not defined inline (correctly extracted)
+[0;32mPASS[0m: save_state() not defined inline (correctly extracted)
+[0;32mPASS[0m: pkg_installed() not defined inline (correctly extracted)
+[0;32mPASS[0m: apt_update_once() not defined inline (correctly extracted)
+[0;32mPASS[0m: apt_install_if_missing() not defined inline (correctly extracted)
+[0;32mPASS[0m: cmd_exists() not defined inline (correctly extracted)
+[0;32mPASS[0m: run_as_user() not defined inline (correctly extracted)
+[0;32mPASS[0m: run_as_root() not defined inline (correctly extracted)
+[0;32mPASS[0m: C_RESET not defined inline (correctly extracted)
+[0;32mPASS[0m: C_NEON_* not defined inline (correctly extracted)
+[0;32mPASS[0m: TARGET_USER not defined inline (correctly extracted)
+[0;32mPASS[0m: Script has main() function
+[0;32mPASS[0m: Script calls main "$@"
+[0;32mPASS[0m: Unknown option exits with code 1
+
+=== Results: 36/36 passed, 0 failed ===
+
+[1m[0;34m=== Running: test-apt.sh ===[0m
+
+=== lib/apt.sh Tests ===
+
+[0;32mPASS[0m: apt.sh sources without error
+[0;32mPASS[0m: pkg_installed detects an installed package
+[0;32mPASS[0m: pkg_installed 'nonexistent' returns false
+[0;32mPASS[0m: pkg_installed() populates PKG_CACHE
+[0;32mPASS[0m: apt_update_once() respects STATE[apt_updated]
+[0;32mPASS[0m: apt_install_if_missing() skips installed packages
+
+=== Results: 6/6 passed, 0 failed ===
+
+[1m[0;34m=== Running: test-colors.sh ===[0m
+
+=== lib/colors.sh Tests ===
+
+[0;32mPASS[0m: colors.sh sources without error
+[0;32mPASS[0m: C_RESET is defined correctly
+[0;32mPASS[0m: C_NEON_CYAN is defined correctly
+[0;32mPASS[0m: C_NEON_PINK is defined correctly
+[0;32mPASS[0m: C_NEON_PURPLE is defined correctly
+[0;32mPASS[0m: C_NEON_GREEN is defined correctly
+[0;32mPASS[0m: C_NEON_RED is defined correctly
+[0;32mPASS[0m: Constants are readonly
+
+=== Results: 8/8 passed, 0 failed ===
+
+[1m[0;34m=== Running: test-common.sh ===[0m
+
+=== lib/common.sh Tests ===
+
+[0;32mPASS[0m: common.sh sources without error
+[0;32mPASS[0m: log function produces output
+[0;32mPASS[0m: info() logs at INFO level
+[0;32mPASS[0m: ok() logs at OK level
+[0;32mPASS[0m: warn() logs at WARN level
+[0;32mPASS[0m: err() logs at ERROR level
+[0;32mPASS[0m: step() logs at STEP level
+[38;5;197m[2026-06-27 02:25:15] [ERROR] fatal error[0m
+[0;32mPASS[0m: die() exits with code 1
+[0;32mPASS[0m: header() contains the title
+[0;32mPASS[0m: colors.sh cascades through common.sh
+[0;32mPASS[0m: die() outputs error message
+[0;32mPASS[0m: log() handles multi-word messages
+
+=== Results: 12/12 passed, 0 failed ===
+
+[1m[0;34m=== Running: test-helpers.sh ===[0m
+
+=== tests/lib/test-helpers.sh Tests ===
+
+[0;32mPASS[0m: test-helpers.sh sources without error
+[0;32mPASS[0m: pass() function works
+[0;32mPASS[0m: fail() function works
+[0;32mPASS[0m: Color constants (RED, GREEN, NC) are defined
+[0;32mPASS[0m: Counter variables are initialized to 0
+
+=== Results: 5/5 passed, 0 failed ===
+
+[1m[0;34m=== Running: test-integration.sh ===[0m
+
+=== Integration Tests ===
+
+[0;32mPASS[0m: setup_i3_kali.sh --help runs without error
+[0;32mPASS[0m: Help shows usage information
+[0;32mPASS[0m: Help shows --user-only flag
+[0;32mPASS[0m: Help shows --skip-security flag
+[0;32mPASS[0m: Help shows --gentle-ai flag
+[0;32mPASS[0m: setup_i3_kali.sh passes bash syntax check
+[0;32mPASS[0m: purge_xfce.sh passes bash syntax check
+
+=== Results: 7/7 passed, 0 failed ===
+
+[1m[0;34m=== Running: test-purge-xfce.sh ===[0m
+
+=== Purge XFCE Tests ===
+
+[0;32mPASS[0m: protect_critical_packages has correct package list
+[0;32mPASS[0m: XFCE packages list has expected entries
+[0;32mPASS[0m: GNOME packages list has expected entries
+[0;32mPASS[0m: Display manager packages list has expected entries
+[0;32mPASS[0m: mark_completed works for idempotency
+[0;32mPASS[0m: is_completed detects completed step
+
+=== Results: 6/6 passed, 0 failed ===
+
+[1m[0;34m=== Running: test-state.sh ===[0m
+
+=== lib/state.sh Tests ===
+
+[0;32mPASS[0m: state.sh sources without error
+[0;32mPASS[0m: load_state() handles missing file
+[0;32mPASS[0m: save_state() creates state file
+[0;32mPASS[0m: mark_completed() creates state file
+[0;32mPASS[0m: is_completed() detects completed step
+[0;32mPASS[0m: is_completed() rejects non-completed step
+[0;32mPASS[0m: show_progress() produces output
+[0;32mPASS[0m: save_state() includes version in JSON
+[0;32mPASS[0m: save/load roundtrip preserves steps
+
+=== Results: 9/9 passed, 0 failed ===
+
+[1m[0;34m=== Running: test-unit.sh ===[0m
+
+=== Unit Tests ===
+
+[0;32mPASS[0m: pkg_installed returns non-zero for missing package
+[0;32mPASS[0m: cmd_exists finds 'ls'
+[0;32mPASS[0m: cmd_exists returns false for missing command
+[0;32mPASS[0m: write_file_if_missing creates file
+[0;32mPASS[0m: write_file_if_missing does not overwrite existing file
+[0;32mPASS[0m: is_completed returns false for nonexistent step
+[0;32mPASS[0m: mark_completed sets step in COMPLETED_STEPS
+[0;32mPASS[0m: show_progress produces output
+[0;32mPASS[0m: show_progress shows correct percentage
+
+=== Results: 9/9 passed, 0 failed ===
+
+[1m[0;34m=== Running: test-user.sh ===[0m
+
+=== lib/user.sh Tests ===
+
+[0;32mPASS[0m: user.sh sources without error
+[0;32mPASS[0m: TARGET_USER is set: statick
+[0;32mPASS[0m: TARGET_HOME is set: /home/statick
+[0;32mPASS[0m: TARGET_UID is set: 1000
+[0;32mPASS[0m: TARGET_GID is set: 1000
+[0;32mPASS[0m: cmd_exists 'ls' returns true
+[0;32mPASS[0m: cmd_exists 'nonexistent_command_xyz' returns false
+[0;32mPASS[0m: run_as_user() executes command
+[0;32mPASS[0m: run_as_root() is defined
+[0;32mPASS[0m: run_as_root() works as root
+
+=== Results: 10/10 passed, 0 failed ===
+
+========================================
+[1mFINAL RESULTS[0m
+========================================
+Passed: [0;32m129[0m
+Failed: [0;31m0[0m
