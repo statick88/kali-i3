@@ -939,7 +939,7 @@ parse_args() {
                 exit 0
                 ;;
             -h|--help)
-                echo "Usage: sudo $0 [--user-only] [--skip-security] [--gentle-ai] [--hexstrike-ai] [--version]"
+                echo "Usage: sudo ${SCRIPT_NAME} [--user-only] [--skip-security] [--gentle-ai] [--hexstrike-ai] [--version]"
                 echo "  --user-only     Dotfiles only (no sudo required)"
                 echo "  --skip-security Skip security tools installation"
                 echo "  --gentle-ai     Install full Gentle-AI stack (gentle-ai, gentle-agent-state, Kilo, openCode)"
