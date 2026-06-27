@@ -7,8 +7,8 @@
 # =============================================================================
 
 readonly C_RESET='\033[0m'
-readonly C_NEON_CYAN='\033[38;5;51m'
-readonly C_NEON_PINK='\033[38;5;206m'
-readonly C_NEON_PURPLE='\033[38;5;135m'
-readonly C_NEON_GREEN='\033[38;5;48m'
-readonly C_NEON_RED='\033[38;5;197m'
+readonly C_NEON_CYAN='\033[38;5;45m'
+readonly C_NEON_PINK='\033[38;5;168m'
+readonly C_NEON_PURPLE='\033[38;5;97m'
+readonly C_NEON_GREEN='\033[38;5;40m'
+readonly C_NEON_RED='\033[38;5;160m'
