@@ -611,7 +611,12 @@ step_deploy_zshrc() {
     cat > "${TARGET_HOME}/.zshrc" <<'ZSHRC'
 export ZSH="${HOME}/.oh-my-zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
-plugins=(git zsh-syntax-highlighting zsh-autosuggestions)
+plugins=(git)
+
+# System-wide zsh plugins (installed via apt)
+source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2>/dev/null || true
+source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh 2>/dev/null || true
+
 source $ZSH/oh-my-zsh.sh
 
 HISTSIZE=100000
