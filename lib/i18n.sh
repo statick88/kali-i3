@@ -164,14 +164,26 @@ i18n_init() {
     LANG_ES[STEP_CLEANUP_APT]="Ejecutando limpieza de APT"
 
     # --- Help text (HELP_*) ---
-    LANG_EN[HELP_USAGE]="Usage: sudo %s [--user-only] [--skip-security] [--gentle-ai] [--hexstrike-ai] [--lang en|es] [--version]"
-    LANG_ES[HELP_USAGE]="Uso: sudo %s [--user-only] [--skip-security] [--gentle-ai] [--hexstrike-ai] [--lang en|es] [--version]"
+    LANG_EN[HELP_USAGE]="Usage: sudo %s [--user-only] [--skip-security] [--skip-dotfiles] [--skip-shell] [--skip-tmux] [--skip-ai] [--gentle-ai] [--hexstrike-ai] [--lang en|es] [--version]"
+    LANG_ES[HELP_USAGE]="Uso: sudo %s [--user-only] [--skip-security] [--skip-dotfiles] [--skip-shell] [--skip-tmux] [--skip-ai] [--gentle-ai] [--hexstrike-ai] [--lang en|es] [--version]"
 
     LANG_EN[HELP_USER_ONLY]="Dotfiles only (no sudo required)"
     LANG_ES[HELP_USER_ONLY]="Solo dotfiles (no requiere sudo)"
 
     LANG_EN[HELP_SKIP_SECURITY]="Skip security tools installation"
     LANG_ES[HELP_SKIP_SECURITY]="Omitir instalación de herramientas de seguridad"
+
+    LANG_EN[HELP_SKIP_DOTFILES]="Skip dotfiles and wallpapers deployment"
+    LANG_ES[HELP_SKIP_DOTFILES]="Omitir despliegue de dotfiles y fondos de pantalla"
+
+    LANG_EN[HELP_SKIP_SHELL]="Skip Zsh, Oh-My-Zsh, and .zshrc deployment"
+    LANG_ES[HELP_SKIP_SHELL]="Omitir Zsh, Oh-My-Zsh y despliegue de .zshrc"
+
+    LANG_EN[HELP_SKIP_TMUX]="Skip TMUX Neon setup"
+    LANG_ES[HELP_SKIP_TMUX]="Omitir configuración de TMUX Neon"
+
+    LANG_EN[HELP_SKIP_AI]="Skip AI tools installation (gentle-ai, HexStrike, opencode)"
+    LANG_ES[HELP_SKIP_AI]="Omitir instalación de herramientas AI (gentle-ai, HexStrike, opencode)"
 
     LANG_EN[HELP_GENTLE_AI]="Install full Gentle-AI stack"
     LANG_ES[HELP_GENTLE_AI]="Instalar stack completo de Gentle-AI"

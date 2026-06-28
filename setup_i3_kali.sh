@@ -962,6 +962,10 @@ step_post_install_cleanup() {
 # =============================================================================
 USER_ONLY=0
 SKIP_SECURITY=0
+SKIP_DOTFILES=0
+SKIP_SHELL=0
+SKIP_TMUX=0
+SKIP_AI=0
 INSTALL_GENTLE_AI=0
 HEXSTRIKE_AI=0
 I18N_LANG="en"
@@ -990,6 +994,10 @@ parse_args() {
         case "$1" in
             --user-only) USER_ONLY=1 ;;
             --skip-security) SKIP_SECURITY=1 ;;
+            --skip-dotfiles) SKIP_DOTFILES=1 ;;
+            --skip-shell) SKIP_SHELL=1 ;;
+            --skip-tmux) SKIP_TMUX=1 ;;
+            --skip-ai) SKIP_AI=1 ;;
             --gentle-ai) INSTALL_GENTLE_AI=1 ;;
             --hexstrike-ai) HEXSTRIKE_AI=1 ;;
             --version)
@@ -999,13 +1007,17 @@ parse_args() {
                 exit 0
                 ;;
             -h|--help)
-                echo "Usage: sudo ${SCRIPT_NAME} [--user-only] [--skip-security] [--gentle-ai] [--hexstrike-ai] [--lang en|es] [--version]"
-                echo "  --user-only     $(msg HELP_USER_ONLY)"
-                echo "  --skip-security $(msg HELP_SKIP_SECURITY)"
-                echo "  --gentle-ai     $(msg HELP_GENTLE_AI)"
-                echo "  --hexstrike-ai  $(msg HELP_HEXSTRIKE_AI)"
-                echo "  --lang LANG     $(msg HELP_LANG)"
-                echo "  --version       $(msg HELP_VERSION)"
+                echo "Usage: sudo ${SCRIPT_NAME} [--user-only] [--skip-security] [--skip-dotfiles] [--skip-shell] [--skip-tmux] [--skip-ai] [--gentle-ai] [--hexstrike-ai] [--lang en|es] [--version]"
+                echo "  --user-only       $(msg HELP_USER_ONLY)"
+                echo "  --skip-security   $(msg HELP_SKIP_SECURITY)"
+                echo "  --skip-dotfiles   $(msg HELP_SKIP_DOTFILES)"
+                echo "  --skip-shell      $(msg HELP_SKIP_SHELL)"
+                echo "  --skip-tmux       $(msg HELP_SKIP_TMUX)"
+                echo "  --skip-ai         $(msg HELP_SKIP_AI)"
+                echo "  --gentle-ai       $(msg HELP_GENTLE_AI)"
+                echo "  --hexstrike-ai    $(msg HELP_HEXSTRIKE_AI)"
+                echo "  --lang LANG       $(msg HELP_LANG)"
+                echo "  --version         $(msg HELP_VERSION)"
                 exit 0 ;;
             *) die "Unknown option: $1" ;;
         esac
@@ -1084,6 +1096,48 @@ main() {
     fi
 
     ALL_STEPS+=("step_post_install_cleanup")
+
+    # Apply skip filters
+    if [[ ${SKIP_DOTFILES} -eq 1 ]]; then
+        local -a filtered=()
+        for step in "${ALL_STEPS[@]}"; do
+            [[ "${step}" == "step_deploy_dotfiles" || "${step}" == "step_deploy_wallpapers" ]] && continue
+            filtered+=("${step}")
+        done
+        ALL_STEPS=("${filtered[@]}")
+    fi
+
+    if [[ ${SKIP_SHELL} -eq 1 ]]; then
+        local -a filtered=()
+        for step in "${ALL_STEPS[@]}"; do
+            [[ "${step}" == "step_install_zsh_omz" || "${step}" == "step_deploy_zshrc" ]] && continue
+            filtered+=("${step}")
+        done
+        ALL_STEPS=("${filtered[@]}")
+    fi
+
+    if [[ ${SKIP_TMUX} -eq 1 ]]; then
+        local -a filtered=()
+        for step in "${ALL_STEPS[@]}"; do
+            [[ "${step}" == "step_setup_tmux_neon" ]] && continue
+            filtered+=("${step}")
+        done
+        ALL_STEPS=("${filtered[@]}")
+    fi
+
+    if [[ ${SKIP_AI} -eq 1 ]]; then
+        local -a filtered=()
+        for step in "${ALL_STEPS[@]}"; do
+            [[ "${step}" == "step_install_gentle_ai" || \
+               "${step}" == "step_install_gentle_agent_state" || \
+               "${step}" == "step_deploy_kilo_config" || \
+               "${step}" == "step_setup_opencode" || \
+               "${step}" == "step_install_hexstrike_ai" || \
+               "${step}" == "step_deploy_hexstrike_mcp_config" ]] && continue
+            filtered+=("${step}")
+        done
+        ALL_STEPS=("${filtered[@]}")
+    fi
 
     local total=${#ALL_STEPS[@]}
     local completed=0
