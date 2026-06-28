@@ -174,6 +174,108 @@ test_log_multiword() {
     [[ "${output}" == *"word1 word2 word3"* ]] && pass "log() handles multi-word messages" || fail "log() should join multiple arguments"
 }
 
+# =============================================================================
+# Test: i18n.sh cascades through common.sh
+# =============================================================================
+test_i18n_cascade() {
+    local output
+    output=$(bash -c "
+        source '${SCRIPT_DIR}/lib/common.sh'
+        i18n_init en
+        msg 'MSG_WELCOME'
+    " 2>/dev/null)
+    [[ -n "${output}" ]] && pass "i18n.sh cascades through common.sh" || fail "i18n not available after sourcing common.sh"
+}
+
+# =============================================================================
+# Test: ok() uses translated message when i18n is initialized
+# =============================================================================
+test_ok_i18n_translation() {
+    local output
+    output=$(bash -c "
+        source '${SCRIPT_DIR}/lib/common.sh'
+        i18n_init es
+        LOG_FILE='/tmp/test-common-log-$$'
+        ok 'MSG_WELCOME'
+    " 2>/dev/null)
+    [[ "${output}" == *"Bienvenido"* ]] && pass "ok() uses Spanish translation" \
+        || fail "ok() should use Spanish translation, got: ${output}"
+}
+
+# =============================================================================
+# Test: warn() uses translated message when i18n is initialized
+# =============================================================================
+test_warn_i18n_translation() {
+    local output
+    output=$(bash -c "
+        source '${SCRIPT_DIR}/lib/common.sh'
+        i18n_init es
+        LOG_FILE='/tmp/test-common-log-$$'
+        warn 'MSG_ERROR_UNKNOWN_OPTION'
+    " 2>/dev/null)
+    [[ "${output}" == *"Opción desconocida"* ]] && pass "warn() uses Spanish translation" \
+        || fail "warn() should use Spanish translation, got: ${output}"
+}
+
+# =============================================================================
+# Test: err() uses translated message when i18n is initialized
+# =============================================================================
+test_err_i18n_translation() {
+    local output
+    output=$(bash -c "
+        source '${SCRIPT_DIR}/lib/common.sh'
+        i18n_init es
+        LOG_FILE='/tmp/test-common-log-$$'
+        err 'MSG_ERROR_MUST_BE_ROOT'
+    " 2>/dev/null)
+    [[ "${output}" == *"root"* || "${output}" == *"sudo"* ]] && pass "err() uses Spanish translation" \
+        || fail "err() should use Spanish translation, got: ${output}"
+}
+
+# =============================================================================
+# Test: step() uses translated message when i18n is initialized
+# =============================================================================
+test_step_i18n_translation() {
+    local output
+    output=$(bash -c "
+        source '${SCRIPT_DIR}/lib/common.sh'
+        i18n_init es
+        LOG_FILE='/tmp/test-common-log-$$'
+        step 'STEP_INSTALL_I3_CORE'
+    " 2>/dev/null)
+    [[ "${output}" == *"Instalando paquetes"* ]] && pass "step() uses Spanish translation" \
+        || fail "step() should use Spanish translation, got: ${output}"
+}
+
+# =============================================================================
+# Test: header() still works with translated content
+# =============================================================================
+test_header_i18n_translation() {
+    local output
+    output=$(bash -c "
+        source '${SCRIPT_DIR}/lib/common.sh'
+        i18n_init es
+        header MSG_WELCOME
+    " 2>/dev/null)
+    [[ "${output}" == *"Bienvenido"* ]] && pass "header() works with translated content" \
+        || fail "header() should work with translated content, got: ${output}"
+}
+
+# =============================================================================
+# Test: Logging functions still output level tag (OK, WARN, etc.) with i18n
+# =============================================================================
+test_log_level_preserved_with_i18n() {
+    local output
+    output=$(bash -c "
+        source '${SCRIPT_DIR}/lib/common.sh'
+        i18n_init es
+        LOG_FILE='/tmp/test-common-log-$$'
+        ok 'MSG_WELCOME'
+    " 2>/dev/null)
+    [[ "${output}" == *"OK"* ]] && pass "ok() preserves OK level tag with i18n" \
+        || fail "ok() should still contain OK level tag"
+}
+
 # Run all tests
 main() {
     echo "=== lib/common.sh Tests ==="
@@ -191,6 +293,13 @@ main() {
     test_colors_cascade
     test_die_outputs_message
     test_log_multiword
+    test_i18n_cascade
+    test_ok_i18n_translation
+    test_warn_i18n_translation
+    test_err_i18n_translation
+    test_step_i18n_translation
+    test_header_i18n_translation
+    test_log_level_preserved_with_i18n
 
     echo ""
     echo "=== Results: ${TESTS_PASS}/${TESTS_RUN} passed, ${TESTS_FAIL} failed ==="

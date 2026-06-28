@@ -37,6 +37,58 @@ test_syntax_check() {
     bash -n "${script_dir}/purge_xfce.sh" 2>/dev/null && pass "purge_xfce.sh passes bash syntax check" || fail "purge_xfce.sh has syntax errors"
 }
 
+# =============================================================================
+# Test: --lang flag appears in --help output
+# =============================================================================
+test_lang_flag_in_help() {
+    local script_dir="$(dirname "$0")/.."
+    bash "${script_dir}/setup_i3_kali.sh" --help 2>&1 | grep -q "\-\-lang" \
+        && pass "Help shows --lang flag" \
+        || fail "Help should show --lang flag"
+}
+
+# =============================================================================
+# Test: STEP_LABELS in setup_i3_kali.sh use msg() calls
+# =============================================================================
+test_setup_step_labels_use_msg() {
+    local script_dir="$(dirname "$0")/.."
+    local count
+    count=$(grep -c 'msg ' "${script_dir}/setup_i3_kali.sh" 2>/dev/null || echo 0)
+    [[ ${count} -gt 0 ]] && pass "setup_i3_kali.sh uses msg() for STEP_LABELS (${count} occurrences)" \
+        || fail "setup_i3_kali.sh should use msg() for STEP_LABELS"
+}
+
+# =============================================================================
+# Test: purge_xfce.sh STEP_LABELS use msg() calls
+# =============================================================================
+test_purge_step_labels_use_msg() {
+    local script_dir="$(dirname "$0")/.."
+    local count
+    count=$(grep -c 'msg ' "${script_dir}/purge_xfce.sh" 2>/dev/null || echo 0)
+    [[ ${count} -gt 0 ]] && pass "purge_xfce.sh uses msg() for STEP_LABELS (${count} occurrences)" \
+        || fail "purge_xfce.sh should use msg() for STEP_LABELS"
+}
+
+# =============================================================================
+# Test: setup_i3_kali.sh sources i18n.sh
+# =============================================================================
+test_setup_sources_i18n() {
+    local script_dir="$(dirname "$0")/.."
+    grep -q 'i18n.sh' "${script_dir}/setup_i3_kali.sh" 2>/dev/null \
+        && pass "setup_i3_kali.sh references i18n.sh" \
+        || fail "setup_i3_kali.sh should source i18n.sh"
+}
+
+# =============================================================================
+# Test: purge_xfce.sh sources i18n.sh
+# =============================================================================
+test_purge_sources_i18n() {
+    local script_dir="$(dirname "$0")/.."
+    grep -q 'i18n.sh' "${script_dir}/purge_xfce.sh" 2>/dev/null \
+        && pass "purge_xfce.sh references i18n.sh" \
+        || fail "purge_xfce.sh should source i18n.sh"
+}
+
 # Run all tests
 main() {
     echo "=== Integration Tests ==="
@@ -45,6 +97,11 @@ main() {
     test_dry_run
     test_args_validation
     test_syntax_check
+    test_lang_flag_in_help
+    test_setup_step_labels_use_msg
+    test_purge_step_labels_use_msg
+    test_setup_sources_i18n
+    test_purge_sources_i18n
 
     echo ""
     echo "=== Results: ${TESTS_PASS}/${TESTS_RUN} passed, ${TESTS_FAIL} failed ==="

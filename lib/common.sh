@@ -8,6 +8,7 @@
 
 SCRIPT_DIR_COMMON="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR_COMMON}/colors.sh"
+source "${SCRIPT_DIR_COMMON}/i18n.sh"
 
 # Default LOG_FILE if not set by caller
 : "${LOG_FILE:=/tmp/kali-i3-common.log}"
@@ -30,16 +31,21 @@ log() {
     printf "[%s] [%s] %s\n" "${timestamp}" "${level}" "${msg}" >> "${LOG_FILE}" 2>/dev/null || true
 }
 
-info()  { log "INFO"  "$@"; }
-ok()    { log "OK"    "$@"; }
-warn()  { log "WARN"  "$@"; }
-err()   { log "ERROR" "$@"; }
-step()  { log "STEP"  "$@"; }
+# --- Logging wrappers with i18n support ---
+# Each function translates its message via msg() before logging.
+
+info()  { log "INFO"  "$(msg "$1")"; }
+ok()    { log "OK"    "$(msg "$1")"; }
+warn()  { log "WARN"  "$(msg "$1")"; }
+err()   { log "ERROR" "$(msg "$1")"; }
+step()  { log "STEP"  "$(msg "$1")"; }
 
 die() { err "$@"; exit 1; }
 
 header() {
+    local title
+    title="$(msg "$1")"
     printf "\n${C_NEON_PINK}══════════════════════════════════════════════════════════════════════════════${C_RESET}\n"
-    printf "${C_NEON_PINK}   %s${C_RESET}\n" "$1"
+    printf "${C_NEON_PINK}   %s${C_RESET}\n" "${title}"
     printf "${C_NEON_PINK}══════════════════════════════════════════════════════════════════════════════${C_RESET}\n\n"
 }

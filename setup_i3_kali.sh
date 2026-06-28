@@ -22,6 +22,7 @@ readonly LOG_FILE="/var/log/${SCRIPT_NAME%.sh}.log"
 
 # Source lib modules
 source "${SCRIPT_DIR}/lib/common.sh"
+source "${SCRIPT_DIR}/lib/i18n.sh"
 source "${SCRIPT_DIR}/lib/user.sh"
 source "${SCRIPT_DIR}/lib/apt.sh"
 
@@ -36,24 +37,29 @@ readonly STATE_FILE="${TARGET_HOME}/.config/i3-setup-state.json"
 readonly STATE_VERSION="1.0.0"
 
 declare -A COMPLETED_STEPS=()
-declare -A STEP_LABELS=(
-    ["step_install_i3_core"]="Installing i3 core packages"
-    ["step_switch_display_manager"]="Switching to SDDM display manager"
-    ["step_deploy_dotfiles"]="Deploy NEON minimal dotfiles"
-    ["step_deploy_wallpapers"]="Deploy minimal wallpaper"
-    ["step_setup_tmux_neon"]="Setup TMUX with NEON theme"
-    ["step_install_zsh_omz"]="Install Zsh + Oh-My-Zsh + Powerlevel10k"
-    ["step_deploy_zshrc"]="Deploy .zshrc configuration"
-    ["step_setup_i3_desktop_entry"]="Register i3 desktop session"
-    ["step_install_security_suite"]="Install Kali security tools suite"
-    ["step_install_gentle_ai"]="Install gentle-ai CLI"
-    ["step_install_gentle_agent_state"]="Install gentle-agent-state integration"
-    ["step_deploy_kilo_config"]="Configure Kilo Code settings"
-    ["step_setup_opencode"]="Configure openCode settings"
-    ["step_install_hexstrike_ai"]="Install HexStrike AI"
-    ["step_deploy_hexstrike_mcp_config"]="Deploy HexStrike AI MCP config"
-    ["step_post_install_cleanup"]="Post-install cleanup"
-)
+declare -A STEP_LABELS=()
+
+# Populate STEP_LABELS with translated strings (must be called after i18n_init)
+init_step_labels() {
+    STEP_LABELS=(
+        ["step_install_i3_core"]="$(msg STEP_INSTALL_I3_CORE)"
+        ["step_switch_display_manager"]="$(msg STEP_SWITCH_DISPLAY_MANAGER)"
+        ["step_deploy_dotfiles"]="$(msg STEP_DEPLOY_DOTFILES)"
+        ["step_deploy_wallpapers"]="$(msg STEP_DEPLOY_WALLPAPERS)"
+        ["step_setup_tmux_neon"]="$(msg STEP_SETUP_TMUX_NEON)"
+        ["step_install_zsh_omz"]="$(msg STEP_INSTALL_ZSH_OMZ)"
+        ["step_deploy_zshrc"]="$(msg STEP_DEPLOY_ZSHRC)"
+        ["step_setup_i3_desktop_entry"]="$(msg STEP_SETUP_I3_DESKTOP_ENTRY)"
+        ["step_install_security_suite"]="$(msg STEP_INSTALL_SECURITY_SUITE)"
+        ["step_install_gentle_ai"]="$(msg STEP_INSTALL_GENTLE_AI)"
+        ["step_install_gentle_agent_state"]="$(msg STEP_INSTALL_GENTLE_AGENT_STATE)"
+        ["step_deploy_kilo_config"]="$(msg STEP_DEPLOY_KILO_CONFIG)"
+        ["step_setup_opencode"]="$(msg STEP_SETUP_OPENCODE)"
+        ["step_install_hexstrike_ai"]="$(msg STEP_INSTALL_HEXSTRIKE_AI)"
+        ["step_deploy_hexstrike_mcp_config"]="$(msg STEP_DEPLOY_HEXSTRIKE_MCP_CONFIG)"
+        ["step_post_install_cleanup"]="$(msg STEP_POST_INSTALL_CLEANUP)"
+    )
+}
 
 # Source state management
 source "${SCRIPT_DIR}/lib/state.sh"
@@ -927,8 +933,28 @@ USER_ONLY=0
 SKIP_SECURITY=0
 INSTALL_GENTLE_AI=0
 HEXSTRIKE_AI=0
+I18N_LANG="en"
 
 parse_args() {
+    # First pass: extract --lang before processing other args
+    local -a remaining=()
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --lang)
+                shift
+                [[ $# -gt 0 ]] || die "Missing value for --lang"
+                I18N_LANG="$1"
+                ;;
+            *)
+                remaining+=("$1")
+                ;;
+        esac
+        shift
+    done
+
+    # Second pass: re-init i18n with resolved language, then process remaining args
+    i18n_init "${I18N_LANG}"
+    set -- "${remaining[@]}"
     while [[ $# -gt 0 ]]; do
         case "$1" in
             --user-only) USER_ONLY=1 ;;
@@ -936,19 +962,19 @@ parse_args() {
             --gentle-ai) INSTALL_GENTLE_AI=1 ;;
             --hexstrike-ai) HEXSTRIKE_AI=1 ;;
             --version)
-                # Extract version from CHANGELOG.md (skip [Unreleased])
                 local version
                 version=$(grep '## \[' "${SCRIPT_DIR}/CHANGELOG.md" | grep -v 'Unreleased' | head -1 | sed 's/## \[\([^]]*\)\].*/\1/')
                 echo "${SCRIPT_NAME} ${version}"
                 exit 0
                 ;;
             -h|--help)
-                echo "Usage: sudo ${SCRIPT_NAME} [--user-only] [--skip-security] [--gentle-ai] [--hexstrike-ai] [--version]"
-                echo "  --user-only     Dotfiles only (no sudo required)"
-                echo "  --skip-security Skip security tools installation"
-                echo "  --gentle-ai     Install full Gentle-AI stack (gentle-ai, gentle-agent-state, Kilo, openCode)"
-                echo "  --hexstrike-ai  Install HexStrike AI + MCP server integration"
-                echo "  --version       Show version from CHANGELOG.md"
+                echo "Usage: sudo ${SCRIPT_NAME} [--user-only] [--skip-security] [--gentle-ai] [--hexstrike-ai] [--lang en|es] [--version]"
+                echo "  --user-only     $(msg HELP_USER_ONLY)"
+                echo "  --skip-security $(msg HELP_SKIP_SECURITY)"
+                echo "  --gentle-ai     $(msg HELP_GENTLE_AI)"
+                echo "  --hexstrike-ai  $(msg HELP_HEXSTRIKE_AI)"
+                echo "  --lang LANG     $(msg HELP_LANG)"
+                echo "  --version       $(msg HELP_VERSION)"
                 exit 0 ;;
             *) die "Unknown option: $1" ;;
         esac
@@ -960,7 +986,16 @@ parse_args() {
 # MAIN
 # =============================================================================
 main() {
+    # Initialize i18n with default language (en) before parsing args
+    i18n_init "${I18N_LANG}"
+
     parse_args "$@"
+
+    # Re-initialize i18n with final language (in case --lang was passed)
+    i18n_init "${I18N_LANG}"
+
+    # Populate STEP_LABELS with translated strings
+    init_step_labels
 
     if [[ $EUID -ne 0 && ${USER_ONLY} -eq 0 ]]; then
         die "Must run as root (sudo) for system changes. Use --user-only for dotfiles only."
@@ -1044,7 +1079,7 @@ main() {
     cat <<EOF
 
 ${C_NEON_GREEN}══════════════════════════════════════════════════════════════════${C_RESET}
-${C_NEON_GREEN}  NEON MINIMAL i3 INSTALLATION COMPLETE${C_RESET}
+${C_NEON_GREEN}  $(msg MSG_INSTALL_COMPLETE)${C_RESET}
 ${C_NEON_GREEN}══════════════════════════════════════════════════════════════════${C_RESET}
 
 ${C_NEON_CYAN}Session:${C_RESET} i3 (available at login)

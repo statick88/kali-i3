@@ -16,10 +16,32 @@ readonly LOG_FILE="/var/log/${SCRIPT_NAME%.sh}.log"
 
 # Source lib modules
 source "${SCRIPT_DIR}/lib/common.sh"
+source "${SCRIPT_DIR}/lib/i18n.sh"
 source "${SCRIPT_DIR}/lib/user.sh"
 
 # Argument parsing
+I18N_LANG="en"
+
 parse_args() {
+    # First pass: extract --lang before processing other args
+    local -a remaining=()
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --lang)
+                shift
+                [[ $# -gt 0 ]] || die "Missing value for --lang"
+                I18N_LANG="$1"
+                ;;
+            *)
+                remaining+=("$1")
+                ;;
+        esac
+        shift
+    done
+
+    # Second pass: re-init i18n with resolved language, then process remaining args
+    i18n_init "${I18N_LANG}"
+    set -- "${remaining[@]}"
     while [[ $# -gt 0 ]]; do
         case "$1" in
             --version)
@@ -29,8 +51,9 @@ parse_args() {
                 exit 0
                 ;;
             -h|--help)
-                echo "Usage: sudo ${SCRIPT_NAME} [--version]"
-                echo "  --version  Show version"
+                echo "Usage: sudo ${SCRIPT_NAME} [--lang en|es] [--version]"
+                echo "  --lang LANG     $(msg HELP_LANG)"
+                echo "  --version       $(msg HELP_VERSION)"
                 exit 0
                 ;;
             *) die "Unknown option: $1" ;;
@@ -43,18 +66,23 @@ parse_args() {
 readonly STATE_FILE="${TARGET_HOME}/.config/purge-xfce-state.json"
 readonly STATE_VERSION="1.0.0"
 declare -A COMPLETED_STEPS=()
-declare -A STEP_LABELS=(
-    ["step_protect_critical_packages"]="Protecting critical system packages"
-    ["step_stop_display_manager"]="Stopping display manager"
-    ["step_kill_xfce_processes"]="Terminating XFCE processes"
-    ["step_purge_meta_packages"]="Purging desktop meta-packages"
-    ["step_purge_display_managers"]="Purging old display managers"
-    ["step_purge_xfce_packages"]="Purging XFCE packages"
-    ["step_purge_gnome_packages"]="Purging GNOME packages"
-    ["step_purge_xfce_configs"]="Removing XFCE configuration files"
-    ["step_unprotect_critical_packages"]="Unprotecting critical packages"
-    ["step_cleanup_apt"]="Running APT cleanup"
-)
+declare -A STEP_LABELS=()
+
+# Populate STEP_LABELS with translated strings (must be called after i18n_init)
+init_step_labels() {
+    STEP_LABELS=(
+        ["step_protect_critical_packages"]="$(msg STEP_PROTECT_CRITICAL_PACKAGES)"
+        ["step_stop_display_manager"]="$(msg STEP_STOP_DISPLAY_MANAGER)"
+        ["step_kill_xfce_processes"]="$(msg STEP_KILL_XFCE_PROCESSES)"
+        ["step_purge_meta_packages"]="$(msg STEP_PURGE_META_PACKAGES)"
+        ["step_purge_display_managers"]="$(msg STEP_PURGE_DISPLAY_MANAGERS)"
+        ["step_purge_xfce_packages"]="$(msg STEP_PURGE_XFCE_PACKAGES)"
+        ["step_purge_gnome_packages"]="$(msg STEP_PURGE_GNOME_PACKAGES)"
+        ["step_purge_xfce_configs"]="$(msg STEP_PURGE_XFCE_CONFIGS)"
+        ["step_unprotect_critical_packages"]="$(msg STEP_UNPROTECT_CRITICAL_PACKAGES)"
+        ["step_cleanup_apt"]="$(msg STEP_CLEANUP_APT)"
+    )
+}
 
 # Source state management
 source "${SCRIPT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}/lib/state.sh"
@@ -230,7 +258,7 @@ cleanup_apt() {
 
 print_summary() {
     printf "\n${C_NEON_GREEN}══════════════════════════════════════════════════════════════════${C_RESET}\n"
-    printf "${C_NEON_GREEN}  NEON XFCE PURGE COMPLETE - CONFIRMATION${C_RESET}\n"
+    printf "${C_NEON_GREEN}  $(msg MSG_PURGE_COMPLETE)${C_RESET}\n"
     printf "${C_NEON_GREEN}══════════════════════════════════════════════════════════════════${C_RESET}\n\n"
 
     printf "${C_NEON_CYAN}Summary:${C_RESET}\n"
@@ -240,15 +268,24 @@ print_summary() {
     printf "  ${C_NEON_PURPLE}-${C_RESET} Modular execution with idempotent checks\n"
     printf "  ${C_NEON_PURPLE}-${C_RESET} System ready for NEON i3-wm\n\n"
 
-    read -rp "${C_NEON_PINK}Reboot now to start clean i3 session? [Y/n]:${C_RESET} " reply
-    [[ -z "${reply}" || "${reply,,}" =~ ^y ]] && { run_as_root "reboot"; } || { info "Reboot manually when ready."; }
+    read -rp "${C_NEON_PINK}$(msg MSG_REBOOT_PROMPT)${C_RESET} " reply
+    [[ -z "${reply}" || "${reply,,}" =~ ^y ]] && { run_as_root "reboot"; } || { info "$(msg MSG_REBOOT_MANUAL)"; }
 }
 
 # =============================================================================
 # MAIN
 # =============================================================================
 main() {
+    # Initialize i18n with default language (en) before parsing args
+    i18n_init "${I18N_LANG}"
+
     parse_args "$@"
+
+    # Re-initialize i18n with final language (in case --lang was passed)
+    i18n_init "${I18N_LANG}"
+
+    # Populate STEP_LABELS with translated strings
+    init_step_labels
 
     if [[ $EUID -ne 0 ]]; then
         err "Must run as root (sudo)"
