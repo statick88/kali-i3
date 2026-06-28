@@ -1037,6 +1037,10 @@ main() {
 
     load_state
 
+    # Start elapsed time tracker for progress bar
+    local START_TIME
+    START_TIME=$(date +%s)
+
     local -a ALL_STEPS=()
 
     if [[ ${USER_ONLY} -eq 0 ]]; then
@@ -1098,12 +1102,12 @@ main() {
 
     for step_name in "${ALL_STEPS[@]}"; do
         if is_completed "${step_name}"; then
-            show_progress "${completed}" "${total}" "${STEP_LABELS[$step_name]:-$step_name} (already done)"
+            show_progress "${completed}" "${total}" "${STEP_LABELS[$step_name]:-$step_name} (already done)" "${START_TIME}"
             ((completed++))
             continue
         fi
 
-        show_progress "${completed}" "${total}" "${STEP_LABELS[$step_name]:-$step_name}"
+        show_progress "${completed}" "${total}" "${STEP_LABELS[$step_name]:-$step_name}" "${START_TIME}"
 
         ${step_name}
 

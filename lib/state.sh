@@ -70,15 +70,43 @@ is_completed() {
 show_progress() {
     local current=$1
     local total=$2
-    local label="${3:-$1}"
+    local label="${3:-unknown}"
+    local start_time=${4:-0}
+
+    # Truncate label to 40 chars
+    if [[ ${#label} -gt 40 ]]; then
+        label="${label:0:40}"
+    fi
+
+    # Calculate percentage and bar
     local percent=$(( current * 100 / total ))
     local filled=$(( percent / 5 ))
     [[ ${filled} -gt 20 ]] && filled=20
     local empty=$(( 20 - filled ))
     local bar=""
-    for ((i=0; i<filled; i++)); do bar+="█"; done
+    for ((i=0; i<filled; i++)); do bar+="▓"; done
     for ((i=0; i<empty; i++)); do bar+="░"; done
 
-    printf "\r${C_NEON_PINK}[${C_NEON_GREEN}%s${C_NEON_PINK}]${C_NEON_CYAN} %3d%%${C_RESET} - %-40s" "${bar}" "${percent}" "${label}"
-    printf "\n"
+    # Color gradient: green <50%, yellow 50-80%, red >80%
+    local color
+    if [[ ${percent} -lt 50 ]]; then
+        color="${C_NEON_GREEN}"
+    elif [[ ${percent} -le 80 ]]; then
+        color="${C_NEON_YELLOW}"
+    else
+        color="${C_NEON_PINK}"
+    fi
+
+    # Elapsed time MM:SS
+    local elapsed=0
+    if [[ ${start_time} -gt 0 ]]; then
+        elapsed=$(( $(date +%s) - start_time ))
+    fi
+    local mins=$(( elapsed / 60 ))
+    local secs=$(( elapsed % 60 ))
+    local elapsed_fmt
+    elapsed_fmt=$(printf "%02d:%02d" "${mins}" "${secs}")
+
+    # Output with \r, no trailing newline
+    printf "\r${color}[${current}/${total}] ${color}${bar}${C_RESET} %3d%% — ${label} (elapsed: ${elapsed_fmt})" "${percent}"
 }
