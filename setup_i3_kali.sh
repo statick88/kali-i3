@@ -107,25 +107,25 @@ step_deploy_dotfiles() {
     run_as_user "mkdir -p ${cfg_dir}/{i3,polybar,rofi,picom,kitty,zsh,gtk-3.0,gtk-4.0}"
 
     # i3 config - NEON MINIMAL
-    cat > "${cfg_dir}/i3/config" <<'I3CONF'
+    cat > "${cfg_dir}/i3/config" <<I3CONF
 # i3-wm Config - NEON MINIMAL Theme
-# Background: #0A0A0A, Accent: #00FFFF (Cyan), #FF006E (Pink), #7B2CBF (Purple)
+# Background: ${NEON_BG}, Accent: ${NEON_ACCENT} (Azul Neon Atenuado), #FF006E (Pink), #7B2CBF (Purple)
 
-set $mod Mod4
+set \$mod Mod4
 
 # Colors (Neon Minimal Dark)
-set $bg      #0A0A0A
-set $bg-alt  #121214
-set $fg      #E0E0E0
-set $neon-cyan #00FFFF
-set $neon-pink #FF006E
-set $neon-purple #7B2CBF
-set $urgent #FF006E
+set \$bg      ${NEON_BG}
+set \$bg-alt  ${NEON_BG_ALT}
+set \$fg      ${NEON_FG}
+set \$neon-cyan ${NEON_ACCENT}
+set \$neon-pink #FF006E
+set \$neon-purple #7B2CBF
+set \$urgent #FF006E
 
-client.focused    $neon-cyan $neon-cyan $bg $neon-cyan $neon-cyan
-client.unfocused  $bg-alt   $bg-alt    $fg $bg-alt   $bg-alt
-client.urgent     $urgent   $urgent    $fg $urgent   $urgent
-client.background $bg
+client.focused    \$neon-cyan \$neon-cyan \$bg \$neon-cyan \$neon-cyan
+client.unfocused  \$bg-alt   \$bg-alt    \$fg \$bg-alt   \$bg-alt
+client.urgent     \$urgent   \$urgent    \$fg \$urgent   \$urgent
+client.background \$bg
 
 # Window rules
 for_window [window_role="pop-up"] floating enable
@@ -139,46 +139,46 @@ exec --no-startup-id polybar -c ~/.config/polybar/config.ini main 2>/dev/null ||
 exec --no-startup-id nm-applet --indicator 2>/dev/null || true
 
 # Keybindings
-bindsym $mod+Return exec kitty
-bindsym $mod+Shift+Return exec alacritty
-bindsym $mod+d exec rofi -show drun
-bindsym $mod+Shift+d exec rofi -show run
-bindsym $mod+Shift+q kill
+bindsym \$mod+Return exec kitty
+bindsym \$mod+Shift+Return exec alacritty
+bindsym \$mod+d exec rofi -show drun
+bindsym \$mod+Shift+d exec rofi -show run
+bindsym \$mod+Shift+q kill
 
 # Navigation (NEON minimal)
-bindsym $mod+h focus left
-bindsym $mod+j focus down
-bindsym $mod+k focus up
-bindsym $mod+l focus right
+bindsym \$mod+h focus left
+bindsym \$mod+j focus down
+bindsym \$mod+k focus up
+bindsym \$mod+l focus right
 
 # Move
-bindsym $mod+Shift+h move left
-bindsym $mod+Shift+j move down
-bindsym $mod+Shift+k move up
-bindsym $mod+Shift+l move right
+bindsym \$mod+Shift+h move left
+bindsym \$mod+Shift+j move down
+bindsym \$mod+Shift+k move up
+bindsym \$mod+Shift+l move right
 
 # Workspaces
-bindsym $mod+1 workspace 1
-bindsym $mod+2 workspace 2
-bindsym $mod+3 workspace 3
-bindsym $mod+4 workspace 4
-bindsym $mod+5 workspace 5
-bindsym $mod+6 workspace 6
-bindsym $mod+7 workspace 7
-bindsym $mod+8 workspace 8
-bindsym $mod+9 workspace 9
-bindsym $mod+0 workspace 10
+bindsym \$mod+1 workspace 1
+bindsym \$mod+2 workspace 2
+bindsym \$mod+3 workspace 3
+bindsym \$mod+4 workspace 4
+bindsym \$mod+5 workspace 5
+bindsym \$mod+6 workspace 6
+bindsym \$mod+7 workspace 7
+bindsym \$mod+8 workspace 8
+bindsym \$mod+9 workspace 9
+bindsym \$mod+0 workspace 10
 
-bindsym $mod+Shift+1 move container to workspace 1
-bindsym $mod+Shift+2 move container to workspace 2
-bindsym $mod+Shift+3 move container to workspace 3
-bindsym $mod+Shift+4 move container to workspace 4
-bindsym $mod+Shift+5 move container to workspace 5
-bindsym $mod+Shift+6 move container to workspace 6
-bindsym $mod+Shift+7 move container to workspace 7
-bindsym $mod+Shift+8 move container to workspace 8
-bindsym $mod+Shift+9 move container to workspace 9
-bindsym $mod+Shift+0 move container to workspace 10
+bindsym \$mod+Shift+1 move container to workspace 1
+bindsym \$mod+Shift+2 move container to workspace 2
+bindsym \$mod+Shift+3 move container to workspace 3
+bindsym \$mod+Shift+4 move container to workspace 4
+bindsym \$mod+Shift+5 move container to workspace 5
+bindsym \$mod+Shift+6 move container to workspace 6
+bindsym \$mod+Shift+7 move container to workspace 7
+bindsym \$mod+Shift+8 move container to workspace 8
+bindsym \$mod+Shift+9 move container to workspace 9
+bindsym \$mod+Shift+0 move container to workspace 10
 
 # Screenshots
 bindsym Print exec flameshot gui
@@ -189,8 +189,8 @@ bindsym XF86AudioLowerVolume exec pamixer -d 5
 bindsym XF86AudioMute exec pamixer -t
 
 # Reload
-bindsym $mod+Shift+c reload
-bindsym $mod+Shift+x exec "i3-nagbar -t warning -m 'Exit i3?' -b 'Yes' 'i3-msg exit'"
+bindsym \$mod+Shift+c reload
+bindsym \$mod+Shift+x exec "i3-nagbar -t warning -m 'Exit i3?' -b 'Yes' 'i3-msg exit'"
 
 bar {
     mode hide
@@ -202,11 +202,11 @@ I3CONF
     ok "Created: i3/config (NEON MINIMAL)"
 
     # Polybar config - NEON MINIMAL with Fira Code
-    cat > "${cfg_dir}/polybar/config.ini" <<'POLYCONF'
+    cat > "${cfg_dir}/polybar/config.ini" <<POLYCONF
 [colors]
-background = #0A0A0A
-foreground = #E0E0E0
-primary = #00FFFF
+background = ${NEON_BG}
+foreground = ${NEON_FG}
+primary = ${NEON_ACCENT}
 secondary = #FF006E
 alert = #7B2CBF
 
@@ -218,8 +218,8 @@ radius = 0
 padding-right = 4
 module-margin-right = 2
 font-0 = "FiraCode Nerd Font:size=10"
-background = #0A0A0A
-foreground = #E0E0E0
+background = ${NEON_BG}
+foreground = ${NEON_FG}
 border-size = 0
 border-color = #00000000
 modules-left = i3
@@ -230,12 +230,12 @@ modules-right = space pulseaudio memory cpu network
 type = internal/i3
 format = <label-state>
 label-focused = "%index%"
-label-focused-background = #121214
-label-focused-foreground = #00FFFF
+label-focused-background = ${NEON_BG_ALT}
+label-focused-foreground = ${NEON_ACCENT}
 label-focused-padding = 2
 label-unfocused = "%index%"
-label-unfocused-background = #0A0A0A
-label-unfocused-foreground = #E0E0E0
+label-unfocused-background = ${NEON_BG}
+label-unfocused-foreground = ${NEON_FG}
 label-unfocused-padding = 2
 
 [module/date]
@@ -273,51 +273,51 @@ POLYCONF
     ok "Created: polybar/config.ini (NEON MINIMAL)"
 
     # Rofi config - NEON MINIMAL
-    cat > "${cfg_dir}/rofi/config.rasi" <<'ROFI'
+    cat > "${cfg_dir}/rofi/config.rasi" <<ROFI
 configuration {
     show-icons: true;
     icon-theme: "Papirus-Dark";
     font: "FiraCode Nerd Font 10";
 }
 window {
-    background-color: #0A0A0A;
+    background-color: ${NEON_BG};
     border: 0px;
     border-radius: 0px;
 }
 listview {
-    background-color: #0A0A0A;
-    border-color: #121214;
+    background-color: ${NEON_BG};
+    border-color: ${NEON_BG_ALT};
     border-radius: 0px;
 }
 element {
-    background-color: #0A0A0A;
+    background-color: ${NEON_BG};
     border-radius: 0px;
-    element-text-color: #E0E0E0;
+    element-text-color: ${NEON_FG};
 }
 element-selected {
-    background-color: #00FFFF;
+    background-color: ${NEON_ACCENT};
     border-radius: 0px;
-    element-text-color: #0A0A0A;
+    element-text-color: ${NEON_BG};
 }
 prompt {
-    background-color: #0A0A0A;
+    background-color: ${NEON_BG};
     border-color: #FF006E;
     border-radius: 0px;
-    text-color: #00FFFF;
+    text-color: ${NEON_ACCENT};
 }
 ROFI
     chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/rofi/config.rasi"
     ok "Created: rofi/config.rasi (NEON MINIMAL)"
 
     # Picom config
-    cat > "${cfg_dir}/picom.conf" <<'PICOM'
+    cat > "${cfg_dir}/picom.conf" <<PICOM
 backend = "glx";
 vsync = true;
 blur-background = true;
 blur-background-frame = true;
 shadow = true;
 shadow-radius = 12;
-shadow-color = #00FFFF;
+shadow-color = ${NEON_ACCENT};
 fading = true;
 fade-delta = 4;
 PICOM
@@ -325,36 +325,36 @@ PICOM
     ok "Created: picom.conf"
 
     # Kitty config - NEON MINIMAL
-    cat > "${cfg_dir}/kitty/kitty.conf" <<'KITTY'
+    cat > "${cfg_dir}/kitty/kitty.conf" <<KITTY
 font_family FiraCode Nerd Font
 font_size 11.0
 bold_font auto
 italic_font auto
 
-background #0A0A0A
-foreground #E0E0E0
-cursor #00FFFF
-cursor_text_color #0A0A0A
+background ${NEON_BG}
+foreground ${NEON_FG}
+cursor ${NEON_ACCENT}
+cursor_text_color ${NEON_BG}
 
-color0 #0A0A0A
+color0 ${NEON_BG}
 color1 #FF006E
 color2 #7B2CBF
-color3 #00FFFF
+color3 ${NEON_ACCENT}
 color4 #FF006E
 color5 #7B2CBF
-color6 #00FFFF
-color7 #E0E0E0
-color8 #121214
+color6 ${NEON_ACCENT}
+color7 ${NEON_FG}
+color8 ${NEON_BG_ALT}
 color9 #FF006E
-color10 #00FFFF
+color10 ${NEON_ACCENT}
 color11 #7B2CBF
-color12 #00FFFF
+color12 ${NEON_ACCENT}
 color13 #FF006E
 color14 #7B2CBF
 color15 #FFFFFF
 
-selection_background #00FFFF
-selection_foreground #0A0A0A
+selection_background ${NEON_ACCENT}
+selection_foreground ${NEON_BG}
 selection_shape block
 
 window_padding_width 12
@@ -366,7 +366,7 @@ KITTY
     ok "Created: kitty/kitty.conf (NEON MINIMAL)"
 
     # Alacritty config - NEON MINIMAL
-    cat > "${cfg_dir}/alacritty/alacritty.yml" <<'ALACRITTY'
+    cat > "${cfg_dir}/alacritty/alacritty.yml" <<ALACRITTY
 font:
   normal:
     family: FiraCode Nerd Font
@@ -386,32 +386,32 @@ window:
 
 colors:
   primary:
-    background: "#0A0A0A"
-    foreground: "#E0E0E0"
+    background: "${NEON_BG}"
+    foreground: "${NEON_FG}"
   cursor:
-    cursor: "#00FFFF"
-    text: "#0A0A0A"
+    cursor: "${NEON_ACCENT}"
+    text: "${NEON_BG}"
   vi_mode_cursor:
     cursor: "#FF006E"
-    text: "#0A0A0A"
+    text: "${NEON_BG}"
   selection:
-    text: "#0A0A0A"
-    background: "#00FFFF"
+    text: "${NEON_BG}"
+    background: "${NEON_ACCENT}"
   normal:
-    black:   "#0A0A0A"
+    black:   "${NEON_BG}"
     red:     "#FF006E"
-    green:   "#00FFFF"
+    green:   "${NEON_ACCENT}"
     yellow:  "#7B2CBF"
-    blue:    "#00FFFF"
+    blue:    "${NEON_ACCENT}"
     magenta: "#FF006E"
     cyan:    "#7B2CBF"
-    white:   "#E0E0E0"
+    white:   "${NEON_FG}"
   bright:
-    black:   "#121214"
+    black:   "${NEON_BG_ALT}"
     red:     "#FF006E"
-    green:   "#00FFFF"
+    green:   "${NEON_ACCENT}"
     yellow:  "#7B2CBF"
-    blue:    "#00FFFF"
+    blue:    "${NEON_ACCENT}"
     magenta: "#FF006E"
     cyan:    "#7B2CBF"
     white:   "#FFFFFF"
@@ -486,9 +486,9 @@ step_setup_tmux_neon() {
     local scripts_dir="${cfg_dir}/scripts"
     run_as_user "mkdir -p ${cfg_dir}/tmux.conf.d ${scripts_dir}"
 
-    cat > "${cfg_dir}/tmux.conf" <<'TMUXCONF'
+    cat > "${cfg_dir}/tmux.conf" <<TMUXCONF
 # TMUX Config - NEON MINIMAL Theme
-# Background: #0A0AA0, Accent: #00FFFF (cyan), #FF006E (pink), #7B2CBF (purple)
+# Background: ${NEON_BG}, Accent: ${NEON_ACCENT} (Azul Neon Atenuado), #FF006E (pink), #7B2CBF (purple)
 
 # Plugins (TPM)
 set -g @plugin 'tmux-plugins/tpm'
@@ -497,35 +497,35 @@ set -g @plugin 'tmux-plugins/tmux-sensible'
 # Theme - Neon Minimal
 set -g status on
 set -g status-position bottom
-set -g status-bg "#0a0aa0"
-set -g status-fg "#e0e0e0"
+set -g status-bg "${NEON_BG}"
+set -g status-fg "${NEON_FG}"
 set -g status-left-length 60
 set -g status-right-length 60
 
 # Status left - Kali Linux logo + session
-set -g status-left "#[fg=#00ffff, bg=#0a0aa0] 🔱 KALI #[fg=#e0e0e0, bg=#0a0aa0] #S #[default]"
+set -g status-left "#[fg=${NEON_ACCENT}, bg=${NEON_BG}] 🔱 KALI #[fg=${NEON_FG}, bg=${NEON_BG}] #S #[default]"
 
 # Status right - Minimal date/time
-set -g status-right "#[fg=#7b2cbf, bg=#0a0aa0] %d/%m #[fg=#00ffff, bg=#0a0aa0] %H:%M #[default]"
+set -g status-right "#[fg=#7b2cbf, bg=${NEON_BG}] %d/%m #[fg=${NEON_ACCENT}, bg=${NEON_BG}] %H:%M #[default]"
 
 # Window status
-setw -g window-status-current-bg "#00ffff"
-setw -g window-status-current-fg "#0a0aa0"
+setw -g window-status-current-bg "${NEON_ACCENT}"
+setw -g window-status-current-fg "${NEON_BG}"
 setw -g window-status-current-format " #I:#W "
 
-setw -g window-status-bg "#0a0aa0"
+setw -g window-status-bg "${NEON_BG}"
 setw -g window-status-fg "#7b2cbf"
 setw -g window-status-format " #I:#W "
 
 # Pane borders - Neon colors
-set -g pane-border-bg "#0a0aa0"
+set -g pane-border-bg "${NEON_BG}"
 set -g pane-border-fg "#ff006e"
-set -g pane-active-border-bg "#0a0aa0"
-set -g pane-active-border-fg "#00ffff"
+set -g pane-active-border-bg "${NEON_BG}"
+set -g pane-active-border-fg "${NEON_ACCENT}"
 
 # Messages
-set -g message-bg "#00ffff"
-set -g message-fg "#0a0aa0"
+set -g message-bg "${NEON_ACCENT}"
+set -g message-fg "${NEON_BG}"
 
 # Reload config
 bind r source-file ~/.config/tmux/tmux.conf \; display-message "🔱 KALI tmux.conf reloaded"
@@ -571,10 +571,10 @@ UPDATESTATUS
     chown "${TARGET_UID}:${TARGET_GID}" "${scripts_dir}/update-status.sh"
     ok "Created: tmux/scripts/update-status.sh"
 
-    cat > "${cfg_dir}/tmux.conf.d/agents.conf" <<'AGENTS'
+    cat > "${cfg_dir}/tmux.conf.d/agents.conf" <<AGENTS
 # TMUX Agent State Hooks - NEON MINIMAL
 
-set -g status-left "#[fg=#00ffff, bg=#0a0aa0] 🔱 KALI #[fg=#7b2cbf, bg=#0a0aa0] #S #($HOME/.config/tmux/scripts/agent-status.sh)#[default]"
+set -g status-left "#[fg=${NEON_ACCENT}, bg=${NEON_BG}] 🔱 KALI #[fg=#7b2cbf, bg=${NEON_BG}] #S #(\$HOME/.config/tmux/scripts/agent-status.sh)#[default]"
 
 # Hook for gentle-agent-state updates
 set-hook -g after-split-window 'run-shell ~/.config/tmux/scripts/update-status.sh 2>/dev/null'
@@ -754,15 +754,15 @@ step_deploy_kilo_config() {
     local kilo_dir="${TARGET_HOME}/.config/kilo"
     run_as_user "mkdir -p ${kilo_dir}"
 
-    cat > "${kilo_dir}/agent.json" <<'KILOCONF'
+    cat > "${kilo_dir}/agent.json" <<KILOCONF
 {
   "name": "kali-i3-neon",
   "description": "NEON MINIMAL i3-wm setup for Kali Linux",
   "theme": "neon-dark",
   "colors": {
-    "background": "#0A0A0A",
-    "foreground": "#E0E0E0",
-    "accent": "#00FFFF",
+    "background": "${NEON_BG}",
+    "foreground": "${NEON_FG}",
+    "accent": "${NEON_ACCENT}",
     "magenta": "#FF006E",
     "purple": "#7B2CBF"
   }
@@ -795,14 +795,14 @@ step_setup_opencode() {
     local opencode_dir="${TARGET_HOME}/.config/opencode"
     run_as_user "mkdir -p ${opencode_dir}"
 
-    cat > "${opencode_dir}/.opencode.json" <<'OPENCODE'
+    cat > "${opencode_dir}/.opencode.json" <<OPENCODE
 {
   "name": "kali-i3-neon",
   "preset": "gentleman",
   "theme": {
-    "background": "#0A0A0A",
-    "foreground": "#E0E0E0",
-    "accent": "#00FFFF",
+    "background": "${NEON_BG}",
+    "foreground": "${NEON_FG}",
+    "accent": "${NEON_ACCENT}",
     "borderRadius": 0,
     "neonPink": "#FF006E",
     "neonPurple": "#7B2CBF"
@@ -1085,9 +1085,9 @@ ${C_NEON_GREEN}═════════════════════�
 ${C_NEON_CYAN}Session:${C_RESET} i3 (available at login)
 ${C_NEON_PINK}Shell:${C_RESET} Zsh + Oh-My-Zsh + Powerlevel10k
 ${C_NEON_PURPLE}Terminal:${C_RESET} Kitty / Alacritty (FiraCode Nerd Font)
-${C_NEON_CYAN}Bar:${C_RESET} Polybar (Neon Dark #0A0A0A)
+${C_NEON_CYAN}Bar:${C_RESET} Polybar (Neon Dark ${NEON_BG})
 ${C_NEON_PINK}Launcher:${C_RESET} Rofi (Neon minimal)
-${C_NEON_CYAN}TMUX:${C_RESET} tmux.conf + TPM (Neon #0A0AA0 bg)
+${C_NEON_CYAN}TMUX:${C_RESET} tmux.conf + TPM (Neon ${NEON_BG} bg)
 
 ${C_NEON_PURPLE}Reboot and select 'i3' in SDDM.${C_RESET}
 ${C_NEON_CYAN}Then run:${C_RESET} sudo ./purge_xfce.sh

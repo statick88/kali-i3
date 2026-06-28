@@ -87,6 +87,69 @@ test_c_neon_red() {
 }
 
 # =============================================================================
+# Test: NEON_BG is defined
+# =============================================================================
+test_neon_bg() {
+    local val
+    val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${NEON_BG}\"" 2>/dev/null)
+    [[ "${val}" == '#0A0A10' ]] && pass "NEON_BG is defined correctly" || fail "NEON_BG has wrong value: ${val}"
+}
+
+# =============================================================================
+# Test: NEON_BG_ALT is defined
+# =============================================================================
+test_neon_bg_alt() {
+    local val
+    val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${NEON_BG_ALT}\"" 2>/dev/null)
+    [[ "${val}" == '#1E1E2F' ]] && pass "NEON_BG_ALT is defined correctly" || fail "NEON_BG_ALT has wrong value: ${val}"
+}
+
+# =============================================================================
+# Test: NEON_FG is defined
+# =============================================================================
+test_neon_fg() {
+    local val
+    val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${NEON_FG}\"" 2>/dev/null)
+    [[ "${val}" == '#E0E0E0' ]] && pass "NEON_FG is defined correctly" || fail "NEON_FG has wrong value: ${val}"
+}
+
+# =============================================================================
+# Test: NEON_ACCENT is defined
+# =============================================================================
+test_neon_accent() {
+    local val
+    val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${NEON_ACCENT}\"" 2>/dev/null)
+    [[ "${val}" == '#008B8B' ]] && pass "NEON_ACCENT is defined correctly" || fail "NEON_ACCENT has wrong value: ${val}"
+}
+
+# =============================================================================
+# Test: NEON_ACCENT_BRIGHT is defined
+# =============================================================================
+test_neon_accent_bright() {
+    local val
+    val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${NEON_ACCENT_BRIGHT}\"" 2>/dev/null)
+    [[ "${val}" == '#00A3A6' ]] && pass "NEON_ACCENT_BRIGHT is defined correctly" || fail "NEON_ACCENT_BRIGHT has wrong value: ${val}"
+}
+
+# =============================================================================
+# Test: NEON_ALERT is defined
+# =============================================================================
+test_neon_alert() {
+    local val
+    val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${NEON_ALERT}\"" 2>/dev/null)
+    [[ "${val}" == '#C71585' ]] && pass "NEON_ALERT is defined correctly" || fail "NEON_ALERT has wrong value: ${val}"
+}
+
+# =============================================================================
+# Test: NEON_SELECTION is defined
+# =============================================================================
+test_neon_selection() {
+    local val
+    val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${NEON_SELECTION}\"" 2>/dev/null)
+    [[ "${val}" == '#1E1E2F' ]] && pass "NEON_SELECTION is defined correctly" || fail "NEON_SELECTION has wrong value: ${val}"
+}
+
+# =============================================================================
 # Test: All constants are readonly
 # =============================================================================
 test_readonly() {
@@ -96,6 +159,18 @@ test_readonly() {
     " 2>/dev/null \
         && fail "C_RESET should be readonly" \
         || pass "Constants are readonly"
+}
+
+# =============================================================================
+# Test: NEON_* palette constants are readonly
+# =============================================================================
+test_neon_readonly() {
+    bash -c "
+        source '${SCRIPT_DIR}/lib/colors.sh'
+        NEON_BG='hacked'
+    " 2>/dev/null \
+        && fail "NEON_BG should be readonly" \
+        || pass "NEON palette constants are readonly"
 }
 
 # Run all tests
@@ -110,7 +185,15 @@ main() {
     test_c_neon_purple
     test_c_neon_green
     test_c_neon_red
+    test_neon_bg
+    test_neon_bg_alt
+    test_neon_fg
+    test_neon_accent
+    test_neon_accent_bright
+    test_neon_alert
+    test_neon_selection
     test_readonly
+    test_neon_readonly
 
     echo ""
     echo "=== Results: ${TESTS_PASS}/${TESTS_RUN} passed, ${TESTS_FAIL} failed ==="

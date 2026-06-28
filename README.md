@@ -14,7 +14,7 @@ sudo ./purge_xfce.sh             # remove XFCE after verifying i3 works
 
 | Component | Detail |
 |-----------|--------|
-| Window manager | i3-wm with NEON MINIMAL theme (`#0A0A0A` bg, `#00FFFF` accent) |
+| Window manager | i3-wm with NEON MINIMAL theme (`#0A0A10` bg, `#008B8B` accent) |
 | Shell | Zsh + Oh-My-Zsh + Powerlevel10k |
 | Terminals | Kitty + Alacritty (FiraCode Nerd Font) |
 | Bar | Polybar (neon dark) |
@@ -42,12 +42,12 @@ kali-i3/
   setup_i3_kali.sh     # main installer (idempotent, checkpointed)
   purge_xfce.sh        # safe XFCE removal (protects critical packages)
   lib/                 # shared bash library
-    colors.sh          # NEON color constants
+    colors.sh          # NEON color constants + Azul Neón Atenuado palette
     common.sh          # logging: log, info, ok, warn, err, die, step, header
     user.sh            # user context: TARGET_USER, run_as_root, run_as_user
     state.sh           # checkpoint persistence: load/save/mark/is_completed
     apt.sh             # apt helpers: pkg_installed (cached), apt_install_if_missing
-  tests/               # test suite (129 tests)
+  tests/               # test suite (181 tests)
     lib/test-helpers.sh
     run-tests.sh       # test runner
     test-*.sh          # unit, integration, approval tests
@@ -69,10 +69,13 @@ Idempotent checkpoints (`~/.config/i3-setup-state.json`) let you resume if inter
 
 | Name | Hex | Usage |
 |------|-----|-------|
-| Background | `#0A0A0A` | Main background |
-| Cyan | `#00FFFF` | Focused windows, accents |
-| Pink | `#FF006E` | Urgent, errors |
-| Purple | `#7B2CBF` | Selection, highlights |
+| Background | `#0A0A10` | Main background |
+| Background Alt | `#1E1E2F` | Secondary background, selection |
+| Foreground | `#E0E0E0` | Text color |
+| Accent | `#008B8B` | Focused windows, accents (Azul Neón Atenuado) |
+| Accent Bright | `#00A3A6` | Bright accent variant |
+| Alert | `#C71585` | Urgent, errors |
+| Selection | `#1E1E2F` | Selection highlights |
 
 ## Testing
 
