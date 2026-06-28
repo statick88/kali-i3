@@ -1,0 +1,10 @@
+[SddmGreeterTheme]
+Name=Neon Minimal
+Description=Minimal dark theme with cyan accent
+Author=Kali-i3 Setup
+License=MIT
+Type=sddm-theme
+Version=1.0
+MainScript=Main.qml
+ConfigFile=theme.conf
+Theme-API=2.0

@@ -652,22 +652,33 @@ ZSHRC
 }
 
 step_switch_display_manager() {
-    header "Switch Display Manager: LightDM -> SDDM (NEON)"
+    header "Switch Display Manager: LightDM -> SDDM (NEON MINIMAL)"
 
     apt_install_if_missing sddm
     run_as_root "systemctl enable sddm" || true
 
+    # Deploy custom neon-minimal theme
+    local theme_dir="/usr/share/sddm/themes/neon-minimal"
+    local src_theme="${SCRIPT_DIR}/dotfiles/sddm/themes/neon-minimal"
+
+    run_as_root "mkdir -p ${theme_dir}"
+    run_as_root "cp ${src_theme}/theme.conf ${theme_dir}/"
+    run_as_root "cp ${src_theme}/metadata.desktop ${theme_dir}/"
+    run_as_root "cp ${src_theme}/Main.qml ${theme_dir}/"
+    run_as_root "chmod -R 755 ${theme_dir}"
+
+    # Configure SDDM to use neon-minimal theme
     run_as_root "mkdir -p /etc/sddm.conf.d"
     cat > /etc/sddm.conf.d/kali-i3.conf <<'SDDMCONF'
 [Theme]
-Current=breeze
+Current=neon-minimal
 
 [Autologin]
 User=
 Session=i3.desktop
 SDDMCONF
 
-    ok "SDDM configured as display manager"
+    ok "SDDM configured with neon-minimal theme"
 }
 
 step_setup_i3_desktop_entry() {
