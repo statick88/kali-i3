@@ -100,6 +100,38 @@ i18n_init() {
     LANG_EN[STEP_POST_INSTALL_CLEANUP]="Post-install cleanup"
     LANG_ES[STEP_POST_INSTALL_CLEANUP]="Limpieza post-instalación"
 
+    # --- Security arsenal step labels (STEP_*) ---
+    LANG_EN[STEP_INSTALL_ADVANCED_TOOLS]="Installing advanced security tools"
+    LANG_ES[STEP_INSTALL_ADVANCED_TOOLS]="Instalando herramientas de seguridad avanzadas"
+
+    LANG_EN[STEP_SETUP_ANONYMITY]="Setting up anonymity tools (Tor, Proxychains)"
+    LANG_ES[STEP_SETUP_ANONYMITY]="Configurando herramientas de anonimato (Tor, Proxychains)"
+
+    LANG_EN[STEP_CONFIGURE_GHIDRA]="Configure Ghidra Java environment"
+    LANG_ES[STEP_CONFIGURE_GHIDRA]="Configurar entorno Java de Ghidra"
+
+    LANG_EN[STEP_SETUP_FIREWALL]="Setting up UFW firewall"
+    LANG_ES[STEP_SETUP_FIREWALL]="Configurando cortafuegos UFW"
+
+    # --- Security arsenal messages (MSG_*) ---
+    LANG_EN[MSG_TOR_STARTED]="Tor service started"
+    LANG_ES[MSG_TOR_STARTED]="Servicio Tor iniciado"
+
+    LANG_EN[MSG_PROXYCHAINS_CONFIGURED]="Proxychains configured for Tor"
+    LANG_ES[MSG_PROXYCHAINS_CONFIGURED]="Proxychains configurado para Tor"
+
+    LANG_EN[MSG_UFW_ENABLED]="UFW firewall enabled"
+    LANG_ES[MSG_UFW_ENABLED]="Cortafuegos UFW habilitado"
+
+    LANG_EN[MSG_NETEXEC_INSTALLED]="NetExec installed"
+    LANG_ES[MSG_NETEXEC_INSTALLED]="NetExec instalado"
+
+    LANG_EN[MSG_SLIVER_INSTALLED]="Sliver installed"
+    LANG_ES[MSG_SLIVER_INSTALLED]="Sliver instalado"
+
+    LANG_EN[MSG_GHIDRA_JAVA_SET]="JAVA_HOME set for Ghidra"
+    LANG_ES[MSG_GHIDRA_JAVA_SET]="JAVA_HOME configurado para Ghidra"
+
     # --- Purge step labels (STEP_PURGE_*) ---
     LANG_EN[STEP_PROTECT_CRITICAL_PACKAGES]="Protecting critical system packages"
     LANG_ES[STEP_PROTECT_CRITICAL_PACKAGES]="Protegiendo paquetes críticos del sistema"

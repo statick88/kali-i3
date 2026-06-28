@@ -25,6 +25,7 @@ source "${SCRIPT_DIR}/lib/common.sh"
 source "${SCRIPT_DIR}/lib/i18n.sh"
 source "${SCRIPT_DIR}/lib/user.sh"
 source "${SCRIPT_DIR}/lib/apt.sh"
+source "${SCRIPT_DIR}/lib/security.sh"
 
 # State tracking
 declare -A STATE=()
@@ -51,6 +52,10 @@ init_step_labels() {
         ["step_deploy_zshrc"]="$(msg STEP_DEPLOY_ZSHRC)"
         ["step_setup_i3_desktop_entry"]="$(msg STEP_SETUP_I3_DESKTOP_ENTRY)"
         ["step_install_security_suite"]="$(msg STEP_INSTALL_SECURITY_SUITE)"
+        ["step_install_advanced_tools"]="$(msg STEP_INSTALL_ADVANCED_TOOLS)"
+        ["step_setup_anonymity"]="$(msg STEP_SETUP_ANONYMITY)"
+        ["step_configure_ghidra"]="$(msg STEP_CONFIGURE_GHIDRA)"
+        ["step_setup_firewall"]="$(msg STEP_SETUP_FIREWALL)"
         ["step_install_gentle_ai"]="$(msg STEP_INSTALL_GENTLE_AI)"
         ["step_install_gentle_agent_state"]="$(msg STEP_INSTALL_GENTLE_AGENT_STATE)"
         ["step_deploy_kilo_config"]="$(msg STEP_DEPLOY_KILO_CONFIG)"
@@ -713,6 +718,32 @@ EMP
     ok "Security suite installed (NEON)"
 }
 
+step_install_advanced_tools() {
+    header "Install Advanced Security Tools (NEON)"
+    install_netexec
+    install_sliver
+    ok "Advanced security tools installed"
+}
+
+step_setup_anonymity() {
+    header "Setup Anonymity Tools (NEON)"
+    setup_tor
+    setup_proxychains
+    ok "Anonymity tools configured"
+}
+
+step_configure_ghidra() {
+    header "Configure Ghidra Java Environment (NEON)"
+    configure_ghidra_java
+    ok "Ghidra Java configured"
+}
+
+step_setup_firewall() {
+    header "Setup UFW Firewall (NEON)"
+    setup_ufw
+    ok "Firewall configured"
+}
+
 step_install_gentle_ai() {
     header "Install gentle-ai CLI (NEON) - Go Install"
 
@@ -1026,6 +1057,10 @@ main() {
 
     if [[ ${SKIP_SECURITY} -eq 0 && ${USER_ONLY} -eq 0 ]]; then
         ALL_STEPS+=("step_install_security_suite")
+        ALL_STEPS+=("step_install_advanced_tools")
+        ALL_STEPS+=("step_setup_anonymity")
+        ALL_STEPS+=("step_configure_ghidra")
+        ALL_STEPS+=("step_setup_firewall")
     fi
 
     if [[ ${INSTALL_GENTLE_AI} -eq 1 ]]; then
