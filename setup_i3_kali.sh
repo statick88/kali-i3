@@ -26,6 +26,7 @@ source "${SCRIPT_DIR}/lib/i18n.sh"
 source "${SCRIPT_DIR}/lib/user.sh"
 source "${SCRIPT_DIR}/lib/apt.sh"
 source "${SCRIPT_DIR}/lib/security.sh"
+source "${SCRIPT_DIR}/lib/interactive.sh"
 
 # State tracking
 declare -A STATE=()
@@ -968,6 +969,7 @@ SKIP_TMUX=0
 SKIP_AI=0
 INSTALL_GENTLE_AI=0
 HEXSTRIKE_AI=0
+INTERACTIVE=0
 I18N_LANG="en"
 
 parse_args() {
@@ -998,6 +1000,7 @@ parse_args() {
             --skip-shell) SKIP_SHELL=1 ;;
             --skip-tmux) SKIP_TMUX=1 ;;
             --skip-ai) SKIP_AI=1 ;;
+            --interactive) INTERACTIVE=1 ;;
             --gentle-ai) INSTALL_GENTLE_AI=1 ;;
             --hexstrike-ai) HEXSTRIKE_AI=1 ;;
             --version)
@@ -1007,8 +1010,9 @@ parse_args() {
                 exit 0
                 ;;
             -h|--help)
-                echo "Usage: sudo ${SCRIPT_NAME} [--user-only] [--skip-security] [--skip-dotfiles] [--skip-shell] [--skip-tmux] [--skip-ai] [--gentle-ai] [--hexstrike-ai] [--lang en|es] [--version]"
+                echo "Usage: sudo ${SCRIPT_NAME} [--user-only] [--interactive] [--skip-security] [--skip-dotfiles] [--skip-shell] [--skip-tmux] [--skip-ai] [--gentle-ai] [--hexstrike-ai] [--lang en|es] [--version]"
                 echo "  --user-only       $(msg HELP_USER_ONLY)"
+                echo "  --interactive     $(msg HELP_INTERACTIVE)"
                 echo "  --skip-security   $(msg HELP_SKIP_SECURITY)"
                 echo "  --skip-dotfiles   $(msg HELP_SKIP_DOTFILES)"
                 echo "  --skip-shell      $(msg HELP_SKIP_SHELL)"
@@ -1137,6 +1141,50 @@ main() {
             filtered+=("${step}")
         done
         ALL_STEPS=("${filtered[@]}")
+    fi
+
+    # Interactive mode: prompt for each category and filter declined ones
+    if [[ ${INTERACTIVE} -eq 1 ]]; then
+        local -a declined_categories=()
+        for cat_name in "${CATEGORY_NAMES[@]}"; do
+            local cat_steps="${CATEGORY_STEPS[${cat_name}]:-}"
+            [[ -z "${cat_steps}" ]] && continue
+
+            # Check if this category has any steps in ALL_STEPS
+            local has_steps=0
+            for step in ${cat_steps}; do
+                for existing in "${ALL_STEPS[@]}"; do
+                    if [[ "${step}" == "${existing}" ]]; then
+                        has_steps=1
+                        break 2
+                    fi
+                done
+            done
+            [[ ${has_steps} -eq 0 ]] && continue
+
+            # Prompt user for this category
+            if ! prompt_category "${cat_name}" "${CATEGORY_DESCRIPTIONS[${cat_name}]}" "${CATEGORY_TIMES[${cat_name}]}"; then
+                declined_categories+=("${cat_name}")
+            fi
+        done
+
+        # Filter out declined categories
+        if [[ ${#declined_categories[@]} -gt 0 ]]; then
+            local -a filtered=()
+            for step in "${ALL_STEPS[@]}"; do
+                local skip_step=0
+                for cat_name in "${declined_categories[@]}"; do
+                    for cat_step in ${CATEGORY_STEPS[${cat_name}]}; do
+                        if [[ "${step}" == "${cat_step}" ]]; then
+                            skip_step=1
+                            break 2
+                        fi
+                    done
+                done
+                [[ ${skip_step} -eq 0 ]] && filtered+=("${step}")
+            done
+            ALL_STEPS=("${filtered[@]}")
+        fi
     fi
 
     local total=${#ALL_STEPS[@]}

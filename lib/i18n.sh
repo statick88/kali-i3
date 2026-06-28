@@ -196,6 +196,29 @@ i18n_init() {
 
     LANG_EN[HELP_LANG]="Set language (en|es), default: en"
     LANG_ES[HELP_LANG]="Establecer idioma (en|es), predeterminado: en"
+
+    LANG_EN[HELP_INTERACTIVE]="Prompt before each category for selective install"
+    LANG_ES[HELP_INTERACTIVE]="Solicitar antes de cada categoría para instalación selectiva"
+
+    # --- Category names (CATEGORY_*) ---
+    LANG_EN[CATEGORY_CORE_NAME]="i3 core packages and display manager"
+    LANG_ES[CATEGORY_CORE_NAME]="Paquetes core de i3 y gestor de pantalla"
+
+    LANG_EN[CATEGORY_DOTFILES_NAME]="NEON theme dotfiles and wallpapers"
+    LANG_ES[CATEGORY_DOTFILES_NAME]="Dotfiles y fondos de pantalla tema NEON"
+
+    LANG_EN[CATEGORY_SHELL_NAME]="Zsh, Oh-My-Zsh, Powerlevel10k, and .zshrc"
+    LANG_ES[CATEGORY_SHELL_NAME]="Zsh, Oh-My-Zsh, Powerlevel10k y .zshrc"
+
+    LANG_EN[CATEGORY_SECURITY_NAME]="Security tools, anonymity, firewall"
+    LANG_ES[CATEGORY_SECURITY_NAME]="Herramientas de seguridad, anonimato, cortafuegos"
+
+    LANG_EN[CATEGORY_AI_TOOLS_NAME]="AI coding assistants and MCP servers"
+    LANG_ES[CATEGORY_AI_TOOLS_NAME]="Asistentes de codificación AI y servidores MCP"
+
+    # --- Interactive prompt template ---
+    LANG_EN[MSG_PROMPT_CATEGORY]="Include %s (~%s)? [Y/n] "
+    LANG_ES[MSG_PROMPT_CATEGORY]="¿Incluir %s (~%s)? [Y/n] "
 }
 
 # =============================================================================
