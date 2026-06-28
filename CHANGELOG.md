@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+### Fixed
+
+- **apt_install_if_missing() resilience**: Added per-package timeout (120s default), retry with exponential backoff (2s, 4s, 8s), and continue-on-failure behavior
+- One bad package no longer aborts the entire batch install
+- Progress logging per package: `ok/installed`, `warn/retrying`, `err/failed`
+- Fixed `run_as_root` call to pass package names as separate arguments instead of interpolated string
+
 ## [2.1.0] - 2026-06-27
 
 ### Added
