@@ -1,0 +1,29 @@
+name: Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  shell-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Install shfmt
+        run: |
+          curl -sLO https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_linux_amd64
+          chmod +x shfmt_v3.7.0_linux_amd64
+          sudo mv shfmt_v3.7.0_linux_amd64 /usr/local/bin/shfmt
+
+      - name: Run shellcheck
+        run: shellcheck --severity=warning lib/*.sh tests/*.sh *.sh scripts/*.sh
+        continue-on-error: true
+
+      - name: Run shfmt
+        run: shfmt -d lib/*.sh tests/*.sh *.sh scripts/*.sh

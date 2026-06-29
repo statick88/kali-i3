@@ -1,0 +1,8 @@
+# Tests excluded from CI (require Debian-specific packages)
+# Format: one filename per line, comments start with #
+test-apt.sh
+test-arsenal.sh
+test-user.sh
+test-common.sh
+test-purge-xfce.sh
+test-approval-purge.sh
