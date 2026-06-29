@@ -92,9 +92,9 @@ test_category_dotfiles_steps() {
 test_category_shell_steps() {
     local output
     output=$(source_categories)
-    echo "${output}" | grep -q "SHELL_STEPS=step_setup_tmux_neon step_install_zsh_omz step_deploy_zshrc" \
+    echo "${output}" | grep -q "SHELL_STEPS=step_setup_tmux_neon step_install_zsh_omz step_deploy_zshrc step_deploy_hacker_profile" \
         && pass "CATEGORY_STEPS[shell] has correct steps" \
-        || fail "CATEGORY_STEPS[shell] should contain tmux_neon, zsh_omz, zshrc"
+        || fail "CATEGORY_STEPS[shell] should contain tmux_neon, zsh_omz, zshrc, hacker_profile"
 }
 
 test_category_security_steps() {

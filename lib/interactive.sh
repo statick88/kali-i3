@@ -12,7 +12,7 @@ CATEGORY_NAMES=(core dotfiles shell security ai-tools)
 declare -A CATEGORY_STEPS=(
     [core]="step_install_i3_core step_switch_display_manager step_setup_i3_desktop_entry"
     [dotfiles]="step_deploy_dotfiles step_deploy_wallpapers"
-    [shell]="step_setup_tmux_neon step_install_zsh_omz step_deploy_zshrc"
+    [shell]="step_setup_tmux_neon step_install_zsh_omz step_deploy_zshrc step_deploy_hacker_profile"
     [security]="step_install_security_suite step_install_advanced_tools step_setup_anonymity step_configure_ghidra step_setup_firewall"
     [ai-tools]="step_install_gentle_ai step_install_gentle_agent_state step_deploy_kilo_config step_setup_opencode step_install_hexstrike_ai step_deploy_hexstrike_mcp_config"
 )

