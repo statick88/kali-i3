@@ -82,7 +82,7 @@ test_palette_defined() {
 test_neon_bg_value() {
     local val
     val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${NEON_BG}\"" 2>/dev/null)
-    [[ "${val}" == '#0A0A10' ]] && pass "NEON_BG = #0A0A10" || fail "NEON_BG = ${val}, expected #0A0A10"
+    [[ "${val}" == '#06080f' ]] && pass "NEON_BG = #06080f" || fail "NEON_BG = ${val}, expected #06080f"
 }
 
 # =============================================================================
@@ -91,7 +91,7 @@ test_neon_bg_value() {
 test_neon_accent_value() {
     local val
     val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${NEON_ACCENT}\"" 2>/dev/null)
-    [[ "${val}" == '#008B8B' ]] && pass "NEON_ACCENT = #008B8B" || fail "NEON_ACCENT = ${val}, expected #008B8B"
+    [[ "${val}" == '#e0c15a' ]] && pass "NEON_ACCENT = #e0c15a" || fail "NEON_ACCENT = ${val}, expected #e0c15a"
 }
 
 # =============================================================================

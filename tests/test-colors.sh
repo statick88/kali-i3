@@ -47,7 +47,7 @@ test_c_reset() {
 test_c_neon_cyan() {
     local val
     val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${C_NEON_CYAN}\"" 2>/dev/null)
-    [[ "${val}" == '\033[38;5;45m' ]] && pass "C_NEON_CYAN is defined correctly" || fail "C_NEON_CYAN has wrong value: ${val}"
+    [[ "${val}" == '\033[38;5;220m' ]] && pass "C_NEON_CYAN is defined correctly" || fail "C_NEON_CYAN has wrong value: ${val}"
 }
 
 # =============================================================================
@@ -65,7 +65,7 @@ test_c_neon_pink() {
 test_c_neon_purple() {
     local val
     val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${C_NEON_PURPLE}\"" 2>/dev/null)
-    [[ "${val}" == '\033[38;5;97m' ]] && pass "C_NEON_PURPLE is defined correctly" || fail "C_NEON_PURPLE has wrong value: ${val}"
+    [[ "${val}" == '\033[38;5;60m' ]] && pass "C_NEON_PURPLE is defined correctly" || fail "C_NEON_PURPLE has wrong value: ${val}"
 }
 
 # =============================================================================
@@ -74,7 +74,7 @@ test_c_neon_purple() {
 test_c_neon_green() {
     local val
     val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${C_NEON_GREEN}\"" 2>/dev/null)
-    [[ "${val}" == '\033[38;5;40m' ]] && pass "C_NEON_GREEN is defined correctly" || fail "C_NEON_GREEN has wrong value: ${val}"
+    [[ "${val}" == '\033[38;5;150m' ]] && pass "C_NEON_GREEN is defined correctly" || fail "C_NEON_GREEN has wrong value: ${val}"
 }
 
 # =============================================================================
@@ -83,7 +83,7 @@ test_c_neon_green() {
 test_c_neon_red() {
     local val
     val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${C_NEON_RED}\"" 2>/dev/null)
-    [[ "${val}" == '\033[38;5;160m' ]] && pass "C_NEON_RED is defined correctly" || fail "C_NEON_RED has wrong value: ${val}"
+    [[ "${val}" == '\033[38;5;167m' ]] && pass "C_NEON_RED is defined correctly" || fail "C_NEON_RED has wrong value: ${val}"
 }
 
 # =============================================================================
@@ -92,7 +92,7 @@ test_c_neon_red() {
 test_neon_bg() {
     local val
     val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${NEON_BG}\"" 2>/dev/null)
-    [[ "${val}" == '#0A0A10' ]] && pass "NEON_BG is defined correctly" || fail "NEON_BG has wrong value: ${val}"
+    [[ "${val}" == '#06080f' ]] && pass "NEON_BG is defined correctly" || fail "NEON_BG has wrong value: ${val}"
 }
 
 # =============================================================================
@@ -101,7 +101,7 @@ test_neon_bg() {
 test_neon_bg_alt() {
     local val
     val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${NEON_BG_ALT}\"" 2>/dev/null)
-    [[ "${val}" == '#1E1E2F' ]] && pass "NEON_BG_ALT is defined correctly" || fail "NEON_BG_ALT has wrong value: ${val}"
+    [[ "${val}" == '#121620' ]] && pass "NEON_BG_ALT is defined correctly" || fail "NEON_BG_ALT has wrong value: ${val}"
 }
 
 # =============================================================================
@@ -110,7 +110,7 @@ test_neon_bg_alt() {
 test_neon_fg() {
     local val
     val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${NEON_FG}\"" 2>/dev/null)
-    [[ "${val}" == '#E0E0E0' ]] && pass "NEON_FG is defined correctly" || fail "NEON_FG has wrong value: ${val}"
+    [[ "${val}" == '#f3f6f9' ]] && pass "NEON_FG is defined correctly" || fail "NEON_FG has wrong value: ${val}"
 }
 
 # =============================================================================
@@ -119,7 +119,7 @@ test_neon_fg() {
 test_neon_accent() {
     local val
     val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${NEON_ACCENT}\"" 2>/dev/null)
-    [[ "${val}" == '#008B8B' ]] && pass "NEON_ACCENT is defined correctly" || fail "NEON_ACCENT has wrong value: ${val}"
+    [[ "${val}" == '#e0c15a' ]] && pass "NEON_ACCENT is defined correctly" || fail "NEON_ACCENT has wrong value: ${val}"
 }
 
 # =============================================================================
@@ -128,7 +128,7 @@ test_neon_accent() {
 test_neon_accent_bright() {
     local val
     val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${NEON_ACCENT_BRIGHT}\"" 2>/dev/null)
-    [[ "${val}" == '#00A3A6' ]] && pass "NEON_ACCENT_BRIGHT is defined correctly" || fail "NEON_ACCENT_BRIGHT has wrong value: ${val}"
+    [[ "${val}" == '#ffe066' ]] && pass "NEON_ACCENT_BRIGHT is defined correctly" || fail "NEON_ACCENT_BRIGHT has wrong value: ${val}"
 }
 
 # =============================================================================
@@ -137,7 +137,7 @@ test_neon_accent_bright() {
 test_neon_alert() {
     local val
     val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${NEON_ALERT}\"" 2>/dev/null)
-    [[ "${val}" == '#C71585' ]] && pass "NEON_ALERT is defined correctly" || fail "NEON_ALERT has wrong value: ${val}"
+    [[ "${val}" == '#cb7c94' ]] && pass "NEON_ALERT is defined correctly" || fail "NEON_ALERT has wrong value: ${val}"
 }
 
 # =============================================================================
@@ -146,7 +146,7 @@ test_neon_alert() {
 test_neon_selection() {
     local val
     val=$(bash -c "source '${SCRIPT_DIR}/lib/colors.sh'; printf '%s' \"\${NEON_SELECTION}\"" 2>/dev/null)
-    [[ "${val}" == '#1E1E2F' ]] && pass "NEON_SELECTION is defined correctly" || fail "NEON_SELECTION has wrong value: ${val}"
+    [[ "${val}" == '#263356' ]] && pass "NEON_SELECTION is defined correctly" || fail "NEON_SELECTION has wrong value: ${val}"
 }
 
 # =============================================================================

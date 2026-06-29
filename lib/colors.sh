@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# lib/colors.sh — NEON MINIMAL color constants
+# lib/colors.sh — Gentleman Theme color constants
 # =============================================================================
 # Extracted from setup_i3_kali.sh and purge_xfce.sh
 # Source this file to get color variables.
@@ -23,6 +23,15 @@ readonly NEON_ACCENT='#e0c15a'
 readonly NEON_ACCENT_BRIGHT='#ffe066'
 readonly NEON_ALERT='#cb7c94'
 readonly NEON_SELECTION='#263356'
+readonly NEON_PINK='#FF006E'
+readonly NEON_PURPLE='#7B2CBF'
+readonly NEON_WHITE='#FFFFFF'
+readonly NEON_BORDER='#00000000'
+
+# ANSI escape constants for pink/purple accents
+readonly C_ACCENT_PINK='\033[38;5;198m'   # Hot pink (#FF006E)
+readonly C_ACCENT_PURPLE='\033[38;5;93m'  # Purple (#7B2CBF)
 
 # Export so heredocs and child processes can reference them
 export NEON_BG NEON_BG_ALT NEON_FG NEON_ACCENT NEON_ACCENT_BRIGHT NEON_ALERT NEON_SELECTION
+export NEON_PINK NEON_PURPLE NEON_WHITE NEON_BORDER
