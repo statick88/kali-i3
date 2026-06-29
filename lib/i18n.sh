@@ -76,6 +76,12 @@ i18n_init() {
     LANG_EN[STEP_SETUP_I3_DESKTOP_ENTRY]="Register i3 desktop session"
     LANG_ES[STEP_SETUP_I3_DESKTOP_ENTRY]="Registrando sesión de escritorio i3"
 
+    LANG_EN[STEP_INSTALL_IOSEVKA_FONT]="Install IosevkaTerm Nerd Font"
+    LANG_ES[STEP_INSTALL_IOSEVKA_FONT]="Instalando IosevkaTerm Nerd Font"
+
+    LANG_EN[STEP_DEPLOY_HACKER_PROFILE]="Deploy Hacker Security Profile"
+    LANG_ES[STEP_DEPLOY_HACKER_PROFILE]="Desplegando perfil de seguridad Hacker"
+
     LANG_EN[STEP_INSTALL_SECURITY_SUITE]="Install Kali security tools suite"
     LANG_ES[STEP_INSTALL_SECURITY_SUITE]="Instalando suite de herramientas de seguridad Kali"
 

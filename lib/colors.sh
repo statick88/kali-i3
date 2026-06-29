@@ -8,21 +8,21 @@
 
 # ANSI escape constants (terminal colors)
 readonly C_RESET='\033[0m'
-readonly C_NEON_CYAN='\033[38;5;45m'
-readonly C_NEON_PINK='\033[38;5;168m'
-readonly C_NEON_PURPLE='\033[38;5;97m'
-readonly C_NEON_GREEN='\033[38;5;40m'
-readonly C_NEON_YELLOW='\033[38;5;220m'
-readonly C_NEON_RED='\033[38;5;160m'
+readonly C_NEON_CYAN='\033[38;5;220m'   # Gold accent (#e0c15a)
+readonly C_NEON_PINK='\033[38;5;168m'   # Muted pink (#cb7c94)
+readonly C_NEON_PURPLE='\033[38;5;60m'   # Muted blue-grey (#263356)
+readonly C_NEON_GREEN='\033[38;5;150m'   # Sage green (#b7cc85)
+readonly C_NEON_YELLOW='\033[38;5;222m'  # Yellow (#ffe066)
+readonly C_NEON_RED='\033[38;5;167m'     # Alert red/pink (#cb7c94)
 
-# Hex palette constants — Azul Neón Atenuado theme
-readonly NEON_BG='#0A0A10'
-readonly NEON_BG_ALT='#1E1E2F'
-readonly NEON_FG='#E0E0E0'
-readonly NEON_ACCENT='#008B8B'
-readonly NEON_ACCENT_BRIGHT='#00A3A6'
-readonly NEON_ALERT='#C71585'
-readonly NEON_SELECTION='#1E1E2F'
+# Hex palette constants — Gentleman Theme
+readonly NEON_BG='#06080f'
+readonly NEON_BG_ALT='#121620'
+readonly NEON_FG='#f3f6f9'
+readonly NEON_ACCENT='#e0c15a'
+readonly NEON_ACCENT_BRIGHT='#ffe066'
+readonly NEON_ALERT='#cb7c94'
+readonly NEON_SELECTION='#263356'
 
 # Export so heredocs and child processes can reference them
 export NEON_BG NEON_BG_ALT NEON_FG NEON_ACCENT NEON_ACCENT_BRIGHT NEON_ALERT NEON_SELECTION
