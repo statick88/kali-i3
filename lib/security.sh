@@ -72,15 +72,13 @@ install_sliver() {
         *)       echo "Unsupported architecture: ${arch}" >&2; return 1 ;;
     esac
     
-    local url="https://github.com/sliverarmory/sliver/releases/latest/download/sliver-server_linux_${arch}.gz"
+    local url="https://github.com/BishopFox/sliver/releases/download/v1.7.3/sliver-server_linux_${arch}"
     local tmp_file
     tmp_file=$(mktemp)
     
     retry_with_backoff wget -q -O "${tmp_file}" "${url}"
-    gunzip "${tmp_file}"
-    chmod +x "${tmp_file%.gz}"
-    mv "${tmp_file%.gz}" /usr/local/bin/sliver
-    rm -f "${tmp_file}"
+    chmod +x "${tmp_file}"
+    mv "${tmp_file}" /usr/local/bin/sliver
     echo "Sliver installed"
 }
 
