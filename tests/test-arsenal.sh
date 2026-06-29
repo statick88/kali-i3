@@ -337,27 +337,37 @@ EOF
 # =============================================================================
 # Test: install_sliver installs when missing
 # =============================================================================
+# Test: install_sliver installs when missing
+# =============================================================================
 test_install_sliver_installs_when_missing() {
-    # Mock wget to succeed
+    # Mock wget to succeed and create the output file at $4 (after -q -O)
+    # install_sliver calls: wget -q -O "${tmp_file}" "${url}"
+    # So $4 = temp_file path
     local mock_dir=$(mktemp -d)
     cat > "${mock_dir}/wget" <<'EOF'
 #!/usr/bin/env bash
-# Mock wget
+# Mock wget - output file is at $4 after -q -O
 echo "wget $@"
-# Create a mock gz file
-echo "mock content" > "$3.gz"
+# Create mock binary at the output file path ($4)
+echo "mock sliver binary" > "$4"
+chmod +x "$4"
 exit 0
 EOF
     chmod +x "${mock_dir}/wget"
-    cat > "${mock_dir}/gunzip" <<'EOF'
+    # Mock mv to avoid sudo requirement for /usr/local/bin
+    cat > "${mock_dir}/mv" <<'EOF'
 #!/usr/bin/env bash
-# Mock gunzip
-echo "gunzip $@"
-# Remove .gz extension
-mv "$1.gz" "$1" 2>/dev/null || true
+# Mock mv - just copy to a test-accessible location
+if [[ "$2" == "/usr/local/bin/sliver" ]]; then
+    cp "$1" "${MOCK_INSTALL_DIR:-/tmp}/sliver"
+    echo "mv $1 -> ${MOCK_INSTALL_DIR:-/tmp}/sliver (mocked)"
+    exit 0
+fi
+# Fallback to real mv for other cases
+/bin/mv "$@"
 exit 0
 EOF
-    chmod +x "${mock_dir}/gunzip"
+    chmod +x "${mock_dir}/mv"
     cat > "${mock_dir}/uname" <<'EOF'
 #!/usr/bin/env bash
 echo "x86_64"
@@ -365,17 +375,30 @@ exit 0
 EOF
     chmod +x "${mock_dir}/uname"
     
+    local mock_install_dir=$(mktemp -d)
     local output
     output=$(bash -c "
         export PATH='${mock_dir}':\$PATH
+        export MOCK_INSTALL_DIR='${mock_install_dir}'
+        # Override command builtin to hide sliver
+        command() {
+            if [[ \"\$1\" == \"-v\" && \"\$2\" == \"sliver\" ]]; then
+                return 1
+            fi
+            builtin command \"\$@\"
+        }
         source '${SECURITY_SH}'
         install_sliver
     " 2>&1)
     
-    rm -rf "${mock_dir}"
+    # Check if mock binary was created at expected location
+    if [[ -f "${mock_install_dir}/sliver" ]]; then
+        pass "install_sliver installs when sliver missing"
+    else
+        fail "install_sliver did not install (output: ${output})"
+    fi
     
-    [[ "${output}" == *"Installing Sliver"* ]] && pass "install_sliver installs when sliver missing" \
-        || fail "install_sliver did not install"
+    rm -rf "${mock_dir}" "${mock_install_dir}"
 }
 
 # =============================================================================
