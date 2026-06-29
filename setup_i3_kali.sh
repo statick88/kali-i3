@@ -471,15 +471,15 @@ step_deploy_wallpapers() {
     fi
 
     if cmd_exists convert; then
-        run_as_user "convert -size 1920x1080 gradient:#0A0A0A-#121214 '${wallpaper}'"
+        run_as_user "convert -size 1920x1080 gradient:#06080f-#121620 '${wallpaper}'"
         chown "${TARGET_UID}:${TARGET_GID}" "${wallpaper}" 2>/dev/null || true
-        ok "Wallpaper generated: ImageMagick gradient #0A0A0A-#121214"
+        ok "Wallpaper generated: ImageMagick gradient #06080f-#121620"
     else
         warn "ImageMagick not found — generating solid wallpaper fallback"
-        run_as_user "python3 -c \"from PIL import Image; img=Image.new('RGB',(1920,1080),color='#0A0A0A'); img.save('${wallpaper}')\"" 2>/dev/null \
+        run_as_user "python3 -c \"from PIL import Image; img=Image.new('RGB',(1920,1080),color='#06080f'); img.save('${wallpaper}')\"" 2>/dev/null \
             || run_as_user "printf 'P6\n1920 1080\n255\n' > '${wallpaper}' && python3 -c \"import sys; open(sys.argv[1],'ab').write(bytes([0x0A]*1920*1080*3))\" '${wallpaper}' 2>/dev/null || true"
         chown "${TARGET_UID}:${TARGET_GID}" "${wallpaper}" 2>/dev/null || true
-        ok "Wallpaper generated: solid #0A0A0A fallback"
+        ok "Wallpaper generated: solid #06080f fallback"
     fi
 }
 
