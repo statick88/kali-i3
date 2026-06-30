@@ -5,8 +5,36 @@
 # Provides load_state(), save_state(), mark_completed(), is_completed(),
 # show_progress()
 #
-# Requires: STATE_FILE, STATE_VERSION, COMPLETED_STEPS to be set by caller
+# Requires: STATE_FILE, STATE_VERSION to be set by caller
+# Uses indexed arrays: COMPLETED_STEPS_KEYS, COMPLETED_STEPS_VALS
 # =============================================================================
+
+# _state_find — return index of key in COMPLETED_STEPS_KEYS, or -1
+_state_find() {
+    local key="$1" i
+    for i in "${!COMPLETED_STEPS_KEYS[@]}"; do
+        [[ "${COMPLETED_STEPS_KEYS[$i]}" == "$key" ]] && echo "$i" && return 0
+    done
+    echo -1
+}
+
+# _state_get — get value for key
+_state_get() {
+    local idx; idx=$(_state_find "$1")
+    [[ "$idx" -ge 0 ]] && echo "${COMPLETED_STEPS_VALS[$idx]}" || echo ""
+}
+
+# _state_set — add or update key
+_state_set() {
+    local key="$1" val="$2" idx
+    idx=$(_state_find "${key}")
+    if [[ "$idx" -ge 0 ]]; then
+        COMPLETED_STEPS_VALS[$idx]="$val"
+    else
+        COMPLETED_STEPS_KEYS+=("$key")
+        COMPLETED_STEPS_VALS+=("$val")
+    fi
+}
 
 load_state() {
     [[ -f "${STATE_FILE}" ]] || return 0
@@ -28,15 +56,15 @@ load_state() {
             [[ "${line}" =~ ^[[:space:]]*\]$ ]] && break
             local step
             step=$(echo "${line}" | sed 's/.*"\(.*\)".*/\1/')
-            [[ -n "${step}" ]] && COMPLETED_STEPS["${step}"]=1
+            [[ -n "${step}" ]] && _state_set "${step}" 1
         fi
     done < "${STATE_FILE}"
 }
 
 save_state() {
     local -a steps=()
-    for key in "${!COMPLETED_STEPS[@]}"; do
-        [[ "${COMPLETED_STEPS[$key]}" -eq 1 ]] && steps+=("${key}")
+    for i in "${!COMPLETED_STEPS_KEYS[@]}"; do
+        [[ "${COMPLETED_STEPS_VALS[$i]}" -eq 1 ]] && steps+=("${COMPLETED_STEPS_KEYS[$i]}")
     done
 
     local tmpfile="${STATE_FILE}.tmp.$$"
@@ -59,12 +87,12 @@ save_state() {
 }
 
 mark_completed() {
-    COMPLETED_STEPS["$1"]=1
+    _state_set "$1" 1
     save_state
 }
 
 is_completed() {
-    [[ "${COMPLETED_STEPS[$1]:-0}" -eq 1 ]]
+    [[ "$(_state_get "$1")" -eq 1 ]]
 }
 
 show_progress() {

@@ -39,6 +39,9 @@ test_apt_source() {
 # Test: pkg_installed() detects installed packages
 # =============================================================================
 test_pkg_installed_positive() {
+    # Skip if dpkg not available (macOS)
+    command -v dpkg >/dev/null 2>&1 || { pass "pkg_installed detects an installed package (skipped: no dpkg)"; return; }
+    
     bash -c "
         declare -A PKG_CACHE=()
         source '${SCRIPT_DIR}/lib/apt.sh'
@@ -110,6 +113,9 @@ test_apt_update_once() {
 # Test: apt_install_if_missing() skips when all packages installed
 # =============================================================================
 test_apt_install_skip() {
+    # Skip if dpkg not available (macOS)
+    command -v dpkg >/dev/null 2>&1 || { pass "apt_install_if_missing() skips installed packages (skipped: no dpkg)"; return; }
+    
     local output
     output=$(bash -c "
         declare -A STATE=()
@@ -118,8 +124,8 @@ test_apt_install_skip() {
         # Find an installed package
         local pkg
         pkg=\$(dpkg -l 2>/dev/null | grep '^ii' | head -1 | awk '{print \$2}')
-        if [[ -n \"\${pkg}\" ]]; then
-            apt_install_if_missing \"\${pkg}\"
+        if [[ -n "\${pkg}" ]]; then
+            apt_install_if_missing "\${pkg}"
             echo 'ok'
         else
             echo 'skip'
@@ -195,19 +201,22 @@ test_apt_install_with_retry_success() {
 # Test: apt_install_with_retry() — already installed (skip)
 # =============================================================================
 test_apt_install_with_retry_already_installed() {
+    # Skip if dpkg not available (macOS)
+    command -v dpkg >/dev/null 2>&1 || { pass "apt_install_with_retry() skips installed packages (skipped: no dpkg)"; return; }
+    
     bash -c "
         declare -A STATE=()
         declare -A PKG_CACHE=()
         source '${SCRIPT_DIR}/lib/apt.sh'
         # Get a real installed package
         pkg=\$(dpkg -l 2>/dev/null | grep '^ii' | head -1 | awk '{print \$2}')
-        [[ -z \"\${pkg}\" ]] && exit 1
+        [[ -z "\${pkg}" ]] && exit 1
         # Track if apt-get is called
         apt_called=0
         run_as_root() { apt_called=1; return 0; }
-        apt_install_with_retry \"\${pkg}\"
+        apt_install_with_retry "\${pkg}"
         # apt should NOT have been called (already installed)
-        [[ \"\${apt_called}\" -eq 0 ]]
+        [[ "\${apt_called}" -eq 0 ]]
     " 2>/dev/null \
         && pass "apt_install_with_retry() skips installed packages" \
         || fail "apt_install_with_retry() should skip installed packages"
@@ -270,8 +279,10 @@ test_apt_install_if_missing_partial_failure() {
 test_apt_install_if_missing_all_succeed() {
     bash -c "
         set -euo pipefail
-        declare -A STATE=()
-        declare -A PKG_CACHE=()
+        STATE_KEYS=()
+        STATE_VALS=()
+        PKG_CACHE_KEYS=()
+        PKG_CACHE_VALS=()
         source '${SCRIPT_DIR}/lib/apt.sh'
         # Stub pkg_installed to return false for all
         pkg_installed() { return 1; }

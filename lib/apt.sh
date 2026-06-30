@@ -14,17 +14,72 @@ readonly APT_INSTALL_RETRIES="${APT_INSTALL_RETRIES:-3}"
 HAS_TIMEOUT=0
 command -v timeout >/dev/null 2>&1 && HAS_TIMEOUT=1
 
+# _pkg_cache_find — return index of pkg in PKG_CACHE_KEYS, or -1
+_pkg_cache_find() {
+    local i
+    for i in "${!PKG_CACHE_KEYS[@]}"; do
+        [[ "${PKG_CACHE_KEYS[$i]}" == "$1" ]] && echo "$i" && return 0
+    done
+    echo -1
+}
+
+# _pkg_cache_set — add or update a pkg in the cache
+_pkg_cache_set() {
+    local pkg="$1" val="$2" idx
+    idx=$(_pkg_cache_find "${pkg}")
+    if [[ "$idx" -ge 0 ]]; then
+        PKG_CACHE_VALS[$idx]="$val"
+    else
+        PKG_CACHE_KEYS+=("$pkg")
+        PKG_CACHE_VALS+=("$val")
+    fi
+}
+
 pkg_installed() {
-    local pkg="$1"
-    [[ -n "${PKG_CACHE[$pkg]:-}" ]] && return "${PKG_CACHE[$pkg]}"
-    dpkg -l "${pkg}" 2>/dev/null | grep -q '^ii' && PKG_CACHE["$pkg"]=0 || PKG_CACHE["$pkg"]=1
-    [[ "${PKG_CACHE[$pkg]}" -eq 0 ]]
+    local pkg="$1" idx
+    idx=$(_pkg_cache_find "${pkg}")
+    if [[ "$idx" -ge 0 ]]; then
+        return "${PKG_CACHE_VALS[$idx]}"
+    fi
+    if dpkg -l "${pkg}" 2>/dev/null | grep -q '^ii'; then
+        _pkg_cache_set "${pkg}" 0
+    else
+        _pkg_cache_set "${pkg}" 1
+    fi
+    idx=$(_pkg_cache_find "${pkg}")
+    [[ "${PKG_CACHE_VALS[$idx]}" -eq 0 ]]
+}
+
+# STATE tracking — indexed array with keys STATE_KEYS / STATE_VALS
+# Callers declare: STATE_KEYS=(); STATE_VALS=()
+_state_find() {
+    local key="$1" i
+    for i in "${!STATE_KEYS[@]}"; do
+        [[ "${STATE_KEYS[$i]}" == "$key" ]] && echo "$i" && return 0
+    done
+    echo -1
+}
+
+_state_get() {
+    local idx; idx=$(_state_find "$1")
+    [[ "$idx" -ge 0 ]] && echo "${STATE_VALS[$idx]}" || echo ""
+}
+
+_state_set() {
+    local key="$1" val="$2" idx
+    idx=$(_state_find "${key}")
+    if [[ "$idx" -ge 0 ]]; then
+        STATE_VALS[$idx]="$val"
+    else
+        STATE_KEYS+=("$key")
+        STATE_VALS+=("$val")
+    fi
 }
 
 apt_update_once() {
-    [[ "${STATE[apt_updated]:-0}" -eq 1 ]] && return 0
+    [[ "$(_state_get apt_updated)" -eq 1 ]] && return 0
     run_as_root "apt-get update -qq"
-    STATE[apt_updated]=1
+    _state_set apt_updated 1
 }
 
 apt_install_with_retry() {

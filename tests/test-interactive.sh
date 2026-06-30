@@ -34,15 +34,15 @@ source_categories() {
         i18n_init en
         source '${SCRIPT_DIR}/lib/interactive.sh'
 
-        # Print category data for assertions
+        # Print category data for assertions using helper function
         echo \"NAMES=\${CATEGORY_NAMES[*]}\"
-        echo \"CORE_STEPS=\${CATEGORY_STEPS[core]}\"
-        echo \"DOTFILES_STEPS=\${CATEGORY_STEPS[dotfiles]}\"
-        echo \"SHELL_STEPS=\${CATEGORY_STEPS[shell]}\"
-        echo \"SECURITY_STEPS=\${CATEGORY_STEPS[security]}\"
-        echo \"AI_STEPS=\${CATEGORY_STEPS[ai-tools]}\"
-        echo \"DESC_CORE=\${CATEGORY_DESCRIPTIONS[core]}\"
-        echo \"TIME_CORE=\${CATEGORY_TIMES[core]}\"
+        echo \"CORE_STEPS=\$(get_category_steps core)\"
+        echo \"DOTFILES_STEPS=\$(get_category_steps dotfiles)\"
+        echo \"SHELL_STEPS=\$(get_category_steps shell)\"
+        echo \"SECURITY_STEPS=\$(get_category_steps security)\"
+        echo \"AI_STEPS=\$(get_category_steps ai-tools)\"
+        echo \"DESC_CORE=\${CATEGORY_DESCRIPTIONS[0]}\"
+        echo \"TIME_CORE=\${CATEGORY_TIMES[0]}\"
     " 2>&1
 }
 

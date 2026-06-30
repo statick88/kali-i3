@@ -28,9 +28,11 @@ source "${SCRIPT_DIR}/lib/apt.sh"
 source "${SCRIPT_DIR}/lib/security.sh"
 source "${SCRIPT_DIR}/lib/interactive.sh"
 
-# State tracking
-declare -A STATE=()
-declare -A PKG_CACHE=()
+# State tracking (bash 3.x compatible - use indexed arrays instead of declare -A)
+STATE_KEYS=()
+STATE_VALS=()
+PKG_CACHE_KEYS=()
+PKG_CACHE_VALS=()
 
 # =============================================================================
 # PERSISTENT STATE & PROGRESS (CHECKPOINTS)
@@ -38,34 +40,64 @@ declare -A PKG_CACHE=()
 readonly STATE_FILE="${TARGET_HOME}/.config/i3-setup-state.json"
 readonly STATE_VERSION="1.0.0"
 
-declare -A COMPLETED_STEPS=()
-declare -A STEP_LABELS=()
+COMPLETED_STEPS_KEYS=()
+COMPLETED_STEPS_VALS=()
+STEP_LABELS_KEYS=()
+STEP_LABELS_VALS=()
 
 # Populate STEP_LABELS with translated strings (must be called after i18n_init)
+# Uses indexed arrays: STEP_LABELS_KEYS, STEP_LABELS_VALS
+_step_label_set() {
+    local key="$1" val="$2" i
+    for i in "${!STEP_LABELS_KEYS[@]}"; do
+        [[ "${STEP_LABELS_KEYS[$i]}" == "$key" ]] && STEP_LABELS_VALS[$i]="$val" && return
+    done
+    STEP_LABELS_KEYS+=("$key")
+    STEP_LABELS_VALS+=("$val")
+}
+
+_step_label_get() {
+    local key="$1" i
+    for i in "${!STEP_LABELS_KEYS[@]}"; do
+        [[ "${STEP_LABELS_KEYS[$i]}" == "$key" ]] && echo "${STEP_LABELS_VALS[$i]}" && return
+    done
+    echo ""
+}
+
+# COMPLETED_STEPS helpers (indexed arrays)
+_completed_steps_count() {
+    echo "${#COMPLETED_STEPS_KEYS[@]}"
+}
+
+_completed_steps_keys() {
+    local i
+    for i in "${!COMPLETED_STEPS_KEYS[@]}"; do
+        echo "${COMPLETED_STEPS_KEYS[$i]}"
+    done
+}
+
 init_step_labels() {
-    STEP_LABELS=(
-        ["step_install_i3_core"]="$(msg STEP_INSTALL_I3_CORE)"
-        ["step_switch_display_manager"]="$(msg STEP_SWITCH_DISPLAY_MANAGER)"
-        ["step_deploy_dotfiles"]="$(msg STEP_DEPLOY_DOTFILES)"
-        ["step_deploy_wallpapers"]="$(msg STEP_DEPLOY_WALLPAPERS)"
-        ["step_setup_tmux_neon"]="$(msg STEP_SETUP_TMUX_NEON)"
-        ["step_install_zsh_omz"]="$(msg STEP_INSTALL_ZSH_OMZ)"
-        ["step_deploy_zshrc"]="$(msg STEP_DEPLOY_ZSHRC)"
-        ["step_deploy_hacker_profile"]="$(msg STEP_DEPLOY_HACKER_PROFILE)"
-        ["step_setup_i3_desktop_entry"]="$(msg STEP_SETUP_I3_DESKTOP_ENTRY)"
-        ["step_install_security_suite"]="$(msg STEP_INSTALL_SECURITY_SUITE)"
-        ["step_install_advanced_tools"]="$(msg STEP_INSTALL_ADVANCED_TOOLS)"
-        ["step_setup_anonymity"]="$(msg STEP_SETUP_ANONYMITY)"
-        ["step_configure_ghidra"]="$(msg STEP_CONFIGURE_GHIDRA)"
-        ["step_setup_firewall"]="$(msg STEP_SETUP_FIREWALL)"
-        ["step_install_gentle_ai"]="$(msg STEP_INSTALL_GENTLE_AI)"
-        ["step_install_gentle_agent_state"]="$(msg STEP_INSTALL_GENTLE_AGENT_STATE)"
-        ["step_deploy_kilo_config"]="$(msg STEP_DEPLOY_KILO_CONFIG)"
-        ["step_setup_opencode"]="$(msg STEP_SETUP_OPENCODE)"
-        ["step_install_hexstrike_ai"]="$(msg STEP_INSTALL_HEXSTRIKE_AI)"
-        ["step_deploy_hexstrike_mcp_config"]="$(msg STEP_DEPLOY_HEXSTRIKE_MCP_CONFIG)"
-        ["step_post_install_cleanup"]="$(msg STEP_POST_INSTALL_CLEANUP)"
-    )
+    _step_label_set "step_install_i3_core" "$(msg STEP_INSTALL_I3_CORE)"
+    _step_label_set "step_switch_display_manager" "$(msg STEP_SWITCH_DISPLAY_MANAGER)"
+    _step_label_set "step_deploy_dotfiles" "$(msg STEP_DEPLOY_DOTFILES)"
+    _step_label_set "step_deploy_wallpapers" "$(msg STEP_DEPLOY_WALLPAPERS)"
+    _step_label_set "step_setup_tmux_neon" "$(msg STEP_SETUP_TMUX_NEON)"
+    _step_label_set "step_install_zsh_omz" "$(msg STEP_INSTALL_ZSH_OMZ)"
+    _step_label_set "step_deploy_zshrc" "$(msg STEP_DEPLOY_ZSHRC)"
+    _step_label_set "step_deploy_hacker_profile" "$(msg STEP_DEPLOY_HACKER_PROFILE)"
+    _step_label_set "step_setup_i3_desktop_entry" "$(msg STEP_SETUP_I3_DESKTOP_ENTRY)"
+    _step_label_set "step_install_security_suite" "$(msg STEP_INSTALL_SECURITY_SUITE)"
+    _step_label_set "step_install_advanced_tools" "$(msg STEP_INSTALL_ADVANCED_TOOLS)"
+    _step_label_set "step_setup_anonymity" "$(msg STEP_SETUP_ANONYMITY)"
+    _step_label_set "step_configure_ghidra" "$(msg STEP_CONFIGURE_GHIDRA)"
+    _step_label_set "step_setup_firewall" "$(msg STEP_SETUP_FIREWALL)"
+    _step_label_set "step_install_gentle_ai" "$(msg STEP_INSTALL_GENTLE_AI)"
+    _step_label_set "step_install_gentle_agent_state" "$(msg STEP_INSTALL_GENTLE_AGENT_STATE)"
+    _step_label_set "step_deploy_kilo_config" "$(msg STEP_DEPLOY_KILO_CONFIG)"
+    _step_label_set "step_setup_opencode" "$(msg STEP_SETUP_OPENCODE)"
+    _step_label_set "step_install_hexstrike_ai" "$(msg STEP_INSTALL_HEXSTRIKE_AI)"
+    _step_label_set "step_deploy_hexstrike_mcp_config" "$(msg STEP_DEPLOY_HEXSTRIKE_MCP_CONFIG)"
+    _step_label_set "step_post_install_cleanup" "$(msg STEP_POST_INSTALL_CLEANUP)"
 }
 
 # Source state management
@@ -1407,11 +1439,11 @@ main() {
     local total=${#ALL_STEPS[@]}
     local completed=0
 
-    if [[ ${#COMPLETED_STEPS[@]} -gt 0 ]]; then
+    if [[ $(_completed_steps_count) -gt 0 ]]; then
         local -a completed_list=()
-        for step in "${!COMPLETED_STEPS[@]}"; do
-            completed_list+=("${step}")
-        done
+        while IFS= read -r step; do
+            [[ -n "$step" ]] && completed_list+=("$step")
+        done < <(_completed_steps_keys)
         step "${C_NEON_CYAN}Resuming from step: ${#completed_list[@]}/${total} completed${C_RESET}"
         completed=${#completed_list[@]}
     fi
@@ -1421,12 +1453,14 @@ main() {
 
     for step_name in "${ALL_STEPS[@]}"; do
         if is_completed "${step_name}"; then
-            show_progress "${completed}" "${total}" "${STEP_LABELS[$step_name]:-$step_name} (already done)" "${START_TIME}"
+            local label=$(_step_label_get "${step_name}")
+            show_progress "${completed}" "${total}" "${label:-$step_name} (already done)" "${START_TIME}"
             ((completed++))
             continue
         fi
 
-        show_progress "${completed}" "${total}" "${STEP_LABELS[$step_name]:-$step_name}" "${START_TIME}"
+        local label=$(_step_label_get "${step_name}")
+        show_progress "${completed}" "${total}" "${label:-$step_name}" "${START_TIME}"
 
         ${step_name}
 

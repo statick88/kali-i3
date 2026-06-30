@@ -7,7 +7,7 @@
 # =============================================================================
 
 readonly TARGET_USER="${SUDO_USER:-${USER}}"
-readonly TARGET_HOME="$(getent passwd "${TARGET_USER}" | cut -d: -f6)"
+readonly TARGET_HOME="$(eval echo "~${TARGET_USER}")"
 readonly TARGET_UID="$(id -u "${TARGET_USER}")"
 readonly TARGET_GID="$(id -g "${TARGET_USER}")"
 
