@@ -32,4 +32,4 @@ Thumbs.db
 *.sublime-*
 
 # SDD infrastructure
-openspec/
+openspec/shellcheck
