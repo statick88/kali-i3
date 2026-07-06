@@ -20,11 +20,11 @@ log() {
     timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
     local color=""
     case "${level}" in
-        INFO)  color="${C_NEON_CYAN}" ;;
+        INFO)  color="${C_NEON_TEAL}" ;;
         OK)    color="${C_NEON_GREEN}" ;;
-        WARN)  color="${C_NEON_PURPLE}" ;;
+        WARN)  color="${C_NEON_YELLOW}" ;;
         ERROR) color="${C_NEON_RED}" ;;
-        STEP)  color="${C_NEON_PINK}" ;;
+        STEP)  color="${C_NEON_TEAL_BRIGHT}" ;;
         *)     color="${C_RESET}" ;;
     esac
     printf "${color}[%s] [%s] %s${C_RESET}\n" "${timestamp}" "${level}" "${msg}"
@@ -45,7 +45,7 @@ die() { err "$@"; exit 1; }
 header() {
     local title
     title="$(msg "$1")"
-    printf "\n${C_NEON_PINK}══════════════════════════════════════════════════════════════════════════════${C_RESET}\n"
-    printf "${C_NEON_PINK}   %s${C_RESET}\n" "${title}"
-    printf "${C_NEON_PINK}══════════════════════════════════════════════════════════════════════════════${C_RESET}\n\n"
+    printf "\n${C_NEON_TEAL}══════════════════════════════════════════════════════════════════════════════${C_RESET}\n"
+    printf "${C_NEON_TEAL}   %s${C_RESET}\n" "${title}"
+    printf "${C_NEON_TEAL}══════════════════════════════════════════════════════════════════════════════${C_RESET}\n\n"
 }

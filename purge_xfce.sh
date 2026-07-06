@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2155  # readonly var=$(cmd) is intentional
 # =============================================================================
 # purge_xfce.sh — Safe XFCE Removal for i3-wm Migration
 # =============================================================================
@@ -262,13 +263,13 @@ print_summary() {
     printf "${C_NEON_GREEN}══════════════════════════════════════════════════════════════════${C_RESET}\n\n"
 
     printf "${C_NEON_CYAN}Summary:${C_RESET}\n"
-    printf "  ${C_NEON_PURPLE}-${C_RESET} XFCE packages and configs removed\n"
-    printf "  ${C_NEON_PURPLE}-${C_RESET} LightDM removed (SDDM now active)\n"
-    printf "  ${C_NEON_PURPLE}-${C_RESET} Critical packages protected during purge\n"
-    printf "  ${C_NEON_PURPLE}-${C_RESET} Modular execution with idempotent checks\n"
-    printf "  ${C_NEON_PURPLE}-${C_RESET} System ready for NEON i3-wm\n\n"
+    printf "  ${C_NEON_TEAL_DIM}-${C_RESET} XFCE packages and configs removed\n"
+    printf "  ${C_NEON_TEAL_DIM}-${C_RESET} LightDM removed (SDDM now active)\n"
+    printf "  ${C_NEON_TEAL_DIM}-${C_RESET} Critical packages protected during purge\n"
+    printf "  ${C_NEON_TEAL_DIM}-${C_RESET} Modular execution with idempotent checks\n"
+    printf "  ${C_NEON_TEAL_DIM}-${C_RESET} System ready for NEON i3-wm\n\n"
 
-    read -rp "${C_NEON_PINK}$(msg MSG_REBOOT_PROMPT)${C_RESET} " reply
+    read -rp "${C_NEON_TEAL_BRIGHT}$(msg MSG_REBOOT_PROMPT)${C_RESET} " reply
     [[ -z "${reply}" || "${reply,,}" =~ ^y ]] && { run_as_root "reboot"; } || { info "$(msg MSG_REBOOT_MANUAL)"; }
 }
 

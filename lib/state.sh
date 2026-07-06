@@ -41,24 +41,39 @@ load_state() {
     [[ -r "${STATE_FILE}" ]] || return 0
 
     local version
-    version=$(grep '"version"' "${STATE_FILE}" | head -1 | sed 's/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/') || return 0
+
+    # Prefer jq for robust JSON parsing; fallback to grep/sed if unavailable
+    if command -v jq >/dev/null 2>&1; then
+        version=$(jq -r '.version // empty' "${STATE_FILE}" 2>/dev/null) || return 0
+    else
+        version=$(grep '"version"' "${STATE_FILE}" | head -1 | sed 's/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/') || return 0
+    fi
 
     if [[ "${version}" != "${STATE_VERSION}" ]]; then
         warn "State file version mismatch (found: ${version}, expected: ${STATE_VERSION}), starting fresh"
         return 0
     fi
 
-    local in_array=0
-    while IFS= read -r line; do
-        if [[ "${in_array}" -eq 0 ]]; then
-            [[ "${line}" =~ \[ ]] && in_array=1
-        else
-            [[ "${line}" =~ ^[[:space:]]*\]$ ]] && break
-            local step
-            step=$(echo "${line}" | sed 's/.*"\(.*\)".*/\1/')
+    if command -v jq >/dev/null 2>&1; then
+        # Use jq to extract completed_steps array
+        local step
+        while IFS= read -r step; do
             [[ -n "${step}" ]] && _state_set "${step}" 1
-        fi
-    done < "${STATE_FILE}"
+        done < <(jq -r '.completed_steps[]?' "${STATE_FILE}" 2>/dev/null)
+    else
+        # Fallback: fragile regex parsing
+        local in_array=0
+        while IFS= read -r line; do
+            if [[ "${in_array}" -eq 0 ]]; then
+                [[ "${line}" =~ \[ ]] && in_array=1
+            else
+                [[ "${line}" =~ ^[[:space:]]*\]$ ]] && break
+                local step
+                step=$(echo "${line}" | sed 's/.*"\(.*\)".*/\1/')
+                [[ -n "${step}" ]] && _state_set "${step}" 1
+            fi
+        done < "${STATE_FILE}"
+    fi
 }
 
 save_state() {
@@ -115,14 +130,14 @@ show_progress() {
     for ((i=0; i<filled; i++)); do bar+="▓"; done
     for ((i=0; i<empty; i++)); do bar+="░"; done
 
-    # Color gradient: green <50%, yellow 50-80%, red >80%
+    # Color gradient: teal <50%, yellow 50-80%, bright teal >80%
     local color
     if [[ ${percent} -lt 50 ]]; then
-        color="${C_NEON_GREEN}"
+        color="${C_NEON_TEAL}"
     elif [[ ${percent} -le 80 ]]; then
         color="${C_NEON_YELLOW}"
     else
-        color="${C_NEON_PINK}"
+        color="${C_NEON_TEAL_BRIGHT}"
     fi
 
     # Elapsed time MM:SS

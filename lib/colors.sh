@@ -1,37 +1,51 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2034  # Sourced cross-file — vars used by common.sh, setup, purge
 # =============================================================================
-# lib/colors.sh — Gentleman Theme color constants
+# lib/colors.sh — NEON MINIMAL Theme color constants
 # =============================================================================
-# Extracted from setup_i3_kali.sh and purge_xfce.sh
-# Source this file to get color variables.
+# Paleta NEON MINIMAL (Azul Neón Atenuado — discreto, profesional)
+#   Background:      #0A0A10  (negro azulado profundo)
+#   Background Alt:  #1E1E2F  (superficie elevada)
+#   Foreground:      #E0E0E0  (blanco suave)
+#   Accent:          #008B8B  (teal — color principal, discreto)
+#   Accent Bright:   #00A3A6  (teal brillante — focus/hover)
+#   Accent Dim:      #006B6B  (teal oscuro — bordes sutiles)
+#   Accent Cyan:     #00BCD4  (cian complementario — acentos secundarios)
+#   Alert:           #C71585  (magenta apagado — solo para urgente/error crítico)
+#   Muted:           #4A5568  (gris azulado — texto secundario, bordes)
+#   Selection:       #1E1E2F  (igual que bg-alt)
 # =============================================================================
 
-# ANSI escape constants (terminal colors)
+# ANSI escape constants (terminal 256-color approximations)
 readonly C_RESET='\033[0m'
-readonly C_NEON_CYAN='\033[38;5;220m'   # Gold accent (#e0c15a)
-readonly C_NEON_PINK='\033[38;5;168m'   # Muted pink (#cb7c94)
-readonly C_NEON_PURPLE='\033[38;5;60m'   # Muted blue-grey (#263356)
-readonly C_NEON_GREEN='\033[38;5;150m'   # Sage green (#b7cc85)
-readonly C_NEON_YELLOW='\033[38;5;222m'  # Yellow (#ffe066)
-readonly C_NEON_RED='\033[38;5;167m'     # Alert red/pink (#cb7c94)
+readonly C_NEON_TEAL='\033[38;5;30m'      # Accent teal (#008B8B)
+readonly C_NEON_TEAL_BRIGHT='\033[38;5;45m'  # Bright teal (#00A3A6)
+readonly C_NEON_TEAL_DIM='\033[38;5;23m'   # Dim teal (#006B6B)
+readonly C_NEON_CYAN='\033[38;5;37m'       # Cyan complementario (#00BCD4)
+readonly C_NEON_FG='\033[38;5;252m'        # Foreground (#E0E0E0)
+readonly C_NEON_GREEN='\033[38;5;150m'     # Sage green (success/ok)
+readonly C_NEON_YELLOW='\033[38;5;222m'    # Amber (warn)
+readonly C_NEON_RED='\033[38;5;197m'       # Muted red (error/critical)
+readonly C_NEON_MUTED='\033[38;5;241m'     # Muted gray-blue (secondary text)
 
-# Hex palette constants — Gentleman Theme
-readonly NEON_BG='#06080f'
-readonly NEON_BG_ALT='#121620'
-readonly NEON_FG='#f3f6f9'
-readonly NEON_ACCENT='#e0c15a'
-readonly NEON_ACCENT_BRIGHT='#ffe066'
-readonly NEON_ALERT='#cb7c94'
-readonly NEON_SELECTION='#263356'
-readonly NEON_PINK='#FF006E'
-readonly NEON_PURPLE='#7B2CBF'
+# Hex palette constants — NEON MINIMAL Theme
+readonly NEON_BG='#0A0A10'
+readonly NEON_BG_ALT='#1E1E2F'
+readonly NEON_FG='#E0E0E0'
+readonly NEON_ACCENT='#008B8B'
+readonly NEON_ACCENT_BRIGHT='#00A3A6'
+readonly NEON_ACCENT_DIM='#006B6B'
+readonly NEON_CYAN='#00BCD4'
+readonly NEON_ALERT='#C71585'
+readonly NEON_MUTED='#4A5568'
+readonly NEON_SELECTION='#1E1E2F'
+
+# Legacy aliases (used in i3 config template — will be updated)
+readonly NEON_PINK='#008B8B'      # was #FF006E — now maps to accent teal
+readonly NEON_PURPLE='#006B6B'    # was #7B2CBF — now maps to dim teal
 readonly NEON_WHITE='#FFFFFF'
 readonly NEON_BORDER='#00000000'
 
-# ANSI escape constants for pink/purple accents
-readonly C_ACCENT_PINK='\033[38;5;198m'   # Hot pink (#FF006E)
-readonly C_ACCENT_PURPLE='\033[38;5;93m'  # Purple (#7B2CBF)
-
 # Export so heredocs and child processes can reference them
-export NEON_BG NEON_BG_ALT NEON_FG NEON_ACCENT NEON_ACCENT_BRIGHT NEON_ALERT NEON_SELECTION
+export NEON_BG NEON_BG_ALT NEON_FG NEON_ACCENT NEON_ACCENT_BRIGHT NEON_ACCENT_DIM NEON_CYAN NEON_ALERT NEON_MUTED NEON_SELECTION
 export NEON_PINK NEON_PURPLE NEON_WHITE NEON_BORDER

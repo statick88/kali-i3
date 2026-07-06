@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2155  # readonly var=$(cmd) is intentional
 # =============================================================================
 # setup_i3_kali.sh — Complete i3-wm Migration & Pentesting Suite for Kali
 # =============================================================================
@@ -145,32 +146,33 @@ step_deploy_dotfiles() {
     local cfg_dir="${TARGET_HOME}/.config"
     run_as_user "mkdir -p ${cfg_dir}/{i3,polybar,rofi,picom,kitty,zsh,gtk-3.0,gtk-4.0}"
 
-    # Install IosevkaTerm Nerd Font for all configs
-    install_iosevka_font
+    # Install FiraCode Nerd Font for all configs
+    install_fira_code_font
 
     # i3 config - NEON MINIMAL
     cat > "${cfg_dir}/i3/config" <<I3CONF
 # i3-wm Config - NEON MINIMAL Theme
-# Background: ${NEON_BG}, Accent: ${NEON_ACCENT} (Azul Neon Atenuado), #FF006E (Pink), #7B2CBF (Purple)
+# Background: ${NEON_BG}, Accent: ${NEON_ACCENT} (teal), Dim: ${NEON_ACCENT_DIM}, Cyan: ${NEON_CYAN}
 
 set \$mod Mod4
 
-# Colors (Neon Minimal Dark)
+# Colors (Neon Minimal Dark — teal harmony)
 set \$bg      ${NEON_BG}
 set \$bg-alt  ${NEON_BG_ALT}
 set \$fg      ${NEON_FG}
-set \$neon-cyan ${NEON_ACCENT}
-set \$neon-pink #FF006E
-set \$neon-purple #7B2CBF
-set \$urgent #FF006E
+set \$neon-teal     ${NEON_ACCENT}
+set \$neon-teal-bright ${NEON_ACCENT_BRIGHT}
+set \$neon-teal-dim    ${NEON_ACCENT_DIM}
+set \$neon-cyan        ${NEON_CYAN}
+set \$urgent      ${NEON_ALERT}
 
-client.focused    \$neon-cyan \$neon-cyan \$bg \$neon-cyan \$neon-cyan
-client.unfocused  \$bg-alt   \$bg-alt    \$fg \$bg-alt   \$bg-alt
-client.urgent     \$urgent   \$urgent    \$fg \$urgent   \$urgent
+client.focused    \$neon-teal     \$neon-teal     \$bg \$neon-teal     \$neon-teal
+client.unfocused  \$bg-alt        \$bg-alt        \$fg \$bg-alt        \$bg-alt
+client.urgent     \$urgent        \$urgent        \$fg \$urgent        \$urgent
 client.background \$bg
 
 # Font
-font pango:IosevkaTerm NF 10
+font pango:FiraCode Nerd Font 10
 
 # Window rules
 for_window [window_role="pop-up"] floating enable
@@ -246,7 +248,7 @@ I3CONF
     chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/i3/config"
     ok "Created: i3/config (NEON MINIMAL)"
 
-    # Polybar config - NEON MINIMAL with IosevkaTerm NF (SketchyBar-style islands)
+    # Polybar config - NEON MINIMAL with FiraCode Nerd Font (SketchyBar-style islands)
     cat > "${cfg_dir}/polybar/config.ini" <<POLYCONF
 [colors]
 background = ${NEON_BG}
@@ -261,7 +263,7 @@ height = 32
 radius = 12
 padding-right = 8
 module-margin-right = 4
-font-0 = "IosevkaTerm NF:size=10"
+font-0 = "FiraCode Nerd Font:size=10"
 background = ${NEON_BG}
 foreground = ${NEON_FG}
 border-size = 0
@@ -316,12 +318,12 @@ POLYCONF
     chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/polybar/config.ini"
     ok "Created: polybar/config.ini (NEON MINIMAL)"
 
-    # Rofi config - NEON MINIMAL with IosevkaTerm NF
+    # Rofi config - NEON MINIMAL with FiraCode Nerd Font
     cat > "${cfg_dir}/rofi/config.rasi" <<ROFI
 configuration {
     show-icons: true;
     icon-theme: "Papirus-Dark";
-    font: "IosevkaTerm NF 10";
+    font: "FiraCode Nerd Font 10";
 }
 window {
     background-color: ${NEON_BG};
@@ -369,9 +371,9 @@ PICOM
     chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/picom.conf"
     ok "Created: picom.conf"
 
-    # Kitty config - NEON MINIMAL with IosevkaTerm NF
+    # Kitty config - NEON MINIMAL with FiraCode Nerd Font
     cat > "${cfg_dir}/kitty/kitty.conf" <<KITTY
-font_family IosevkaTerm NF
+font_family FiraCode Nerd Font
 font_size 11.0
 bold_font auto
 italic_font auto
@@ -414,12 +416,12 @@ KITTY
     cat > "${cfg_dir}/alacritty/alacritty.yml" <<ALACRITTY
 font:
   normal:
-    family: IosevkaTerm NF
+    family: FiraCode Nerd Font
     style: Regular
   bold:
-    family: IosevkaTerm NF
+    family: FiraCode Nerd Font
   italic:
-    family: IosevkaTerm NF
+    family: FiraCode Nerd Font
   size: 11.0
 
 window:
@@ -464,9 +466,9 @@ ALACRITTY
 
     cat > "${cfg_dir}/alacritty/alacritty.toml" <<ALACRITTY_TOML
 [font]
-normal = { family = "IosevkaTerm NF", style = "Regular" }
-bold = { family = "IosevkaTerm NF", style = "Bold" }
-italic = { family = "IosevkaTerm NF", style = "Italic" }
+normal = { family = "FiraCode Nerd Font", style = "Regular" }
+bold = { family = "FiraCode Nerd Font", style = "Bold" }
+italic = { family = "FiraCode Nerd Font", style = "Italic" }
 size = 11.0
 
 [window]
@@ -513,12 +515,12 @@ ALACRITTY_TOML
     chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/alacritty/alacritty.yml"
     ok "Created: alacritty/alacritty.yml (NEON MINIMAL)"
 
-    # GTK settings - NEON MINIMAL with IosevkaTerm NF
+    # GTK settings - NEON MINIMAL with FiraCode Nerd Font
     cat > "${cfg_dir}/gtk-3.0/settings.ini" <<'GTKCONF'
 [Settings]
 gtk-theme-name = Arc-Dark
 gtk-icon-theme-name = Papirus-Dark
-gtk-font-name = IosevkaTerm NF 10
+gtk-font-name = FiraCode Nerd Font 10
 gtk-cursor-theme-name = Breeze
 GTKCONF
     chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/gtk-3.0/settings.ini"
@@ -527,7 +529,7 @@ GTKCONF
 [Settings]
 gtk-theme-name = Arc-Dark
 gtk-icon-theme-name = Papirus-Dark
-gtk-font-name = IosevkaTerm NF 10
+gtk-font-name = FiraCode Nerd Font 10
 GTK4
     chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/gtk-4.0/settings.ini"
 
@@ -1171,26 +1173,26 @@ AGENT_MCP
     ok "HexStrike AI MCP configs deployed"
 }
 
-install_iosevka_font() {
-    header "Install IosevkaTerm Nerd Font"
+install_fira_code_font() {
+    header "Install FiraCode Nerd Font"
 
     local font_dir="${TARGET_HOME}/.local/share/fonts"
-    local temp_dir="/tmp/iosevka-term-nerd-font"
-    local font_url="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/IosevkaTerm.zip"
+    local temp_dir="/tmp/fira-code-nerd-font"
+    local font_url="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip"
 
     run_as_user "mkdir -p ${font_dir}"
     run_as_user "rm -rf ${temp_dir} && mkdir -p ${temp_dir}"
 
-    info "Downloading IosevkaTerm Nerd Font..."
-    if run_as_user "cd ${temp_dir} && curl -fsSL -o IosevkaTerm.zip '${font_url}'"; then
-        run_as_user "cd ${temp_dir} && unzip -q IosevkaTerm.zip"
+    info "Downloading FiraCode Nerd Font..."
+    if run_as_user "cd ${temp_dir} && curl -fsSL -o FiraCode.zip '${font_url}'"; then
+        run_as_user "cd ${temp_dir} && unzip -q FiraCode.zip"
         run_as_user "cp ${temp_dir}/*.ttf ${font_dir}/ 2>/dev/null || true"
         run_as_user "cp ${temp_dir}/*.otf ${font_dir}/ 2>/dev/null || true"
         run_as_user "fc-cache -f ${font_dir} 2>/dev/null || true"
         run_as_user "rm -rf ${temp_dir}"
-        ok "IosevkaTerm Nerd Font installed to ${font_dir}"
+        ok "FiraCode Nerd Font installed to ${font_dir}"
     else
-        warn "Failed to download IosevkaTerm Nerd Font, skipping"
+        warn "Failed to download FiraCode Nerd Font, skipping"
         run_as_user "rm -rf ${temp_dir}"
     fi
 }
@@ -1474,14 +1476,14 @@ ${C_NEON_GREEN}═════════════════════�
 ${C_NEON_GREEN}  $(msg MSG_INSTALL_COMPLETE)${C_RESET}
 ${C_NEON_GREEN}══════════════════════════════════════════════════════════════════${C_RESET}
 
-${C_NEON_CYAN}Session:${C_RESET} i3 (available at login)
-${C_NEON_PINK}Shell:${C_RESET} Zsh + Oh-My-Zsh + Powerlevel10k
-${C_NEON_PURPLE}Terminal:${C_RESET} Kitty / Alacritty (FiraCode Nerd Font)
-${C_NEON_CYAN}Bar:${C_RESET} Polybar (Neon Dark ${NEON_BG})
-${C_NEON_PINK}Launcher:${C_RESET} Rofi (Neon minimal)
-${C_NEON_CYAN}TMUX:${C_RESET} tmux.conf + TPM (Neon ${NEON_BG} bg)
+${C_NEON_TEAL}Session:${C_RESET} i3 (available at login)
+${C_NEON_TEAL_BRIGHT}Shell:${C_RESET} Zsh + Oh-My-Zsh + Powerlevel10k
+${C_NEON_TEAL_DIM}Terminal:${C_RESET} Kitty / Alacritty (FiraCode Nerd Font)
+${C_NEON_TEAL}Bar:${C_RESET} Polybar (Neon Dark ${NEON_BG})
+${C_NEON_TEAL_BRIGHT}Launcher:${C_RESET} Rofi (Neon minimal)
+${C_NEON_TEAL}TMUX:${C_RESET} tmux.conf + TPM (Neon ${NEON_BG} bg)
 
-${C_NEON_PURPLE}Reboot and select 'i3' in SDDM.${C_RESET}
+${C_NEON_TEAL_DIM}Reboot and select 'i3' in SDDM.${C_RESET}
 ${C_NEON_CYAN}Then run:${C_RESET} sudo ./purge_xfce.sh
 
 EOF

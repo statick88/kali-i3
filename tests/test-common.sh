@@ -145,7 +145,7 @@ test_colors_cascade() {
         source '${SCRIPT_DIR}/lib/common.sh'
         printf '%s' \"\${C_NEON_CYAN}\"
     " 2>/dev/null)
-    [[ "${val}" == '\033[38;5;220m' ]] && pass "colors.sh cascades through common.sh" || fail "colors not available after sourcing common.sh"
+    [[ "${val}" == '\033[38;5;37m' ]] && pass "colors.sh cascades through common.sh" || fail "colors not available after sourcing common.sh"
 }
 
 # =============================================================================

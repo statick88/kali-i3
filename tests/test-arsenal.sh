@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2155  # mktemp in declare is acceptable in tests
 # =============================================================================
 # tests/test-arsenal.sh — Tests for lib/security.sh security arsenal functions
 # =============================================================================

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2034  # Arrays sourced cross-file by setup_i3_kali.sh
 # =============================================================================
 # lib/interactive.sh — Interactive mode category selection
 # =============================================================================
@@ -40,7 +41,7 @@ CATEGORY_TIMES=(
 # Usage: prompt_category "category_name" "description" "estimated_time"
 # Returns: 0 = include (yes), 1 = skip (no)
 prompt_category() {
-    local category_name="$1"
+    # shellcheck disable=SC2034  # $1 (category_name) intentionally unused
     local description="$2"
     local estimated_time="$3"
     local response

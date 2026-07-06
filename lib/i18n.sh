@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2034  # Arrays used via eval indirection; cross-file sourcing
 # =============================================================================
 # lib/i18n.sh — Internationalization (i18n) infrastructure
 # =============================================================================
@@ -136,8 +137,8 @@ i18n_init() {
     _i18n_set LANG_EN STEP_SETUP_I3_DESKTOP_ENTRY "Register i3 desktop session"
     _i18n_set LANG_ES STEP_SETUP_I3_DESKTOP_ENTRY "Registrando sesión de escritorio i3"
 
-    _i18n_set LANG_EN STEP_INSTALL_IOSEVKA_FONT "Install IosevkaTerm Nerd Font"
-    _i18n_set LANG_ES STEP_INSTALL_IOSEVKA_FONT "Instalando IosevkaTerm Nerd Font"
+_i18n_set LANG_EN STEP_INSTALL_FIRA_CODE_FONT "Install FiraCode Nerd Font"
+_i18n_set LANG_ES STEP_INSTALL_FIRA_CODE_FONT "Instalando FiraCode Nerd Font"
 
     _i18n_set LANG_EN STEP_DEPLOY_HACKER_PROFILE "Deploy Hacker Security Profile"
     _i18n_set LANG_ES STEP_DEPLOY_HACKER_PROFILE "Desplegando perfil de seguridad Hacker"

@@ -23,7 +23,6 @@ jobs:
 
       - name: Run shellcheck
         run: shellcheck --severity=warning lib/*.sh tests/*.sh *.sh scripts/*.sh
-        continue-on-error: true
 
       - name: Run shfmt
         run: shfmt -d lib/*.sh tests/*.sh *.sh scripts/*.sh

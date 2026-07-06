@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2034  # Variables sourced and used externally by setup/purge
+# shellcheck disable=SC2155  # readonly var=$(cmd) is intentional: atomic readonly assignment
 # =============================================================================
 # lib/user.sh — User detection and execution helpers
 # =============================================================================
@@ -16,9 +18,13 @@ cmd_exists() {
 }
 
 run_as_user() {
-    sudo -u "${TARGET_USER}" -H bash -c "$*"
+    # Takes a single command string and executes it as the target user
+    # Callers MUST properly quote variables and arguments within the string
+    sudo -u "${TARGET_USER}" -H bash -c "$1"
 }
 
 run_as_root() {
-    [[ "$(id -u)" -eq 0 ]] && bash -c "$*" || sudo bash -c "$*"
+    # Takes a single command string and executes it as root
+    # Callers MUST properly quote variables and arguments within the string
+    [[ "$(id -u)" -eq 0 ]] && bash -c "$1" || sudo bash -c "$1"
 }

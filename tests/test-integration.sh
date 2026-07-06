@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2155  # mktemp/dirname in declare is acceptable in tests
 # Integration tests for setup_i3_kali.sh
 
 # Source shared test helpers

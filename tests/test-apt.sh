@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1083  # \${} and \$ inside bash -c strings are intentional
 # Tests for lib/apt.sh — APT helper functions
 
 TESTS_RUN=0
