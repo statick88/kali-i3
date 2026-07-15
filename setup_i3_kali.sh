@@ -144,10 +144,32 @@ step_deploy_dotfiles() {
     header "Deploy Dotfiles (NEON MINIMALIST Theme)"
 
     local cfg_dir="${TARGET_HOME}/.config"
-    run_as_user "mkdir -p ${cfg_dir}/{i3,polybar,rofi,picom,kitty,zsh,gtk-3.0,gtk-4.0}"
+    run_as_user "mkdir -p ${cfg_dir}/{i3,polybar,rofi,picom,kitty,alacritty,zsh,gtk-3.0,gtk-4.0}"
 
     # Install FiraCode Nerd Font for all configs
     install_fira_code_font
+
+    # VMware Clipboard Wrapper for i3
+    local wrapper_dir="${TARGET_HOME}/.local/bin"
+    local wrapper_path="${wrapper_dir}/vmware-clipboard"
+    run_as_user "mkdir -p ${wrapper_dir}"
+    cat > "${wrapper_path}" <<'WMCLIP'
+#!/bin/bash
+# VMware Clipboard Wrapper for i3
+# Ensures proper X11 display context for clipboard daemon
+
+sleep 3
+export DISPLAY=:0
+
+# Prevent multiple instances
+if pgrep -x "vmware-user-suid-wrapper" >/dev/null; then
+    exit 0
+fi
+
+exec vmware-user-suid-wrapper >> ~/.local/share/vmware-clipboard.log 2>&1 &
+WMCLIP
+    run_as_user "chmod +x ${wrapper_path}"
+    ok "Created: ~/.local/bin/vmware-clipboard"
 
     # i3 config - NEON MINIMAL
     cat > "${cfg_dir}/i3/config" <<I3CONF
@@ -174,16 +196,39 @@ client.background \$bg
 # Font
 font pango:FiraCode Nerd Font 10
 
+# Gaps
+gaps inner 10
+gaps outer 5
+
 # Window rules
 for_window [window_role="pop-up"] floating enable
 for_window [window_type="dialog"] floating enable
 for_window [class="Pavucontrol"] floating enable
+for_window [class="Gpick"] floating enable
+for_window [class="Nm-connection-editor"] floating enable
+for_window [class="Blueman-manager"] floating enable
+for_window [class="Gnome-calculator"] floating enable
+for_window [class="Gnome-system-monitor"] floating enable
+for_window [window_role="GtkFileChooserDialog"] floating enable
+
+# Workspace assignments
+assign [class="firefox"] → 2
+assign [class="Firefox"] → 2
+assign [class="google-chrome"] → 2
+assign [class="Chrome"] → 2
+assign [class="code"] → 3
+assign [class="Code"] → 3
+assign [class="discord"] → 4
+assign [class="Discord"] → 4
+assign [class="spotify"] → 5
+assign [class="Spotify"] → 5
 
 # Autostart
-exec --no-startup-id picom --config ~/.config/picom.conf
-exec --no-startup-id feh --bg-fill ~/.config/wallpaper.png 2>/dev/null || true
-exec --no-startup-id polybar -c ~/.config/polybar/config.ini main 2>/dev/null || true
-exec --no-startup-id nm-applet --indicator 2>/dev/null || true
+    exec --no-startup-id picom --config ~/.config/picom.conf >/dev/null 2>&1 &
+    exec --no-startup-id feh --bg-fill ~/.config/wallpaper.png 2>/dev/null || true
+    exec --no-startup-id ~/.config/polybar/launch.sh
+    exec --no-startup-id nm-applet --indicator 2>/dev/null || true
+    exec --no-startup-id ~/.local/bin/vmware-clipboard
 
 # Keybindings
 bindsym \$mod+Return exec kitty
@@ -203,6 +248,21 @@ bindsym \$mod+Shift+h move left
 bindsym \$mod+Shift+j move down
 bindsym \$mod+Shift+k move up
 bindsym \$mod+Shift+l move right
+
+# Resize mode
+mode "resize" {
+    bindsym h resize shrink width 10px
+    bindsym j resize grow height 10px
+    bindsym k resize shrink height 10px
+    bindsym l resize grow width 10px
+    bindsym Left resize shrink width 10px
+    bindsym Down resize grow height 10px
+    bindsym Up resize shrink height 10px
+    bindsym Right resize grow width 10px
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym \$mod+r mode "resize"
 
 # Workspaces
 bindsym \$mod+1 workspace 1
@@ -235,7 +295,7 @@ bindsym XF86AudioRaiseVolume exec pamixer -i 5
 bindsym XF86AudioLowerVolume exec pamixer -d 5
 bindsym XF86AudioMute exec pamixer -t
 
-# Reload
+# Reload / Exit
 bindsym \$mod+Shift+c reload
 bindsym \$mod+Shift+x exec "i3-nagbar -t warning -m 'Exit i3?' -b 'Yes' 'i3-msg exit'"
 
@@ -249,12 +309,41 @@ I3CONF
     ok "Created: i3/config (NEON MINIMAL)"
 
     # Polybar config - NEON MINIMAL with FiraCode Nerd Font (SketchyBar-style islands)
+    # Create launch script with aggressive cleanup
+    cat > "${cfg_dir}/polybar/launch.sh" <<LAUNCH
+#!/usr/bin/env bash
+# ~/.config/polybar/launch.sh
+# Aggressive cleanup + launch Polybar with hardcoded eth0
+
+set -euo pipefail
+
+CONFIG_FILE="\$HOME/.config/polybar/config.ini"
+BAR_NAME="main"
+
+# Kill existing Polybar instances AGGRESSIVELY
+pkill -9 -x polybar 2>/dev/null || true
+sleep 0.5
+pkill -9 -x polybar 2>/dev/null || true
+
+# Launch Polybar
+polybar -c "\$CONFIG_FILE" "\$BAR_NAME" &
+disown
+LAUNCH
+    chmod +x "${cfg_dir}/polybar/launch.sh"
+    chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/polybar/launch.sh"
+    ok "Created: polybar/launch.sh"
+
+    # Auto-detect primary network interface
+    local primary_iface
+    primary_iface=$(ip -o route get 1.1.1.1 2>/dev/null | awk '{print $5}' | head -1)
+    primary_iface="${primary_iface:-eth0}"
+
     cat > "${cfg_dir}/polybar/config.ini" <<POLYCONF
 [colors]
 background = ${NEON_BG}
 foreground = ${NEON_FG}
 primary = ${NEON_ACCENT}
-secondary = #FF006E
+secondary = #00ff66
 alert = #7B2CBF
 
 [bar/main]
@@ -263,7 +352,7 @@ height = 32
 radius = 12
 padding-right = 8
 module-margin-right = 4
-font-0 = "FiraCode Nerd Font:size=10"
+font-0 = "FiraCode Nerd Font Mono:size=10"
 background = ${NEON_BG}
 foreground = ${NEON_FG}
 border-size = 0
@@ -293,23 +382,33 @@ label = "[ %date% %time% ]"
 
 [module/pulseaudio]
 type = internal/pulseaudio
-format-volume = "[ VOL %percentage%% ]"
-format-muted = "[ MUTE ]"
+sink = @DEFAULT_SINK@
+interval = 1
+format-volume = <label-volume>
+format-muted = <label-muted>
+label-volume = "[ VOL %percentage%% ]"
+label-muted = "[ MUTE ]"
 
 [module/memory]
 type = internal/memory
-format = "[ MEM %percentage_used%% ]"
+interval = 1
+format = <label>
+label = "[ MEM %percentage_used%% ]"
 
 [module/cpu]
 type = internal/cpu
-format = "[ CPU %percentage%% ]"
+interval = 1
+format = <label>
+label = "[ CPU %percentage%% ]"
 
 [module/network]
 type = internal/network
-interface = eth0
-interval = 3
-format-connected = "[ NET %local_ip% ]"
-format-disconnected = "[ NET OFF ]"
+interface = ${primary_iface}
+interval = 1
+format-connected = <label-connected>
+format-disconnected = <label-disconnected>
+label-connected = "[ NET %local_ip% ↑%upspeed% ↓%downspeed% ]"
+label-disconnected = "[ NET OFF ]"
 
 [settings]
 screenchange-reload = true
@@ -347,7 +446,7 @@ element-selected {
 }
 prompt {
     background-color: ${NEON_BG};
-    border-color: #FF006E;
+    border-color: #00ff66;
     border-radius: 12px;
     text-color: ${NEON_ACCENT};
 }
@@ -355,18 +454,27 @@ ROFI
     chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/rofi/config.rasi"
     ok "Created: rofi/config.rasi (NEON MINIMAL)"
 
-    # Picom config - NEON MINIMAL with rounded corners
+    # Picom config - NEON MINIMAL with rounded corners (xrender for VMware)
     cat > "${cfg_dir}/picom.conf" <<PICOM
-backend = "glx";
+backend = "xrender";
 vsync = true;
-blur-background = true;
-blur-background-frame = true;
 shadow = true;
 shadow-radius = 12;
-shadow-color = ${NEON_ACCENT};
+shadow-color = "#008B8B";
+shadow-exclude = [
+  "class_g = 'polybar'",
+  "class_g = 'rofi'",
+  "name = 'Notification'",
+  "class_g = 'Alacritty' && focused"
+];
 fading = true;
 fade-delta = 4;
-corner-radius = 10;
+detect-transient-windows = true;
+detect-client-opacity = true;
+wintypes:
+{
+  tooltip = { fade = true; shadow = false; };
+};
 PICOM
     chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/picom.conf"
     ok "Created: picom.conf"
@@ -384,19 +492,19 @@ cursor ${NEON_ACCENT}
 cursor_text_color ${NEON_BG}
 
 color0 ${NEON_BG}
-color1 #FF006E
+color1 #00ff66
 color2 #7B2CBF
 color3 ${NEON_ACCENT}
-color4 #FF006E
+color4 #00ff66
 color5 #7B2CBF
 color6 ${NEON_ACCENT}
 color7 ${NEON_FG}
 color8 ${NEON_BG_ALT}
-color9 #FF006E
+color9 #00ff66
 color10 ${NEON_ACCENT}
 color11 #7B2CBF
 color12 ${NEON_ACCENT}
-color13 #FF006E
+color13 #00ff66
 color14 #7B2CBF
 color15 #FFFFFF
 
@@ -439,27 +547,27 @@ colors:
     cursor: "${NEON_ACCENT}"
     text: "${NEON_BG}"
   vi_mode_cursor:
-    cursor: "#FF006E"
+    cursor: "#00ff66"
     text: "${NEON_BG}"
   selection:
     text: "${NEON_BG}"
     background: "${NEON_ACCENT}"
   normal:
     black:   "${NEON_BG}"
-    red:     "#FF006E"
+    red:     "#00ff66"
     green:   "${NEON_ACCENT}"
     yellow:  "#7B2CBF"
     blue:    "${NEON_ACCENT}"
-    magenta: "#FF006E"
+    magenta: "#00ff66"
     cyan:    "#7B2CBF"
     white:   "${NEON_FG}"
   bright:
     black:   "${NEON_BG_ALT}"
-    red:     "#FF006E"
+    red:     "#00ff66"
     green:   "${NEON_ACCENT}"
     yellow:  "#7B2CBF"
     blue:    "${NEON_ACCENT}"
-    magenta: "#FF006E"
+    magenta: "#00ff66"
     cyan:    "#7B2CBF"
     white:   "#FFFFFF"
 ALACRITTY
@@ -485,7 +593,7 @@ cursor = "${NEON_ACCENT}"
 text = "${NEON_BG}"
 
 [colors.vi_mode_cursor]
-cursor = "#FF006E"
+cursor = "#00ff66"
 text = "${NEON_BG}"
 
 [colors.selection]
@@ -494,26 +602,27 @@ background = "${NEON_ACCENT}"
 
 [colors.normal]
 black = "${NEON_BG}"
-red = "#FF006E"
+red = "#00ff66"
 green = "${NEON_ACCENT}"
 yellow = "#7B2CBF"
 blue = "${NEON_ACCENT}"
-magenta = "#FF006E"
+magenta = "#00ff66"
 cyan = "#7B2CBF"
 white = "${NEON_FG}"
 
 [colors.bright]
 black = "${NEON_BG_ALT}"
-red = "#FF006E"
+red = "#00ff66"
 green = "${NEON_ACCENT}"
 yellow = "#7B2CBF"
 blue = "${NEON_ACCENT}"
-magenta = "#FF006E"
+magenta = "#00ff66"
 cyan = "#7B2CBF"
 white = "#FFFFFF"
 ALACRITTY_TOML
     chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/alacritty/alacritty.yml"
-    ok "Created: alacritty/alacritty.yml (NEON MINIMAL)"
+    chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/alacritty/alacritty.toml"
+    ok "Created: alacritty/alacritty.yml + alacritty.toml (NEON MINIMAL)"
 
     # GTK settings - NEON MINIMAL with FiraCode Nerd Font
     cat > "${cfg_dir}/gtk-3.0/settings.ini" <<'GTKCONF'
@@ -584,7 +693,7 @@ step_setup_tmux_neon() {
 
     cat > "${cfg_dir}/tmux.conf" <<TMUXCONF
 # TMUX Config - NEON MINIMAL Theme
-# Background: ${NEON_BG}, Accent: ${NEON_ACCENT} (Azul Neon Atenuado), #FF006E (pink), #7B2CBF (purple)
+# Background: ${NEON_BG}, Accent: ${NEON_ACCENT} (Azul Neon Atenuado), #00ff66 (green), #7B2CBF (purple)
 
 # Plugins (TPM)
 set -g @plugin 'tmux-plugins/tpm'
@@ -614,10 +723,8 @@ setw -g window-status-fg "#7b2cbf"
 setw -g window-status-format " #I:#W "
 
 # Pane borders - Neon colors
-set -g pane-border-bg "${NEON_BG}"
-set -g pane-border-fg "#ff006e"
-set -g pane-active-border-bg "${NEON_BG}"
-set -g pane-active-border-fg "${NEON_ACCENT}"
+set -g pane-border-style "fg=#ff006e,bg=${NEON_BG}"
+set -g pane-active-border-style "fg=${NEON_ACCENT},bg=${NEON_BG}"
 
 # Messages
 set -g message-bg "${NEON_ACCENT}"
@@ -750,7 +857,7 @@ step_deploy_hacker_profile() {
     local zsh_dir="${TARGET_HOME}/.config/zsh"
     run_as_user "mkdir -p ${zsh_dir}"
 
-    cat > "${zsh_dir}/hacker_profile.zsh" <<'HACKERPROFILE'
+    cat > "${zsh_dir}/hacker_profile.zsh" <<HACKERPROFILE
 # =============================================================================
 # Hacker Profile — Security Tools Aliases & Agent Variables
 # Generated by setup_i3_kali.sh
@@ -846,19 +953,12 @@ nmap-udp() { nmap -sU -T4 --top-ports 100 "$1"; }
 gobuster-common() { gobuster dir -u "$1" -w /usr/share/wordlists/dirb/common.txt; }
 gobuster-big() { gobuster dir -u "$1" -w /usr/share/wordlists/dirb/big.txt; }
 
-# --- Color helpers ---
-    export NEON_BG='#06080f'
-    export NEON_FG='#f3f6f9'
-    export NEON_ACCENT='#e0c15a'
-    export NEON_PINK='#FF006E'
-    export NEON_PURPLE='#7B2CBF'
-
-    # --- Enable MCP Server Service ---
-    if systemctl list-unit-files | grep -q 'kali-server-mcp.service'; then
-        run_as_root "systemctl enable --now kali-server-mcp.service" 2>/dev/null || true
-    elif systemctl list-unit-files | grep -q 'mcp-server.service'; then
-        run_as_root "systemctl enable --now mcp-server.service" 2>/dev/null || true
-    fi
+# --- Color helpers (sourced from lib/colors.sh — values must match) ---
+    export NEON_BG='#0A0A10'
+    export NEON_FG='#E0E0E0'
+    export NEON_ACCENT='#008B8B'
+    export NEON_PINK='#008B8B'
+    export NEON_PURPLE='#006B6B'
 
 HACKERPROFILE
 
@@ -1021,7 +1121,7 @@ step_deploy_kilo_config() {
     "background": "${NEON_BG}",
     "foreground": "${NEON_FG}",
     "accent": "${NEON_ACCENT}",
-    "magenta": "#FF006E",
+    "magenta": "#00ff66",
     "purple": "#7B2CBF"
   }
 }
@@ -1062,7 +1162,7 @@ step_setup_opencode() {
     "foreground": "${NEON_FG}",
     "accent": "${NEON_ACCENT}",
     "borderRadius": 0,
-    "neonPink": "#FF006E",
+    "neonPink": "#00ff66",
     "neonPurple": "#7B2CBF"
   },
   "agents": {
@@ -1202,7 +1302,7 @@ step_post_install_cleanup() {
 
     run_as_root "apt-get autoremove -y"
     run_as_root "apt-get clean && apt-get autoclean -y"
-    run_as_root "rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*"
+    run_as_root "rm -rf /var/lib/apt/lists/*"
     run_as_root "chown -R ${TARGET_UID}:${TARGET_GID} ${TARGET_HOME}/.config 2>/dev/null || true"
 
     ok "Cleanup complete"
@@ -1398,7 +1498,8 @@ main() {
     if [[ ${INTERACTIVE} -eq 1 ]]; then
         local -a declined_categories=()
         for cat_name in "${CATEGORY_NAMES[@]}"; do
-            local cat_steps="${CATEGORY_STEPS[${cat_name}]:-}"
+            local cat_steps
+            cat_steps=$(get_category_steps "${cat_name}") || continue
             [[ -z "${cat_steps}" ]] && continue
 
             # Check if this category has any steps in ALL_STEPS
