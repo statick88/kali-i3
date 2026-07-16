@@ -1321,6 +1321,95 @@ INSTALL_GENTLE_AI=0
 HEXSTRIKE_AI=0
 INTERACTIVE=0
 I18N_LANG="en"
+PHASE_FILTER=""
+
+# =============================================================================
+# PHASE DEFINITIONS (10 phases)
+# =============================================================================
+# Phase 1:  Core i3 packages
+# Phase 2:  Display manager (SDDM)
+# Phase 3:  Dotfiles & wallpapers
+# Phase 4:  TMUX configuration
+# Phase 5:  Zsh, Oh-My-Zsh, hacker profile
+# Phase 6:  Desktop entry registration
+# Phase 7:  Security tools suite
+# Phase 8:  Anonymity & firewall
+# Phase 9:  AI coding assistants
+# Phase 10: HexStrike + cleanup
+readonly -a PHASE_1_STEPS=("step_install_i3_core")
+readonly -a PHASE_2_STEPS=("step_switch_display_manager")
+readonly -a PHASE_3_STEPS=("step_deploy_dotfiles" "step_deploy_wallpapers")
+readonly -a PHASE_4_STEPS=("step_setup_tmux_neon")
+readonly -a PHASE_5_STEPS=("step_install_zsh_omz" "step_deploy_zshrc" "step_deploy_hacker_profile")
+readonly -a PHASE_6_STEPS=("step_setup_i3_desktop_entry")
+readonly -a PHASE_7_STEPS=("step_install_security_suite" "step_install_advanced_tools")
+readonly -a PHASE_8_STEPS=("step_setup_anonymity" "step_configure_ghidra" "step_setup_firewall")
+readonly -a PHASE_9_STEPS=("step_install_gentle_ai" "step_install_gentle_agent_state" "step_deploy_kilo_config" "step_setup_opencode")
+readonly -a PHASE_10_STEPS=("step_install_hexstrike_ai" "step_deploy_hexstrike_mcp_config" "step_post_install_cleanup")
+readonly MAX_PHASE=10
+
+# parse_phase_list — parse a phase spec string into an array of phase numbers
+# Accepts: "1,3,5" / "1-5" / "1,3-7,10" / "all"
+# Returns: prints one phase number per line
+parse_phase_list() {
+    local spec="$1"
+    [[ -z "${spec}" ]] && return 1
+
+    if [[ "${spec}" == "all" ]]; then
+        local i
+        for ((i=1; i<=MAX_PHASE; i++)); do
+            echo "${i}"
+        done
+        return 0
+    fi
+
+    IFS=',' read -ra parts <<< "${spec}"
+    for part in "${parts[@]}"; do
+        part="${part// /}"  # strip spaces
+        if [[ "${part}" =~ ^([0-9]+)-([0-9]+)$ ]]; then
+            local start="${BASH_REMATCH[1]}"
+            local end="${BASH_REMATCH[2]}"
+            if [[ ${start} -lt 1 || ${end} -gt ${MAX_PHASE} || ${start} -gt ${end} ]]; then
+                die "Invalid phase range: ${part} (valid: 1-${MAX_PHASE})"
+            fi
+            local i
+            for ((i=start; i<=end; i++)); do
+                echo "${i}"
+            done
+        elif [[ "${part}" =~ ^[0-9]+$ ]]; then
+            if [[ ${part} -lt 1 || ${part} -gt ${MAX_PHASE} ]]; then
+                die "Invalid phase number: ${part} (valid: 1-${MAX_PHASE})"
+            fi
+            echo "${part}"
+        else
+            die "Invalid phase spec: '${part}' (expected number, range like 1-3, or 'all')"
+        fi
+    done
+}
+
+# phase_has_step — check if a given step belongs to a phase number
+phase_has_step() {
+    local phase="$1" step="$2"
+    local var="PHASE_${phase}_STEPS"
+    local -a steps=("${!var}")
+    local s
+    for s in "${steps[@]}"; do
+        [[ "${s}" == "${step}" ]] && return 0
+    done
+    return 1
+}
+
+# steps_for_phases — return all steps that belong to any of the given phases
+steps_for_phases() {
+    local -a phase_nums=("$@")
+    local -a result=() phase_num
+    for phase_num in "${phase_nums[@]}"; do
+        local var="PHASE_${phase_num}_STEPS"
+        local -a steps=("${!var}")
+        result+=("${steps[@]}")
+    done
+    printf '%s\n' "${result[@]}"
+}
 
 parse_args() {
     # First pass: extract --lang before processing other args
@@ -1353,6 +1442,17 @@ parse_args() {
             --interactive) INTERACTIVE=1 ;;
             --gentle-ai) INSTALL_GENTLE_AI=1 ;;
             --hexstrike-ai) HEXSTRIKE_AI=1 ;;
+            --phase)
+                shift
+                [[ $# -gt 0 ]] || die "Missing value for --phase"
+                PHASE_FILTER="$1"
+                # Validate the phase list eagerly so errors surface early
+                local -a _phases=()
+                while IFS= read -r _p; do
+                    [[ -n "${_p}" ]] && _phases+=("${_p}")
+                done < <(parse_phase_list "${PHASE_FILTER}")
+                [[ ${#_phases[@]} -gt 0 ]] || die "Invalid --phase specification: ${PHASE_FILTER}"
+                ;;
             --version)
                 local version
                 version=$(grep '## \[' "${SCRIPT_DIR}/CHANGELOG.md" | grep -v 'Unreleased' | head -1 | sed 's/## \[\([^]]*\)\].*/\1/')
@@ -1360,9 +1460,14 @@ parse_args() {
                 exit 0
                 ;;
             -h|--help)
-                echo "Usage: sudo ${SCRIPT_NAME} [--user-only] [--interactive] [--skip-security] [--skip-dotfiles] [--skip-shell] [--skip-tmux] [--skip-ai] [--gentle-ai] [--hexstrike-ai] [--lang en|es] [--version]"
+                echo "Usage: sudo ${SCRIPT_NAME} [--user-only] [--interactive] [--phase <phases>] [--skip-security] [--skip-dotfiles] [--skip-shell] [--skip-tmux] [--skip-ai] [--gentle-ai] [--hexstrike-ai] [--lang en|es] [--version]"
                 echo "  --user-only       $(msg HELP_USER_ONLY)"
                 echo "  --interactive     $(msg HELP_INTERACTIVE)"
+                echo "  --phase PHASES    Run only specific phases (e.g. 1,3,5 or 1-5 or all)."
+                echo "                    Phases: 1=core 2=display-mgr 3=dotfiles 4=tmux"
+                echo "                            5=zsh 6=desktop-entry 7=security 8=anonymity"
+                echo "                            9=ai-tools 10=hexstrike+cleanup"
+                echo "                    Takes precedence over --resume (resets state for selected phases)."
                 echo "  --skip-security   $(msg HELP_SKIP_SECURITY)"
                 echo "  --skip-dotfiles   $(msg HELP_SKIP_DOTFILES)"
                 echo "  --skip-shell      $(msg HELP_SKIP_SHELL)"
@@ -1492,6 +1597,42 @@ main() {
             filtered+=("${step}")
         done
         ALL_STEPS=("${filtered[@]}")
+    fi
+
+    # Phase filter: if --phase is specified, keep only steps belonging to
+    # the listed phases.  When --phase is used, completed-state is cleared
+    # for the selected steps so they always re-run (--phase overrides resume).
+    if [[ -n "${PHASE_FILTER}" ]]; then
+        local -a allowed_phases=()
+        while IFS= read -r _ap; do
+            [[ -n "${_ap}" ]] && allowed_phases+=("${_ap}")
+        done < <(parse_phase_list "${PHASE_FILTER}")
+
+        # Build set of allowed steps
+        local -a allowed_steps=()
+        while IFS= read -r _as; do
+            [[ -n "${_as}" ]] && allowed_steps+=("${_as}")
+        done < <(steps_for_phases "${allowed_phases[@]}")
+
+        local -a filtered=()
+        for step in "${ALL_STEPS[@]}"; do
+            local keep=0
+            for allowed in "${allowed_steps[@]}"; do
+                if [[ "${step}" == "${allowed}" ]]; then
+                    keep=1
+                    break
+                fi
+            done
+            if [[ ${keep} -eq 1 ]]; then
+                filtered+=("${step}")
+                # Clear completed state so phase always re-runs
+                if is_completed "${step}"; then
+                    _state_set "${step}" 0
+                fi
+            fi
+        done
+        ALL_STEPS=("${filtered[@]}")
+        save_state
     fi
 
     # Interactive mode: prompt for each category and filter declined ones
