@@ -27,9 +27,9 @@ SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 # Test: common.sh can be sourced without errors
 # =============================================================================
 test_common_source() {
-    bash -c "source '${SCRIPT_DIR}/lib/common.sh'" 2>/dev/null \
-        && pass "common.sh sources without error" \
-        || fail "common.sh failed to source"
+    bash -c "source '${SCRIPT_DIR}/lib/common.sh'" 2>/dev/null &&
+        pass "common.sh sources without error" ||
+        fail "common.sh failed to source"
 }
 
 # =============================================================================
@@ -198,8 +198,8 @@ test_ok_i18n_translation() {
         LOG_FILE='/tmp/test-common-log-$$'
         ok 'MSG_WELCOME'
     " 2>&1)
-    [[ "${output}" == *"Bienvenido"* ]] && pass "ok() uses Spanish translation" \
-        || fail "ok() should use Spanish translation, got: ${output}"
+    [[ "${output}" == *"Bienvenido"* ]] && pass "ok() uses Spanish translation" ||
+        fail "ok() should use Spanish translation, got: ${output}"
 }
 
 # =============================================================================
@@ -213,8 +213,8 @@ test_warn_i18n_translation() {
         LOG_FILE='/tmp/test-common-log-$$'
         warn 'MSG_ERROR_UNKNOWN_OPTION'
     " 2>&1)
-    [[ "${output}" == *"Opción desconocida"* ]] && pass "warn() uses Spanish translation" \
-        || fail "warn() should use Spanish translation, got: ${output}"
+    [[ "${output}" == *"Opción desconocida"* ]] && pass "warn() uses Spanish translation" ||
+        fail "warn() should use Spanish translation, got: ${output}"
 }
 
 # =============================================================================
@@ -228,8 +228,8 @@ test_err_i18n_translation() {
         LOG_FILE='/tmp/test-common-log-$$'
         err 'MSG_ERROR_MUST_BE_ROOT'
     " 2>&1)
-    [[ "${output}" == *"root"* || "${output}" == *"sudo"* ]] && pass "err() uses Spanish translation" \
-        || fail "err() should use Spanish translation, got: ${output}"
+    [[ "${output}" == *"root"* || "${output}" == *"sudo"* ]] && pass "err() uses Spanish translation" ||
+        fail "err() should use Spanish translation, got: ${output}"
 }
 
 # =============================================================================
@@ -243,8 +243,8 @@ test_step_i18n_translation() {
         LOG_FILE='/tmp/test-common-log-$$'
         step 'STEP_INSTALL_I3_CORE'
     " 2>&1)
-    [[ "${output}" == *"Instalando paquetes"* ]] && pass "step() uses Spanish translation" \
-        || fail "step() should use Spanish translation, got: ${output}"
+    [[ "${output}" == *"Instalando paquetes"* ]] && pass "step() uses Spanish translation" ||
+        fail "step() should use Spanish translation, got: ${output}"
 }
 
 # =============================================================================
@@ -257,8 +257,8 @@ test_header_i18n_translation() {
         i18n_init es
         header MSG_WELCOME
     " 2>/dev/null)
-    [[ "${output}" == *"Bienvenido"* ]] && pass "header() works with translated content" \
-        || fail "header() should work with translated content, got: ${output}"
+    [[ "${output}" == *"Bienvenido"* ]] && pass "header() works with translated content" ||
+        fail "header() should work with translated content, got: ${output}"
 }
 
 # =============================================================================
@@ -272,8 +272,8 @@ test_log_level_preserved_with_i18n() {
         LOG_FILE='/tmp/test-common-log-$$'
         ok 'MSG_WELCOME'
     " 2>&1)
-    [[ "${output}" == *"OK"* ]] && pass "ok() preserves OK level tag with i18n" \
-        || fail "ok() should still contain OK level tag"
+    [[ "${output}" == *"OK"* ]] && pass "ok() preserves OK level tag with i18n" ||
+        fail "ok() should still contain OK level tag"
 }
 
 # Run all tests

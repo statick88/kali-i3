@@ -31,9 +31,9 @@ test_apt_source() {
     bash -c "
         declare -A STATE=()
         source '${SCRIPT_DIR}/lib/apt.sh'
-    " 2>/dev/null \
-        && pass "apt.sh sources without error" \
-        || fail "apt.sh failed to source"
+    " 2>/dev/null &&
+        pass "apt.sh sources without error" ||
+        fail "apt.sh failed to source"
 }
 
 # =============================================================================
@@ -41,8 +41,11 @@ test_apt_source() {
 # =============================================================================
 test_pkg_installed_positive() {
     # Skip if dpkg not available (macOS)
-    command -v dpkg >/dev/null 2>&1 || { pass "pkg_installed detects an installed package (skipped: no dpkg)"; return; }
-    
+    command -v dpkg >/dev/null 2>&1 || {
+        pass "pkg_installed detects an installed package (skipped: no dpkg)"
+        return
+    }
+
     bash -c "
         declare -A PKG_CACHE=()
         source '${SCRIPT_DIR}/lib/apt.sh'
@@ -54,9 +57,9 @@ test_pkg_installed_positive() {
         else
             exit 1
         fi
-    " 2>/dev/null \
-        && pass "pkg_installed detects an installed package" \
-        || fail "pkg_installed should detect an installed package"
+    " 2>/dev/null &&
+        pass "pkg_installed detects an installed package" ||
+        fail "pkg_installed should detect an installed package"
 }
 
 # =============================================================================
@@ -67,9 +70,9 @@ test_pkg_installed_negative() {
         declare -A PKG_CACHE=()
         source '${SCRIPT_DIR}/lib/apt.sh'
         pkg_installed 'nonexistent-package-xyz'
-    " 2>/dev/null \
-        && fail "pkg_installed 'nonexistent' should return false" \
-        || pass "pkg_installed 'nonexistent' returns false"
+    " 2>/dev/null &&
+        fail "pkg_installed 'nonexistent' should return false" ||
+        pass "pkg_installed 'nonexistent' returns false"
 }
 
 # =============================================================================
@@ -87,9 +90,9 @@ test_pkg_cached() {
         else
             echo 'not_cached'
         fi
-    " 2>/dev/null | grep -q "cached" \
-        && pass "pkg_installed() populates PKG_CACHE" \
-        || fail "pkg_installed() should populate PKG_CACHE"
+    " 2>/dev/null | grep -q "cached" &&
+        pass "pkg_installed() populates PKG_CACHE" ||
+        fail "pkg_installed() should populate PKG_CACHE"
 }
 
 # =============================================================================
@@ -115,8 +118,11 @@ test_apt_update_once() {
 # =============================================================================
 test_apt_install_skip() {
     # Skip if dpkg not available (macOS)
-    command -v dpkg >/dev/null 2>&1 || { pass "apt_install_if_missing() skips installed packages (skipped: no dpkg)"; return; }
-    
+    command -v dpkg >/dev/null 2>&1 || {
+        pass "apt_install_if_missing() skips installed packages (skipped: no dpkg)"
+        return
+    }
+
     local output
     output=$(bash -c "
         declare -A STATE=()
@@ -146,9 +152,9 @@ test_apt_constants() {
         # Check constants exist and have expected default values
         [[ \"\${APT_INSTALL_TIMEOUT}\" -eq 120 ]] || exit 1
         [[ \"\${APT_INSTALL_RETRIES}\" -eq 3 ]] || exit 1
-    " 2>/dev/null \
-        && pass "APT constants defined with defaults" \
-        || fail "APT constants not defined or wrong defaults"
+    " 2>/dev/null &&
+        pass "APT constants defined with defaults" ||
+        fail "APT constants not defined or wrong defaults"
 }
 
 # =============================================================================
@@ -161,9 +167,9 @@ test_apt_has_timeout_flag() {
         source '${SCRIPT_DIR}/lib/apt.sh'
         # HAS_TIMEOUT should be 0 or 1
         [[ \"\${HAS_TIMEOUT}\" == '0' || \"\${HAS_TIMEOUT}\" == '1' ]] || exit 1
-    " 2>/dev/null \
-        && pass "HAS_TIMEOUT flag is set" \
-        || fail "HAS_TIMEOUT flag not properly initialized"
+    " 2>/dev/null &&
+        pass "HAS_TIMEOUT flag is set" ||
+        fail "HAS_TIMEOUT flag not properly initialized"
 }
 
 # =============================================================================
@@ -175,9 +181,9 @@ test_apt_install_with_retry_exists() {
         declare -A PKG_CACHE=()
         source '${SCRIPT_DIR}/lib/apt.sh'
         declare -f apt_install_with_retry >/dev/null 2>&1 || exit 1
-    " 2>/dev/null \
-        && pass "apt_install_with_retry() function exists" \
-        || fail "apt_install_with_retry() function not found"
+    " 2>/dev/null &&
+        pass "apt_install_with_retry() function exists" ||
+        fail "apt_install_with_retry() function not found"
 }
 
 # =============================================================================
@@ -193,9 +199,9 @@ test_apt_install_with_retry_success() {
         # Call apt_install_with_retry with a package that 'exists'
         apt_install_with_retry 'mock-pkg' 2>/dev/null
         exit \$?
-    " 2>/dev/null \
-        && pass "apt_install_with_retry() returns 0 on success" \
-        || fail "apt_install_with_retry() should return 0 on success"
+    " 2>/dev/null &&
+        pass "apt_install_with_retry() returns 0 on success" ||
+        fail "apt_install_with_retry() should return 0 on success"
 }
 
 # =============================================================================
@@ -203,8 +209,11 @@ test_apt_install_with_retry_success() {
 # =============================================================================
 test_apt_install_with_retry_already_installed() {
     # Skip if dpkg not available (macOS)
-    command -v dpkg >/dev/null 2>&1 || { pass "apt_install_with_retry() skips installed packages (skipped: no dpkg)"; return; }
-    
+    command -v dpkg >/dev/null 2>&1 || {
+        pass "apt_install_with_retry() skips installed packages (skipped: no dpkg)"
+        return
+    }
+
     bash -c "
         declare -A STATE=()
         declare -A PKG_CACHE=()
@@ -218,9 +227,9 @@ test_apt_install_with_retry_already_installed() {
         apt_install_with_retry "\${pkg}"
         # apt should NOT have been called (already installed)
         [[ "\${apt_called}" -eq 0 ]]
-    " 2>/dev/null \
-        && pass "apt_install_with_retry() skips installed packages" \
-        || fail "apt_install_with_retry() should skip installed packages"
+    " 2>/dev/null &&
+        pass "apt_install_with_retry() skips installed packages" ||
+        fail "apt_install_with_retry() should skip installed packages"
 }
 
 # =============================================================================
@@ -237,9 +246,9 @@ test_apt_install_with_retry_timeout() {
         # Set low retries for speed
         APT_INSTALL_RETRIES=2
         apt_install_with_retry 'hang-pkg'
-    " 2>/dev/null \
-        && fail "apt_install_with_retry() should fail after retries" \
-        || pass "apt_install_with_retry() fails after retries exhausted"
+    " 2>/dev/null &&
+        fail "apt_install_with_retry() should fail after retries" ||
+        pass "apt_install_with_retry() fails after retries exhausted"
 }
 
 # =============================================================================
@@ -269,9 +278,9 @@ test_apt_install_if_missing_partial_failure() {
         [[ \"\${install_calls[*]}\" == *'pkg-b'* ]] || exit 2
         # Verify return code is 1 (failure)
         [[ \${rc} -ne 0 ]] && exit 0 || exit 1
-    " 2>/dev/null \
-        && pass "apt_install_if_missing() returns 1 on partial failure" \
-        || fail "apt_install_if_missing() should return 1 when some packages fail"
+    " 2>/dev/null &&
+        pass "apt_install_if_missing() returns 1 on partial failure" ||
+        fail "apt_install_if_missing() should return 1 when some packages fail"
 }
 
 # =============================================================================
@@ -292,9 +301,9 @@ test_apt_install_if_missing_all_succeed() {
         # Stub apt_install_with_retry to always succeed
         apt_install_with_retry() { return 0; }
         apt_install_if_missing 'pkg-a' 'pkg-b' 'pkg-c'
-    " 2>/dev/null \
-        && pass "apt_install_if_missing() returns 0 when all succeed" \
-        || fail "apt_install_if_missing() should return 0 when all succeed"
+    " 2>/dev/null &&
+        pass "apt_install_if_missing() returns 0 when all succeed" ||
+        fail "apt_install_if_missing() should return 0 when all succeed"
 }
 
 # Run all tests

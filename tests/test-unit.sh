@@ -38,7 +38,7 @@ test_file_functions() {
         local perms="${3:-644}"
         [[ -f "${dest}" ]] && return 0
         mkdir -p "$(dirname "${dest}")" 2>/dev/null || true
-        printf "%s" "${content}" > "${dest}"
+        printf "%s" "${content}" >"${dest}"
         chmod "${perms}" "${dest}" 2>/dev/null || true
     }
 
@@ -91,7 +91,7 @@ test_progress_bar() {
         local current=$1
         local total=$2
         local label="${3:-$1}"
-        local percent=$(( current * 100 / total ))
+        local percent=$((current * 100 / total))
         printf "\r${C_NEON_PINK}[${C_NEON_GREEN}%s${C_NEON_PINK}]${C_NEON_CYAN} %3d%%${C_RESET} - %s\n" "█████" "${percent}" "${label}"
     }
 

@@ -18,15 +18,15 @@ source "${LIB_DIR}/ssh.sh"
 # Test: ssh.sh can be sourced without errors
 # =============================================================================
 test_ssh_source() {
-    bash -c "source '${LIB_DIR}/ssh.sh'" 2>/dev/null \
-        && pass "ssh.sh sources without error" \
-        || fail "ssh.sh failed to source"
+    bash -c "source '${LIB_DIR}/ssh.sh'" 2>/dev/null &&
+        pass "ssh.sh sources without error" ||
+        fail "ssh.sh failed to source"
 }
 
 # =============================================================================
 # Test: ssh_connect requires arguments
 # =============================================================================
- test_ssh_connect_requires_args() {
+test_ssh_connect_requires_args() {
     local output
     output=$(ssh_connect 2>&1) && {
         fail "ssh_connect should fail without arguments"
@@ -35,9 +35,9 @@ test_ssh_source() {
     # Strip ANSI color codes and timestamp for matching
     local clean_output
     clean_output=$(echo "${output}" | sed 's/\x1b\[[0-9;]*m//g' | sed 's/\[.*\] \[.*\] //')
-    [[ "${clean_output}" == *"host, user, and password are required"* ]] \
-        && pass "ssh_connect requires arguments" \
-        || fail "ssh_connect should mention 'host, user, and password are required' in error"
+    [[ "${clean_output}" == *"host, user, and password are required"* ]] &&
+        pass "ssh_connect requires arguments" ||
+        fail "ssh_connect should mention 'host, user, and password are required' in error"
 }
 
 # =============================================================================
@@ -52,9 +52,9 @@ test_ssh_execute_requires_args() {
     # Strip ANSI color codes and timestamp for matching
     local clean_output
     clean_output=$(echo "${output}" | sed 's/\x1b\[[0-9;]*m//g' | sed 's/\[.*\] \[.*\] //')
-    [[ "${clean_output}" == *"handle and command are required"* ]] \
-        && pass "ssh_execute requires arguments" \
-        || fail "ssh_execute should mention 'handle and command are required' in error"
+    [[ "${clean_output}" == *"handle and command are required"* ]] &&
+        pass "ssh_execute requires arguments" ||
+        fail "ssh_execute should mention 'handle and command are required' in error"
 }
 
 # =============================================================================
@@ -69,9 +69,9 @@ test_ssh_copy_requires_args() {
     # Strip ANSI color codes and timestamp for matching
     local clean_output
     clean_output=$(echo "${output}" | sed 's/\x1b\[[0-9;]*m//g' | sed 's/\[.*\] \[.*\] //')
-    [[ "${clean_output}" == *"handle, local_path, and remote_path are required"* ]] \
-        && pass "ssh_copy requires arguments" \
-        || fail "ssh_copy should mention 'handle, local_path, and remote_path are required' in error"
+    [[ "${clean_output}" == *"handle, local_path, and remote_path are required"* ]] &&
+        pass "ssh_copy requires arguments" ||
+        fail "ssh_copy should mention 'handle, local_path, and remote_path are required' in error"
 }
 
 # =============================================================================
@@ -83,9 +83,9 @@ test_ssh_copy_requires_local_file() {
         fail "ssh_copy should fail with nonexistent file"
         return
     }
-    [[ "${output}" == *"does not exist"* ]] \
-        && pass "ssh_copy requires local file to exist" \
-        || fail "ssh_copy should mention 'does not exist' in error"
+    [[ "${output}" == *"does not exist"* ]] &&
+        pass "ssh_copy requires local file to exist" ||
+        fail "ssh_copy should mention 'does not exist' in error"
 }
 
 # =============================================================================
@@ -94,9 +94,9 @@ test_ssh_copy_requires_local_file() {
 test_ssh_disconnect_no_handle() {
     local output
     output=$(ssh_disconnect 2>&1)
-    [[ $? -eq 0 ]] \
-        && pass "ssh_disconnect works without handle" \
-        || fail "ssh_disconnect should succeed without handle"
+    [[ $? -eq 0 ]] &&
+        pass "ssh_disconnect works without handle" ||
+        fail "ssh_disconnect should succeed without handle"
 }
 
 # =============================================================================
@@ -108,27 +108,27 @@ test_ssh_wait_for_host_requires_host() {
         fail "ssh_wait_for_host should fail without host"
         return
     }
-    [[ "${output}" == *"required"* ]] \
-        && pass "ssh_wait_for_host requires host" \
-        || fail "ssh_wait_for_host should mention 'required' in error"
+    [[ "${output}" == *"required"* ]] &&
+        pass "ssh_wait_for_host requires host" ||
+        fail "ssh_wait_for_host should mention 'required' in error"
 }
 
 # =============================================================================
 # Test: SSH_OPTS default value
 # =============================================================================
 test_ssh_opts_default() {
-    [[ "${SSH_OPTS}" == *"StrictHostKeyChecking=no"* ]] \
-        && pass "SSH_OPTS has default value" \
-        || fail "SSH_OPTS should have StrictHostKeyChecking=no"
+    [[ "${SSH_OPTS}" == *"StrictHostKeyChecking=no"* ]] &&
+        pass "SSH_OPTS has default value" ||
+        fail "SSH_OPTS should have StrictHostKeyChecking=no"
 }
 
 # =============================================================================
 # Test: SSH_PORT default value
 # =============================================================================
 test_ssh_port_default() {
-    [[ "${SSH_PORT}" == "22" ]] \
-        && pass "SSH_PORT defaults to 22" \
-        || fail "SSH_PORT should default to 22"
+    [[ "${SSH_PORT}" == "22" ]] &&
+        pass "SSH_PORT defaults to 22" ||
+        fail "SSH_PORT should default to 22"
 }
 
 # =============================================================================

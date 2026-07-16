@@ -30,9 +30,9 @@ I18N_SH="${SCRIPT_DIR}/lib/i18n.sh"
 # Test: i18n.sh can be sourced without errors
 # =============================================================================
 test_i18n_source() {
-    bash -c "source '${I18N_SH}'" 2>/dev/null \
-        && pass "i18n.sh sources without error" \
-        || fail "i18n.sh failed to source"
+    bash -c "source '${I18N_SH}'" 2>/dev/null &&
+        pass "i18n.sh sources without error" ||
+        fail "i18n.sh failed to source"
 }
 
 # =============================================================================
@@ -45,8 +45,8 @@ test_msg_english() {
         i18n_init en
         msg 'MSG_WELCOME'
     " 2>/dev/null)
-    [[ -n "${output}" ]] && pass "msg() returns English translation for MSG_WELCOME" \
-        || fail "msg() returned empty for MSG_WELCOME"
+    [[ -n "${output}" ]] && pass "msg() returns English translation for MSG_WELCOME" ||
+        fail "msg() returned empty for MSG_WELCOME"
 }
 
 # =============================================================================
@@ -59,8 +59,8 @@ test_msg_spanish() {
         i18n_init es
         msg 'MSG_WELCOME'
     " 2>/dev/null)
-    [[ -n "${output}" ]] && pass "msg() returns Spanish translation for MSG_WELCOME" \
-        || fail "msg() returned empty for MSG_WELCOME"
+    [[ -n "${output}" ]] && pass "msg() returns Spanish translation for MSG_WELCOME" ||
+        fail "msg() returned empty for MSG_WELCOME"
 }
 
 # =============================================================================
@@ -78,8 +78,8 @@ test_msg_differs_by_language() {
         i18n_init es
         msg 'MSG_WELCOME'
     " 2>/dev/null)
-    [[ "${en_output}" != "${es_output}" ]] && pass "msg() returns different strings for EN vs ES" \
-        || fail "msg() should return different strings for EN vs ES, got: '${en_output}' vs '${es_output}'"
+    [[ "${en_output}" != "${es_output}" ]] && pass "msg() returns different strings for EN vs ES" ||
+        fail "msg() should return different strings for EN vs ES, got: '${en_output}' vs '${es_output}'"
 }
 
 # =============================================================================
@@ -92,8 +92,8 @@ test_msg_missing_key_fallback() {
         i18n_init en
         msg 'NONEXISTENT_KEY_12345'
     " 2>/dev/null)
-    [[ "${output}" == "NONEXISTENT_KEY_12345" ]] && pass "msg() returns key name for missing key" \
-        || fail "msg() should return key name as fallback, got: '${output}'"
+    [[ "${output}" == "NONEXISTENT_KEY_12345" ]] && pass "msg() returns key name for missing key" ||
+        fail "msg() should return key name as fallback, got: '${output}'"
 }
 
 # =============================================================================
@@ -113,8 +113,8 @@ test_i18n_init_default() {
         i18n_init es
         msg 'MSG_WELCOME'
     " 2>/dev/null)
-    [[ "${output}" != "${es_output}" ]] && pass "i18n_init() defaults to English" \
-        || fail "i18n_init() should default to English"
+    [[ "${output}" != "${es_output}" ]] && pass "i18n_init() defaults to English" ||
+        fail "i18n_init() should default to English"
 }
 
 # =============================================================================
@@ -133,8 +133,8 @@ test_i18n_init_explicit() {
         i18n_init es
         msg 'MSG_WELCOME'
     " 2>/dev/null)
-    [[ "${output}" == "${es_output}" ]] && pass "i18n_init() respects explicit language" \
-        || fail "i18n_init() should respect explicit language argument"
+    [[ "${output}" == "${es_output}" ]] && pass "i18n_init() respects explicit language" ||
+        fail "i18n_init() should respect explicit language argument"
 }
 
 # =============================================================================
@@ -178,10 +178,10 @@ test_step_labels_translations() {
         [[ "${es_val}" == "${key}" ]] && ((missing_es++))
     done
 
-    [[ ${missing_en} -eq 0 ]] && pass "All STEP_LABELS have EN translations" \
-        || fail "${missing_en} STEP_LABELS missing EN translations"
-    [[ ${missing_es} -eq 0 ]] && pass "All STEP_LABELS have ES translations" \
-        || fail "${missing_es} STEP_LABELS missing ES translations"
+    [[ ${missing_en} -eq 0 ]] && pass "All STEP_LABELS have EN translations" ||
+        fail "${missing_en} STEP_LABELS missing EN translations"
+    [[ ${missing_es} -eq 0 ]] && pass "All STEP_LABELS have ES translations" ||
+        fail "${missing_es} STEP_LABELS missing ES translations"
 }
 
 # =============================================================================
@@ -214,10 +214,10 @@ test_help_translations() {
         [[ "${es_val}" == "${key}" ]] && ((missing_es++))
     done
 
-    [[ ${missing_en} -eq 0 ]] && pass "All HELP_* keys have EN translations" \
-        || fail "${missing_en} HELP_* keys missing EN translations"
-    [[ ${missing_es} -eq 0 ]] && pass "All HELP_* keys have ES translations" \
-        || fail "${missing_es} HELP_* keys missing ES translations"
+    [[ ${missing_en} -eq 0 ]] && pass "All HELP_* keys have EN translations" ||
+        fail "${missing_en} HELP_* keys missing EN translations"
+    [[ ${missing_es} -eq 0 ]] && pass "All HELP_* keys have ES translations" ||
+        fail "${missing_es} HELP_* keys missing ES translations"
 }
 
 # =============================================================================
@@ -249,10 +249,10 @@ test_msg_general_translations() {
         [[ "${es_val}" == "${key}" ]] && ((missing_es++))
     done
 
-    [[ ${missing_en} -eq 0 ]] && pass "All MSG_* keys have EN translations" \
-        || fail "${missing_en} MSG_* keys missing EN translations"
-    [[ ${missing_es} -eq 0 ]] && pass "All MSG_* keys have ES translations" \
-        || fail "${missing_es} MSG_* keys missing ES translations"
+    [[ ${missing_en} -eq 0 ]] && pass "All MSG_* keys have EN translations" ||
+        fail "${missing_en} MSG_* keys missing EN translations"
+    [[ ${missing_es} -eq 0 ]] && pass "All MSG_* keys have ES translations" ||
+        fail "${missing_es} MSG_* keys missing ES translations"
 }
 
 # =============================================================================
@@ -289,10 +289,10 @@ test_purge_step_translations() {
         [[ "${es_val}" == "${key}" ]] && ((missing_es++))
     done
 
-    [[ ${missing_en} -eq 0 ]] && pass "All PURGE STEP_LABELS have EN translations" \
-        || fail "${missing_en} PURGE STEP_LABELS missing EN translations"
-    [[ ${missing_es} -eq 0 ]] && pass "All PURGE STEP_LABELS have ES translations" \
-        || fail "${missing_es} PURGE STEP_LABELS missing ES translations"
+    [[ ${missing_en} -eq 0 ]] && pass "All PURGE STEP_LABELS have EN translations" ||
+        fail "${missing_en} PURGE STEP_LABELS missing EN translations"
+    [[ ${missing_es} -eq 0 ]] && pass "All PURGE STEP_LABELS have ES translations" ||
+        fail "${missing_es} PURGE STEP_LABELS missing ES translations"
 }
 
 # Run all tests

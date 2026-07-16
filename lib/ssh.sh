@@ -72,7 +72,7 @@ ssh_execute() {
     fi
 
     # Parse handle
-    IFS='|' read -r host user pass port <<< "${handle}"
+    IFS='|' read -r host user pass port <<<"${handle}"
 
     # Build SSH command
     local ssh_cmd="sshpass -p '${pass}' ssh ${SSH_OPTS} -p ${port} ${user}@${host}"
@@ -109,7 +109,7 @@ ssh_execute_background() {
     fi
 
     # Parse handle
-    IFS='|' read -r host user pass port <<< "${handle}"
+    IFS='|' read -r host user pass port <<<"${handle}"
 
     # Build SSH command
     local ssh_cmd="sshpass -p '${pass}' ssh ${SSH_OPTS} -p ${port} ${user}@${host}"
@@ -143,7 +143,7 @@ ssh_copy() {
     fi
 
     # Parse handle
-    IFS='|' read -r host user pass port <<< "${handle}"
+    IFS='|' read -r host user pass port <<<"${handle}"
 
     # Build SCP command
     local scp_cmd="sshpass -p '${pass}' scp ${SSH_OPTS} -P ${port}"
@@ -176,7 +176,7 @@ ssh_copy_from() {
     fi
 
     # Parse handle
-    IFS='|' read -r host user pass port <<< "${handle}"
+    IFS='|' read -r host user pass port <<<"${handle}"
 
     # Build SCP command
     local scp_cmd="sshpass -p '${pass}' scp ${SSH_OPTS} -P ${port}"
@@ -207,7 +207,7 @@ ssh_disconnect() {
     fi
 
     # Parse handle
-    IFS='|' read -r host user pass port <<< "${handle}"
+    IFS='|' read -r host user pass port <<<"${handle}"
 
     ok "ssh_disconnect: disconnected from ${user}@${host}:${port}"
     return 0

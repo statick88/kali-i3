@@ -50,8 +50,8 @@ prompt_category() {
     read -r response
 
     case "${response}" in
-        [nN]|[nN][oO]) return 1 ;;
-        *) return 0 ;;
+    [nN] | [nN][oO]) return 1 ;;
+    *) return 0 ;;
     esac
 }
 

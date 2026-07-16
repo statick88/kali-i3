@@ -10,9 +10,9 @@
 metrics_init() {
     local metrics_dir="${1:-${METRICS_DIR}}"
     mkdir -p "${metrics_dir}" 2>/dev/null || true
-    
+
     # Create metrics file
-    cat > "${metrics_dir}/metrics.json" <<EOF
+    cat >"${metrics_dir}/metrics.json" <<EOF
 {
   "start_time": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "phases": [],
@@ -37,20 +37,20 @@ metrics_phase() {
     local duration_ms="$2"
     local exit_code="$3"
     local metrics_dir="${4:-${METRICS_DIR}}"
-    
+
     # Append phase to metrics
     local tmp_file
     tmp_file=$(mktemp)
-    
+
     # Simple append - in production use jq
-    cat > "${tmp_file}" <<EOF
+    cat >"${tmp_file}" <<EOF
   "phase_${phase_name}": {
     "duration_ms": ${duration_ms},
     "exit_code": ${exit_code},
     "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   }
 EOF
-    
+
     # Append to metrics file (simplified - no jq dependency)
     echo "  Recorded phase: ${phase_name}"
 }
@@ -58,10 +58,10 @@ EOF
 # Record test result
 metrics_test() {
     local test_name="$1"
-    local result="$2"  # "pass" or "fail"
+    local result="$2" # "pass" or "fail"
     local duration_ms="${3:-0}"
     local metrics_dir="${4:-${METRICS_DIR}}"
-    
+
     echo "  Test ${test_name}: ${result} (${duration_ms}ms)"
 }
 
@@ -69,14 +69,14 @@ metrics_test() {
 metrics_vm_connect() {
     local connect_time_ms="$1"
     local metrics_dir="${2:-${METRICS_DIR}}"
-    
+
     echo "  VM connect time: ${connect_time_ms}ms"
 }
 
 # Generate final metrics report
 metrics_report() {
     local metrics_dir="${1:-${METRICS_DIR}}"
-    
+
     echo "=== Metrics Report ==="
     echo ""
     echo "Start Time: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
@@ -100,8 +100,8 @@ metrics_report() {
 metrics_json() {
     local metrics_dir="${1:-${METRICS_DIR}}"
     local output_file="${2:-${metrics_dir}/report.json}"
-    
-    cat > "${output_file}" <<EOF
+
+    cat >"${output_file}" <<EOF
 {
   "start_time": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "vm": {
@@ -115,6 +115,6 @@ metrics_json() {
   }
 }
 EOF
-    
+
     echo "${output_file}"
 }

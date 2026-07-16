@@ -40,9 +40,9 @@ cleanup() {
 test_state_source() {
     bash -c "
         source '${SCRIPT_DIR}/lib/state.sh'
-    " 2>/dev/null \
-        && pass "state.sh sources without error" \
-        || fail "state.sh failed to source"
+    " 2>/dev/null &&
+        pass "state.sh sources without error" ||
+        fail "state.sh failed to source"
 }
 
 # =============================================================================
@@ -161,9 +161,9 @@ test_save_state_json_content() {
         source '${SCRIPT_DIR}/lib/state.sh'
         save_state
     " 2>/dev/null
-    grep -q '"version"' "${TEST_STATE_FILE}" 2>/dev/null \
-        && pass "save_state() includes version in JSON" \
-        || fail "save_state() JSON should contain version"
+    grep -q '"version"' "${TEST_STATE_FILE}" 2>/dev/null &&
+        pass "save_state() includes version in JSON" ||
+        fail "save_state() JSON should contain version"
 }
 
 # =============================================================================

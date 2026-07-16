@@ -27,9 +27,9 @@ SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 # Test: user.sh can be sourced without errors
 # =============================================================================
 test_user_source() {
-    bash -c "source '${SCRIPT_DIR}/lib/user.sh'" 2>/dev/null \
-        && pass "user.sh sources without error" \
-        || fail "user.sh failed to source"
+    bash -c "source '${SCRIPT_DIR}/lib/user.sh'" 2>/dev/null &&
+        pass "user.sh sources without error" ||
+        fail "user.sh failed to source"
 }
 
 # =============================================================================
@@ -75,9 +75,9 @@ test_cmd_exists_positive() {
     bash -c "
         source '${SCRIPT_DIR}/lib/user.sh'
         cmd_exists 'ls'
-    " 2>/dev/null \
-        && pass "cmd_exists 'ls' returns true" \
-        || fail "cmd_exists 'ls' should return true"
+    " 2>/dev/null &&
+        pass "cmd_exists 'ls' returns true" ||
+        fail "cmd_exists 'ls' should return true"
 }
 
 # =============================================================================
@@ -87,9 +87,9 @@ test_cmd_exists_negative() {
     bash -c "
         source '${SCRIPT_DIR}/lib/user.sh'
         cmd_exists 'nonexistent_command_xyz'
-    " 2>/dev/null \
-        && fail "cmd_exists 'nonexistent_command_xyz' should return false" \
-        || pass "cmd_exists 'nonexistent_command_xyz' returns false"
+    " 2>/dev/null &&
+        fail "cmd_exists 'nonexistent_command_xyz' should return false" ||
+        pass "cmd_exists 'nonexistent_command_xyz' returns false"
 }
 
 # =============================================================================
@@ -111,9 +111,9 @@ test_run_as_root_exists() {
     bash -c "
         source '${SCRIPT_DIR}/lib/user.sh'
         type -t run_as_root
-    " 2>/dev/null | grep -q "function" \
-        && pass "run_as_root() is defined" \
-        || fail "run_as_root() should be defined"
+    " 2>/dev/null | grep -q "function" &&
+        pass "run_as_root() is defined" ||
+        fail "run_as_root() should be defined"
 }
 
 # =============================================================================

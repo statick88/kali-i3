@@ -20,7 +20,7 @@ retry_with_backoff() {
     local delay=1
     local attempt=1
     local exit_code=0
-    
+
     while [[ ${attempt} -le ${max_retries} ]]; do
         if "${cmd}" "$@"; then
             return 0
@@ -46,7 +46,7 @@ install_netexec() {
         echo "NetExec already installed"
         return 0
     fi
-    
+
     echo "Installing NetExec..."
     retry_with_backoff apt-get install -y pipx
     pipx install netexec
@@ -62,20 +62,23 @@ install_sliver() {
         echo "Sliver already installed"
         return 0
     fi
-    
+
     echo "Installing Sliver..."
     local arch
     arch=$(uname -m)
     case "${arch}" in
-        x86_64)  arch="amd64" ;;
-        aarch64) arch="arm64" ;;
-        *)       echo "Unsupported architecture: ${arch}" >&2; return 1 ;;
+    x86_64) arch="amd64" ;;
+    aarch64) arch="arm64" ;;
+    *)
+        echo "Unsupported architecture: ${arch}" >&2
+        return 1
+        ;;
     esac
-    
+
     local url="https://github.com/BishopFox/sliver/releases/download/v1.7.3/sliver-server_linux_${arch}"
     local tmp_file
     tmp_file=$(mktemp)
-    
+
     retry_with_backoff wget -q -O "${tmp_file}" "${url}"
     chmod +x "${tmp_file}"
     mv "${tmp_file}" /usr/local/bin/sliver
@@ -91,7 +94,7 @@ setup_tor() {
         echo "Tor already enabled"
         return 0
     fi
-    
+
     echo "Installing Tor..."
     retry_with_backoff apt-get install -y tor
     systemctl enable --now tor
@@ -107,19 +110,19 @@ setup_proxychains() {
         echo "Installing proxychains4..."
         retry_with_backoff apt-get install -y proxychains4
     fi
-    
+
     local conf_file="/etc/proxychains4.conf"
     if [[ -f "${conf_file}" ]]; then
         # Check if already configured for Tor
-        if grep -q "socks5 127.0.0.1 9050" "${conf_file}" && \
-           grep -q "proxy_dns" "${conf_file}"; then
+        if grep -q "socks5 127.0.0.1 9050" "${conf_file}" &&
+            grep -q "proxy_dns" "${conf_file}"; then
             echo "proxychains4 already configured for Tor"
             return 0
         fi
     fi
-    
+
     echo "Configuring proxychains4 for Tor..."
-    cat > "${conf_file}" <<'EOF'
+    cat >"${conf_file}" <<'EOF'
 # proxychains4 configuration for Tor
 strict_chain
 proxy_dns
@@ -142,11 +145,11 @@ configure_ghidra_java() {
         echo "Ghidra not installed, skipping JAVA_HOME configuration"
         return 0
     fi
-    
+
     # Detect OpenJDK path
     local java_home
     java_home=$(dirname "$(dirname "$(readlink -f "$(command -v java)")")")
-    
+
     if [[ -n "${java_home}" ]]; then
         echo "Setting JAVA_HOME for Ghidra: ${java_home}"
         export JAVA_HOME="${java_home}"
@@ -166,10 +169,10 @@ setup_ufw() {
         echo "UFW already active"
         return 0
     fi
-    
+
     echo "Installing UFW..."
     retry_with_backoff apt-get install -y ufw
-    
+
     echo "Configuring UFW..."
     ufw default deny incoming
     ufw default allow outgoing
