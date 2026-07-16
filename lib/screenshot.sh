@@ -85,7 +85,9 @@ screenshot_remote() {
     fi
     
     # Take screenshot on remote
-    local remote_path="/tmp/remote_screenshot_$(date +%s).png"
+    local remote_ts
+    remote_ts="$(date +%s)"
+    local remote_path="/tmp/remote_screenshot_${remote_ts}.png"
     case "${remote_tool}" in
         maim)
             ssh_execute "${handle}" "maim ${remote_path}" 2>/dev/null

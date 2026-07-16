@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2155  # readonly var=$(cmd) is intentional
+# shellcheck disable=SC2034  # STATE_KEYS/VALS, PKG_CACHE_*, COMPLETED_STEPS_*, STEP_LABELS_*, PHASE_*_STEPS used via ${!var} indirection
+# shellcheck disable=SC2154  # state, msg assigned via local in function params
 # =============================================================================
 # setup_i3_kali.sh — Complete i3-wm Migration & Pentesting Suite for Kali
 # =============================================================================

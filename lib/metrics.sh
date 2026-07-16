@@ -38,8 +38,6 @@ metrics_phase() {
     local exit_code="$3"
     local metrics_dir="${4:-${METRICS_DIR}}"
     
-    local metrics_file="${metrics_dir}/metrics.json"
-    
     # Append phase to metrics
     local tmp_file
     tmp_file=$(mktemp)
