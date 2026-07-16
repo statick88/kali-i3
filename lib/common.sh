@@ -27,7 +27,7 @@ log() {
         STEP)  color="${C_NEON_TEAL_BRIGHT}" ;;
         *)     color="${C_RESET}" ;;
     esac
-    printf "${color}[%s] [%s] %s${C_RESET}\n" "${timestamp}" "${level}" "${msg}"
+    printf "${color}[%s] [%s] %s${C_RESET}\n" "${timestamp}" "${level}" "${msg}" >&2
     printf "[%s] [%s] %s\n" "${timestamp}" "${level}" "${msg}" >> "${LOG_FILE}" 2>/dev/null || true
 }
 
