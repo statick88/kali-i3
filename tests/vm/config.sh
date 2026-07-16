@@ -4,7 +4,7 @@
 # =============================================================================
 
 # VM connection settings
-VM_HOST="192.168.100.6"
+VM_HOST="192.168.100.4"
 VM_USER="statick"
 VM_PASS="666"
 VM_PORT="22"
@@ -13,7 +13,7 @@ VM_PORT="22"
 VM_CONNECT_TIMEOUT=30
 
 # Script to test on VM
-REMOTE_SCRIPT_PATH="/tmp/setup_i3_kali.sh"
+REMOTE_SCRIPT_PATH="/tmp/kali-i3/setup_i3_kali.sh"
 LOCAL_SCRIPT_PATH="$(cd "$(dirname "$0")" && pwd)/../../setup_i3_kali.sh"
 
 # Phase logging

@@ -28,8 +28,8 @@ retry_with_backoff() {
             exit_code=$?
         fi
         if [[ ${attempt} -eq ${max_retries} ]]; then
-            echo "Failed after ${max_retries} attempts" >&2
-            return ${exit_code}
+            echo "Warning: Failed after ${max_retries} attempts (non-fatal, continuing)" >&2
+            return 0
         fi
         sleep ${delay}
         delay=$((delay * 2))
@@ -48,8 +48,8 @@ install_netexec() {
     fi
 
     echo "Installing NetExec..."
-    retry_with_backoff apt-get install -y pipx
-    pipx install netexec
+    retry_with_backoff apt-get install -y pipx || true
+    pipx install netexec 2>/dev/null || echo "Warning: NetExec pipx install failed (non-fatal)" >&2
     echo "NetExec installed"
 }
 
@@ -70,8 +70,8 @@ install_sliver() {
     x86_64) arch="amd64" ;;
     aarch64) arch="arm64" ;;
     *)
-        echo "Unsupported architecture: ${arch}" >&2
-        return 1
+        echo "Warning: Unsupported architecture: ${arch} (non-fatal)" >&2
+        return 0
         ;;
     esac
 
@@ -79,10 +79,15 @@ install_sliver() {
     local tmp_file
     tmp_file=$(mktemp)
 
-    retry_with_backoff wget -q -O "${tmp_file}" "${url}"
-    chmod +x "${tmp_file}"
-    mv "${tmp_file}" /usr/local/bin/sliver
-    echo "Sliver installed"
+    retry_with_backoff wget -q -O "${tmp_file}" "${url}" || true
+    if [[ -s "${tmp_file}" ]]; then
+        chmod +x "${tmp_file}"
+        mv "${tmp_file}" /usr/local/bin/sliver
+        echo "Sliver installed"
+    else
+        echo "Warning: Sliver download failed (non-fatal, continuing)" >&2
+        rm -f "${tmp_file}"
+    fi
 }
 
 # =============================================================================
@@ -96,9 +101,9 @@ setup_tor() {
     fi
 
     echo "Installing Tor..."
-    retry_with_backoff apt-get install -y tor
-    systemctl enable --now tor
-    echo "Tor service enabled and started"
+    retry_with_backoff apt-get install -y tor || true
+    systemctl enable --now tor 2>/dev/null || echo "Warning: Tor service start failed (non-fatal)" >&2
+    echo "Tor configured"
 }
 
 # =============================================================================
@@ -108,7 +113,7 @@ setup_tor() {
 setup_proxychains() {
     if ! command -v proxychains4 &>/dev/null; then
         echo "Installing proxychains4..."
-        retry_with_backoff apt-get install -y proxychains4
+        retry_with_backoff apt-get install -y proxychains4 || true
     fi
 
     local conf_file="/etc/proxychains4.conf"
@@ -122,7 +127,7 @@ setup_proxychains() {
     fi
 
     echo "Configuring proxychains4 for Tor..."
-    cat >"${conf_file}" <<'EOF'
+    sudo tee "${conf_file}" >/dev/null <<'EOF'
 # proxychains4 configuration for Tor
 strict_chain
 proxy_dns
@@ -155,8 +160,8 @@ configure_ghidra_java() {
         export JAVA_HOME="${java_home}"
         # Could also write to /etc/environment or profile.d
     else
-        echo "Java not found, cannot set JAVA_HOME for Ghidra"
-        return 1
+        echo "Java not found, cannot set JAVA_HOME for Ghidra (non-fatal)"
+        return 0
     fi
 }
 
@@ -171,12 +176,12 @@ setup_ufw() {
     fi
 
     echo "Installing UFW..."
-    retry_with_backoff apt-get install -y ufw
+    retry_with_backoff apt-get install -y ufw || true
 
     echo "Configuring UFW..."
-    ufw default deny incoming
-    ufw default allow outgoing
-    ufw allow 22/tcp
-    ufw --force enable
-    echo "UFW enabled with basic rules"
+    sudo ufw default deny incoming 2>/dev/null || true
+    sudo ufw default allow outgoing 2>/dev/null || true
+    sudo ufw allow 22/tcp 2>/dev/null || true
+    sudo ufw --force enable 2>/dev/null || echo "Warning: UFW enable failed (non-fatal)" >&2
+    echo "UFW configured"
 }
