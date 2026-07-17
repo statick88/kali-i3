@@ -80,6 +80,10 @@ test_copy_script() {
     handle=$(ssh_connect "${VM_HOST}" "${VM_USER}" "${VM_PASS}" "${VM_PORT}")
     
     if [[ $? -eq 0 && -n "${handle}" ]]; then
+        # Create remote directory if needed
+        local remote_dir
+        remote_dir=$(dirname "${REMOTE_SCRIPT_PATH}")
+        ssh_execute "${handle}" "mkdir -p '${remote_dir}'" 2>/dev/null || true
         if ssh_copy "${handle}" "${LOCAL_SCRIPT_PATH}" "${REMOTE_SCRIPT_PATH}"; then
             # Verify file exists
             local output
