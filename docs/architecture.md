@@ -128,7 +128,7 @@ Pentesting setups can take 30+ minutes. If the script fails at phase 7, you shou
 
 ### Why modular libraries?
 
-Each `lib/*.sh` module can be sourced independently by both the main script and the test suite. This means tests can call `apt_install_if_missing` or `state_mark_done` directly without bootstrapping the full setup pipeline.
+Each `lib/*.sh` module is like a room in a house — it has a specific purpose, and if one room floods, the others stay dry. The main script sources only what it needs. Tests can call individual functions directly without bootstrapping the full pipeline.
 
 ### Why interactive + unattended?
 

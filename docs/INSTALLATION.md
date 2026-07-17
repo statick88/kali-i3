@@ -2,6 +2,8 @@
 
 This guide walks you through migrating from XFCE to i3-wm on Kali Linux. The process has 3 phases: install, verify, purge. Each phase is idempotent — you can re-run if interrupted.
 
+Think of it like building a house: Phase 1 lays the foundation (packages, configs). Phase 2 inspects the work (verify services run). Phase 3 tears down the old structure (remove XFCE). You wouldn't demolish the old house before confirming the new one stands.
+
 ## Before you start
 
 | Check | Command | Expected |
