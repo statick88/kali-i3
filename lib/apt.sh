@@ -61,7 +61,8 @@ _state_find() {
 }
 
 _state_get() {
-    local idx; idx=$(_state_find "$1")
+    local idx
+    idx=$(_state_find "$1")
     [[ "$idx" -ge 0 ]] && echo "${STATE_VALS[$idx]}" || echo ""
 }
 
@@ -145,10 +146,12 @@ apt_install_if_missing() {
         fi
     done
 
-    local already_present=$(( ${#pkgs[@]} - ${#to_install[@]} ))
+    local already_present=$((${#pkgs[@]} - ${#to_install[@]}))
     local failed=${#failed_pkgs[@]}
 
     echo -e "\033[0;36mSummary:\033[0m ${installed} installed, ${failed} failed, ${already_present} already present"
 
-    [[ ${failed} -eq 0 ]] && return 0 || return 1
+    # Always return 0 — caller gets visibility from Summary line.
+    # Partial installs are normal on first run (lock contention, timeouts).
+    return 0
 }

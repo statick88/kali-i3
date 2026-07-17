@@ -27,9 +27,9 @@ SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 # Test: common.sh can be sourced without errors
 # =============================================================================
 test_common_source() {
-    bash -c "source '${SCRIPT_DIR}/lib/common.sh'" 2>/dev/null \
-        && pass "common.sh sources without error" \
-        || fail "common.sh failed to source"
+    bash -c "source '${SCRIPT_DIR}/lib/common.sh'" 2>/dev/null &&
+        pass "common.sh sources without error" ||
+        fail "common.sh failed to source"
 }
 
 # =============================================================================
@@ -41,7 +41,7 @@ test_log_function() {
         source '${SCRIPT_DIR}/lib/common.sh'
         LOG_FILE='/tmp/test-common-log-$$'
         log 'INFO' 'test message'
-    " 2>/dev/null)
+    " 2>&1)
     [[ -n "${output}" ]] && pass "log function produces output" || fail "log function produced no output"
 }
 
@@ -54,7 +54,7 @@ test_info_function() {
         source '${SCRIPT_DIR}/lib/common.sh'
         LOG_FILE='/tmp/test-common-log-$$'
         info 'test info'
-    " 2>/dev/null)
+    " 2>&1)
     [[ "${output}" == *"INFO"* ]] && pass "info() logs at INFO level" || fail "info() should contain INFO"
 }
 
@@ -67,7 +67,7 @@ test_ok_function() {
         source '${SCRIPT_DIR}/lib/common.sh'
         LOG_FILE='/tmp/test-common-log-$$'
         ok 'test ok'
-    " 2>/dev/null)
+    " 2>&1)
     [[ "${output}" == *"OK"* ]] && pass "ok() logs at OK level" || fail "ok() should contain OK"
 }
 
@@ -80,7 +80,7 @@ test_warn_function() {
         source '${SCRIPT_DIR}/lib/common.sh'
         LOG_FILE='/tmp/test-common-log-$$'
         warn 'test warning'
-    " 2>/dev/null)
+    " 2>&1)
     [[ "${output}" == *"WARN"* ]] && pass "warn() logs at WARN level" || fail "warn() should contain WARN"
 }
 
@@ -93,7 +93,7 @@ test_err_function() {
         source '${SCRIPT_DIR}/lib/common.sh'
         LOG_FILE='/tmp/test-common-log-$$'
         err 'test error'
-    " 2>/dev/null)
+    " 2>&1)
     [[ "${output}" == *"ERROR"* ]] && pass "err() logs at ERROR level" || fail "err() should contain ERROR"
 }
 
@@ -106,7 +106,7 @@ test_step_function() {
         source '${SCRIPT_DIR}/lib/common.sh'
         LOG_FILE='/tmp/test-common-log-$$'
         step 'test step'
-    " 2>/dev/null)
+    " 2>&1)
     [[ "${output}" == *"STEP"* ]] && pass "step() logs at STEP level" || fail "step() should contain STEP"
 }
 
@@ -170,7 +170,7 @@ test_log_multiword() {
         source '${SCRIPT_DIR}/lib/common.sh'
         LOG_FILE='/tmp/test-common-log-$$'
         log 'INFO' 'word1' 'word2' 'word3'
-    " 2>/dev/null)
+    " 2>&1)
     [[ "${output}" == *"word1 word2 word3"* ]] && pass "log() handles multi-word messages" || fail "log() should join multiple arguments"
 }
 
@@ -197,9 +197,9 @@ test_ok_i18n_translation() {
         i18n_init es
         LOG_FILE='/tmp/test-common-log-$$'
         ok 'MSG_WELCOME'
-    " 2>/dev/null)
-    [[ "${output}" == *"Bienvenido"* ]] && pass "ok() uses Spanish translation" \
-        || fail "ok() should use Spanish translation, got: ${output}"
+    " 2>&1)
+    [[ "${output}" == *"Bienvenido"* ]] && pass "ok() uses Spanish translation" ||
+        fail "ok() should use Spanish translation, got: ${output}"
 }
 
 # =============================================================================
@@ -212,9 +212,9 @@ test_warn_i18n_translation() {
         i18n_init es
         LOG_FILE='/tmp/test-common-log-$$'
         warn 'MSG_ERROR_UNKNOWN_OPTION'
-    " 2>/dev/null)
-    [[ "${output}" == *"Opción desconocida"* ]] && pass "warn() uses Spanish translation" \
-        || fail "warn() should use Spanish translation, got: ${output}"
+    " 2>&1)
+    [[ "${output}" == *"Opción desconocida"* ]] && pass "warn() uses Spanish translation" ||
+        fail "warn() should use Spanish translation, got: ${output}"
 }
 
 # =============================================================================
@@ -227,9 +227,9 @@ test_err_i18n_translation() {
         i18n_init es
         LOG_FILE='/tmp/test-common-log-$$'
         err 'MSG_ERROR_MUST_BE_ROOT'
-    " 2>/dev/null)
-    [[ "${output}" == *"root"* || "${output}" == *"sudo"* ]] && pass "err() uses Spanish translation" \
-        || fail "err() should use Spanish translation, got: ${output}"
+    " 2>&1)
+    [[ "${output}" == *"root"* || "${output}" == *"sudo"* ]] && pass "err() uses Spanish translation" ||
+        fail "err() should use Spanish translation, got: ${output}"
 }
 
 # =============================================================================
@@ -242,9 +242,9 @@ test_step_i18n_translation() {
         i18n_init es
         LOG_FILE='/tmp/test-common-log-$$'
         step 'STEP_INSTALL_I3_CORE'
-    " 2>/dev/null)
-    [[ "${output}" == *"Instalando paquetes"* ]] && pass "step() uses Spanish translation" \
-        || fail "step() should use Spanish translation, got: ${output}"
+    " 2>&1)
+    [[ "${output}" == *"Instalando paquetes"* ]] && pass "step() uses Spanish translation" ||
+        fail "step() should use Spanish translation, got: ${output}"
 }
 
 # =============================================================================
@@ -257,8 +257,8 @@ test_header_i18n_translation() {
         i18n_init es
         header MSG_WELCOME
     " 2>/dev/null)
-    [[ "${output}" == *"Bienvenido"* ]] && pass "header() works with translated content" \
-        || fail "header() should work with translated content, got: ${output}"
+    [[ "${output}" == *"Bienvenido"* ]] && pass "header() works with translated content" ||
+        fail "header() should work with translated content, got: ${output}"
 }
 
 # =============================================================================
@@ -271,9 +271,9 @@ test_log_level_preserved_with_i18n() {
         i18n_init es
         LOG_FILE='/tmp/test-common-log-$$'
         ok 'MSG_WELCOME'
-    " 2>/dev/null)
-    [[ "${output}" == *"OK"* ]] && pass "ok() preserves OK level tag with i18n" \
-        || fail "ok() should still contain OK level tag"
+    " 2>&1)
+    [[ "${output}" == *"OK"* ]] && pass "ok() preserves OK level tag with i18n" ||
+        fail "ok() should still contain OK level tag"
 }
 
 # Run all tests

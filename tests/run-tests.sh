@@ -25,13 +25,15 @@ run_test_file() {
     echo ""
 
     # Run in subshell to capture exit code properly
-    (bash "${test_file}" 2>&1 || true) > "${tmpout}"
+    (bash "${test_file}" 2>&1 || true) >"${tmpout}"
     cat "${tmpout}"
 
     # Count results (ANSI color codes may appear between PASS/FAIL and :)
     local passed failed
-    passed=$(grep -cP 'PASS.*?:' "${tmpout}" 2>/dev/null); passed=${passed:-0}
-    failed=$(grep -cP 'FAIL.*?:' "${tmpout}" 2>/dev/null); failed=${failed:-0}
+    passed=$(grep -cP 'PASS.*?:' "${tmpout}" 2>/dev/null)
+    passed=${passed:-0}
+    failed=$(grep -cP 'FAIL.*?:' "${tmpout}" 2>/dev/null)
+    failed=${failed:-0}
 
     GRAND_PASS=$((GRAND_PASS + passed))
     GRAND_FAIL=$((GRAND_FAIL + failed))

@@ -28,9 +28,9 @@ SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 # Test: C_NEON_YELLOW exists in colors.sh
 # =============================================================================
 test_c_neon_yellow_exists() {
-    grep -q 'C_NEON_YELLOW' "${SCRIPT_DIR}/lib/colors.sh" \
-        && pass "C_NEON_YELLOW constant exists in colors.sh" \
-        || fail "C_NEON_YELLOW should be defined in colors.sh"
+    grep -q 'C_NEON_YELLOW' "${SCRIPT_DIR}/lib/colors.sh" &&
+        pass "C_NEON_YELLOW constant exists in colors.sh" ||
+        fail "C_NEON_YELLOW should be defined in colors.sh"
 }
 
 # =============================================================================

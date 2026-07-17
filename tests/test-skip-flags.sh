@@ -95,12 +95,12 @@ build_all_steps() {
     if [[ ${skip_ai} -eq 1 ]]; then
         local -a filtered=()
         for step in "${ALL_STEPS[@]}"; do
-            [[ "${step}" == "step_install_gentle_ai" || \
-               "${step}" == "step_install_gentle_agent_state" || \
-               "${step}" == "step_deploy_kilo_config" || \
-               "${step}" == "step_setup_opencode" || \
-               "${step}" == "step_install_hexstrike_ai" || \
-               "${step}" == "step_deploy_hexstrike_mcp_config" ]] && continue
+            [[ "${step}" == "step_install_gentle_ai" ||
+                "${step}" == "step_install_gentle_agent_state" ||
+                "${step}" == "step_deploy_kilo_config" ||
+                "${step}" == "step_setup_opencode" ||
+                "${step}" == "step_install_hexstrike_ai" ||
+                "${step}" == "step_deploy_hexstrike_mcp_config" ]] && continue
             filtered+=("${step}")
         done
         ALL_STEPS=("${filtered[@]}")
@@ -125,9 +125,9 @@ has_step() {
 test_skip_dotfiles_removes_deploy_dotfiles() {
     local steps
     steps=$(build_all_steps 0 0 1 0 0 0 0 0)
-    has_step "step_deploy_dotfiles" "${steps}" \
-        && fail "--skip-dotfiles should remove step_deploy_dotfiles" \
-        || pass "--skip-dotfiles removes step_deploy_dotfiles"
+    has_step "step_deploy_dotfiles" "${steps}" &&
+        fail "--skip-dotfiles should remove step_deploy_dotfiles" ||
+        pass "--skip-dotfiles removes step_deploy_dotfiles"
 }
 
 # =============================================================================
@@ -136,9 +136,9 @@ test_skip_dotfiles_removes_deploy_dotfiles() {
 test_skip_dotfiles_removes_wallpapers() {
     local steps
     steps=$(build_all_steps 0 0 1 0 0 0 0 0)
-    has_step "step_deploy_wallpapers" "${steps}" \
-        && fail "--skip-dotfiles should remove step_deploy_wallpapers" \
-        || pass "--skip-dotfiles removes step_deploy_wallpapers"
+    has_step "step_deploy_wallpapers" "${steps}" &&
+        fail "--skip-dotfiles should remove step_deploy_wallpapers" ||
+        pass "--skip-dotfiles removes step_deploy_wallpapers"
 }
 
 # =============================================================================
@@ -147,15 +147,15 @@ test_skip_dotfiles_removes_wallpapers() {
 test_skip_dotfiles_keeps_others() {
     local steps
     steps=$(build_all_steps 0 0 1 0 0 0 0 0)
-    has_step "step_install_i3_core" "${steps}" \
-        && pass "--skip-dotfiles keeps step_install_i3_core" \
-        || fail "--skip-dotfiles should keep step_install_i3_core"
-    has_step "step_install_zsh_omz" "${steps}" \
-        && pass "--skip-dotfiles keeps step_install_zsh_omz" \
-        || fail "--skip-dotfiles should keep step_install_zsh_omz"
-    has_step "step_setup_tmux_neon" "${steps}" \
-        && pass "--skip-dotfiles keeps step_setup_tmux_neon" \
-        || fail "--skip-dotfiles should keep step_setup_tmux_neon"
+    has_step "step_install_i3_core" "${steps}" &&
+        pass "--skip-dotfiles keeps step_install_i3_core" ||
+        fail "--skip-dotfiles should keep step_install_i3_core"
+    has_step "step_install_zsh_omz" "${steps}" &&
+        pass "--skip-dotfiles keeps step_install_zsh_omz" ||
+        fail "--skip-dotfiles should keep step_install_zsh_omz"
+    has_step "step_setup_tmux_neon" "${steps}" &&
+        pass "--skip-dotfiles keeps step_setup_tmux_neon" ||
+        fail "--skip-dotfiles should keep step_setup_tmux_neon"
 }
 
 # =============================================================================
@@ -164,9 +164,9 @@ test_skip_dotfiles_keeps_others() {
 test_skip_shell_removes_zsh_omz() {
     local steps
     steps=$(build_all_steps 0 0 0 1 0 0 0 0)
-    has_step "step_install_zsh_omz" "${steps}" \
-        && fail "--skip-shell should remove step_install_zsh_omz" \
-        || pass "--skip-shell removes step_install_zsh_omz"
+    has_step "step_install_zsh_omz" "${steps}" &&
+        fail "--skip-shell should remove step_install_zsh_omz" ||
+        pass "--skip-shell removes step_install_zsh_omz"
 }
 
 # =============================================================================
@@ -175,9 +175,9 @@ test_skip_shell_removes_zsh_omz() {
 test_skip_shell_removes_deploy_zshrc() {
     local steps
     steps=$(build_all_steps 0 0 0 1 0 0 0 0)
-    has_step "step_deploy_zshrc" "${steps}" \
-        && fail "--skip-shell should remove step_deploy_zshrc" \
-        || pass "--skip-shell removes step_deploy_zshrc"
+    has_step "step_deploy_zshrc" "${steps}" &&
+        fail "--skip-shell should remove step_deploy_zshrc" ||
+        pass "--skip-shell removes step_deploy_zshrc"
 }
 
 # =============================================================================
@@ -186,9 +186,9 @@ test_skip_shell_removes_deploy_zshrc() {
 test_skip_shell_keeps_tmux() {
     local steps
     steps=$(build_all_steps 0 0 0 1 0 0 0 0)
-    has_step "step_setup_tmux_neon" "${steps}" \
-        && pass "--skip-shell keeps step_setup_tmux_neon" \
-        || fail "--skip-shell should keep step_setup_tmux_neon"
+    has_step "step_setup_tmux_neon" "${steps}" &&
+        pass "--skip-shell keeps step_setup_tmux_neon" ||
+        fail "--skip-shell should keep step_setup_tmux_neon"
 }
 
 # =============================================================================
@@ -197,9 +197,9 @@ test_skip_shell_keeps_tmux() {
 test_skip_tmux_removes_tmux() {
     local steps
     steps=$(build_all_steps 0 0 0 0 1 0 0 0)
-    has_step "step_setup_tmux_neon" "${steps}" \
-        && fail "--skip-tmux should remove step_setup_tmux_neon" \
-        || pass "--skip-tmux removes step_setup_tmux_neon"
+    has_step "step_setup_tmux_neon" "${steps}" &&
+        fail "--skip-tmux should remove step_setup_tmux_neon" ||
+        pass "--skip-tmux removes step_setup_tmux_neon"
 }
 
 # =============================================================================
@@ -208,12 +208,12 @@ test_skip_tmux_removes_tmux() {
 test_skip_tmux_keeps_shell() {
     local steps
     steps=$(build_all_steps 0 0 0 0 1 0 0 0)
-    has_step "step_install_zsh_omz" "${steps}" \
-        && pass "--skip-tmux keeps step_install_zsh_omz" \
-        || fail "--skip-tmux should keep step_install_zsh_omz"
-    has_step "step_deploy_zshrc" "${steps}" \
-        && pass "--skip-tmux keeps step_deploy_zshrc" \
-        || fail "--skip-tmux should keep step_deploy_zshrc"
+    has_step "step_install_zsh_omz" "${steps}" &&
+        pass "--skip-tmux keeps step_install_zsh_omz" ||
+        fail "--skip-tmux should keep step_install_zsh_omz"
+    has_step "step_deploy_zshrc" "${steps}" &&
+        pass "--skip-tmux keeps step_deploy_zshrc" ||
+        fail "--skip-tmux should keep step_deploy_zshrc"
 }
 
 # =============================================================================
@@ -222,9 +222,9 @@ test_skip_tmux_keeps_shell() {
 test_skip_ai_removes_gentle_ai() {
     local steps
     steps=$(build_all_steps 0 0 0 0 0 1 1 0)
-    has_step "step_install_gentle_ai" "${steps}" \
-        && fail "--skip-ai should remove step_install_gentle_ai" \
-        || pass "--skip-ai removes step_install_gentle_ai"
+    has_step "step_install_gentle_ai" "${steps}" &&
+        fail "--skip-ai should remove step_install_gentle_ai" ||
+        pass "--skip-ai removes step_install_gentle_ai"
 }
 
 # =============================================================================
@@ -233,9 +233,9 @@ test_skip_ai_removes_gentle_ai() {
 test_skip_ai_removes_agent_state() {
     local steps
     steps=$(build_all_steps 0 0 0 0 0 1 1 0)
-    has_step "step_install_gentle_agent_state" "${steps}" \
-        && fail "--skip-ai should remove step_install_gentle_agent_state" \
-        || pass "--skip-ai removes step_install_gentle_agent_state"
+    has_step "step_install_gentle_agent_state" "${steps}" &&
+        fail "--skip-ai should remove step_install_gentle_agent_state" ||
+        pass "--skip-ai removes step_install_gentle_agent_state"
 }
 
 # =============================================================================
@@ -244,9 +244,9 @@ test_skip_ai_removes_agent_state() {
 test_skip_ai_removes_kilo_config() {
     local steps
     steps=$(build_all_steps 0 0 0 0 0 1 1 0)
-    has_step "step_deploy_kilo_config" "${steps}" \
-        && fail "--skip-ai should remove step_deploy_kilo_config" \
-        || pass "--skip-ai removes step_deploy_kilo_config"
+    has_step "step_deploy_kilo_config" "${steps}" &&
+        fail "--skip-ai should remove step_deploy_kilo_config" ||
+        pass "--skip-ai removes step_deploy_kilo_config"
 }
 
 # =============================================================================
@@ -255,9 +255,9 @@ test_skip_ai_removes_kilo_config() {
 test_skip_ai_removes_opencode() {
     local steps
     steps=$(build_all_steps 0 0 0 0 0 1 1 0)
-    has_step "step_setup_opencode" "${steps}" \
-        && fail "--skip-ai should remove step_setup_opencode" \
-        || pass "--skip-ai removes step_setup_opencode"
+    has_step "step_setup_opencode" "${steps}" &&
+        fail "--skip-ai should remove step_setup_opencode" ||
+        pass "--skip-ai removes step_setup_opencode"
 }
 
 # =============================================================================
@@ -266,12 +266,12 @@ test_skip_ai_removes_opencode() {
 test_skip_ai_removes_hexstrike() {
     local steps
     steps=$(build_all_steps 0 0 0 0 0 1 1 1)
-    has_step "step_install_hexstrike_ai" "${steps}" \
-        && fail "--skip-ai should remove step_install_hexstrike_ai" \
-        || pass "--skip-ai removes step_install_hexstrike_ai"
-    has_step "step_deploy_hexstrike_mcp_config" "${steps}" \
-        && fail "--skip-ai should remove step_deploy_hexstrike_mcp_config" \
-        || pass "--skip-ai removes step_deploy_hexstrike_mcp_config"
+    has_step "step_install_hexstrike_ai" "${steps}" &&
+        fail "--skip-ai should remove step_install_hexstrike_ai" ||
+        pass "--skip-ai removes step_install_hexstrike_ai"
+    has_step "step_deploy_hexstrike_mcp_config" "${steps}" &&
+        fail "--skip-ai should remove step_deploy_hexstrike_mcp_config" ||
+        pass "--skip-ai removes step_deploy_hexstrike_mcp_config"
 }
 
 # =============================================================================
@@ -280,24 +280,24 @@ test_skip_ai_removes_hexstrike() {
 test_combined_skip_dotfiles_and_ai() {
     local steps
     steps=$(build_all_steps 0 0 1 0 0 1 1 0)
-    has_step "step_deploy_dotfiles" "${steps}" \
-        && fail "combined: should remove step_deploy_dotfiles" \
-        || pass "combined: removes step_deploy_dotfiles"
-    has_step "step_deploy_wallpapers" "${steps}" \
-        && fail "combined: should remove step_deploy_wallpapers" \
-        || pass "combined: removes step_deploy_wallpapers"
-    has_step "step_install_gentle_ai" "${steps}" \
-        && fail "combined: should remove step_install_gentle_ai" \
-        || pass "combined: removes step_install_gentle_ai"
-    has_step "step_install_i3_core" "${steps}" \
-        && pass "combined: keeps step_install_i3_core" \
-        || fail "combined: should keep step_install_i3_core"
-    has_step "step_install_zsh_omz" "${steps}" \
-        && pass "combined: keeps step_install_zsh_omz" \
-        || fail "combined: should keep step_install_zsh_omz"
-    has_step "step_setup_tmux_neon" "${steps}" \
-        && pass "combined: keeps step_setup_tmux_neon" \
-        || fail "combined: should keep step_setup_tmux_neon"
+    has_step "step_deploy_dotfiles" "${steps}" &&
+        fail "combined: should remove step_deploy_dotfiles" ||
+        pass "combined: removes step_deploy_dotfiles"
+    has_step "step_deploy_wallpapers" "${steps}" &&
+        fail "combined: should remove step_deploy_wallpapers" ||
+        pass "combined: removes step_deploy_wallpapers"
+    has_step "step_install_gentle_ai" "${steps}" &&
+        fail "combined: should remove step_install_gentle_ai" ||
+        pass "combined: removes step_install_gentle_ai"
+    has_step "step_install_i3_core" "${steps}" &&
+        pass "combined: keeps step_install_i3_core" ||
+        fail "combined: should keep step_install_i3_core"
+    has_step "step_install_zsh_omz" "${steps}" &&
+        pass "combined: keeps step_install_zsh_omz" ||
+        fail "combined: should keep step_install_zsh_omz"
+    has_step "step_setup_tmux_neon" "${steps}" &&
+        pass "combined: keeps step_setup_tmux_neon" ||
+        fail "combined: should keep step_setup_tmux_neon"
 }
 
 # =============================================================================
@@ -306,25 +306,25 @@ test_combined_skip_dotfiles_and_ai() {
 test_all_skip_flags() {
     local steps
     steps=$(build_all_steps 0 0 1 1 1 1 1 0)
-    has_step "step_deploy_dotfiles" "${steps}" \
-        && fail "all skips: should remove dotfiles" \
-        || pass "all skips: removes dotfiles"
-    has_step "step_install_zsh_omz" "${steps}" \
-        && fail "all skips: should remove shell" \
-        || pass "all skips: removes shell"
-    has_step "step_setup_tmux_neon" "${steps}" \
-        && fail "all skips: should remove tmux" \
-        || pass "all skips: removes tmux"
-    has_step "step_install_gentle_ai" "${steps}" \
-        && fail "all skips: should remove AI" \
-        || pass "all skips: removes AI"
+    has_step "step_deploy_dotfiles" "${steps}" &&
+        fail "all skips: should remove dotfiles" ||
+        pass "all skips: removes dotfiles"
+    has_step "step_install_zsh_omz" "${steps}" &&
+        fail "all skips: should remove shell" ||
+        pass "all skips: removes shell"
+    has_step "step_setup_tmux_neon" "${steps}" &&
+        fail "all skips: should remove tmux" ||
+        pass "all skips: removes tmux"
+    has_step "step_install_gentle_ai" "${steps}" &&
+        fail "all skips: should remove AI" ||
+        pass "all skips: removes AI"
     # Core steps remain
-    has_step "step_install_i3_core" "${steps}" \
-        && pass "all skips: keeps core i3" \
-        || fail "all skips: should keep core i3"
-    has_step "step_post_install_cleanup" "${steps}" \
-        && pass "all skips: keeps cleanup" \
-        || fail "all skips: should keep cleanup"
+    has_step "step_install_i3_core" "${steps}" &&
+        pass "all skips: keeps core i3" ||
+        fail "all skips: should keep core i3"
+    has_step "step_post_install_cleanup" "${steps}" &&
+        pass "all skips: keeps cleanup" ||
+        fail "all skips: should keep cleanup"
 }
 
 # =============================================================================
@@ -333,51 +333,51 @@ test_all_skip_flags() {
 test_skip_security_still_works() {
     local steps
     steps=$(build_all_steps 0 1 0 0 0 0 0 0)
-    has_step "step_install_security_suite" "${steps}" \
-        && fail "--skip-security should remove step_install_security_suite" \
-        || pass "--skip-security still removes security suite"
-    has_step "step_install_advanced_tools" "${steps}" \
-        && fail "--skip-security should remove step_install_advanced_tools" \
-        || pass "--skip-security still removes advanced tools"
-    has_step "step_install_i3_core" "${steps}" \
-        && pass "--skip-security keeps core i3" \
-        || fail "--skip-security should keep core i3"
+    has_step "step_install_security_suite" "${steps}" &&
+        fail "--skip-security should remove step_install_security_suite" ||
+        pass "--skip-security still removes security suite"
+    has_step "step_install_advanced_tools" "${steps}" &&
+        fail "--skip-security should remove step_install_advanced_tools" ||
+        pass "--skip-security still removes advanced tools"
+    has_step "step_install_i3_core" "${steps}" &&
+        pass "--skip-security keeps core i3" ||
+        fail "--skip-security should keep core i3"
 }
 
 # =============================================================================
 # Test: Help text shows --skip-dotfiles
 # =============================================================================
 test_help_shows_skip_dotfiles() {
-    bash "${SCRIPT_DIR}/setup_i3_kali.sh" --help 2>&1 | grep -q "\-\-skip-dotfiles" \
-        && pass "--help shows --skip-dotfiles" \
-        || fail "--help should show --skip-dotfiles"
+    bash "${SCRIPT_DIR}/setup_i3_kali.sh" --help 2>&1 | grep -q "\-\-skip-dotfiles" &&
+        pass "--help shows --skip-dotfiles" ||
+        fail "--help should show --skip-dotfiles"
 }
 
 # =============================================================================
 # Test: Help text shows --skip-shell
 # =============================================================================
 test_help_shows_skip_shell() {
-    bash "${SCRIPT_DIR}/setup_i3_kali.sh" --help 2>&1 | grep -q "\-\-skip-shell" \
-        && pass "--help shows --skip-shell" \
-        || fail "--help should show --skip-shell"
+    bash "${SCRIPT_DIR}/setup_i3_kali.sh" --help 2>&1 | grep -q "\-\-skip-shell" &&
+        pass "--help shows --skip-shell" ||
+        fail "--help should show --skip-shell"
 }
 
 # =============================================================================
 # Test: Help text shows --skip-tmux
 # =============================================================================
 test_help_shows_skip_tmux() {
-    bash "${SCRIPT_DIR}/setup_i3_kali.sh" --help 2>&1 | grep -q "\-\-skip-tmux" \
-        && pass "--help shows --skip-tmux" \
-        || fail "--help should show --skip-tmux"
+    bash "${SCRIPT_DIR}/setup_i3_kali.sh" --help 2>&1 | grep -q "\-\-skip-tmux" &&
+        pass "--help shows --skip-tmux" ||
+        fail "--help should show --skip-tmux"
 }
 
 # =============================================================================
 # Test: Help text shows --skip-ai
 # =============================================================================
 test_help_shows_skip_ai() {
-    bash "${SCRIPT_DIR}/setup_i3_kali.sh" --help 2>&1 | grep -q "\-\-skip-ai" \
-        && pass "--help shows --skip-ai" \
-        || fail "--help should show --skip-ai"
+    bash "${SCRIPT_DIR}/setup_i3_kali.sh" --help 2>&1 | grep -q "\-\-skip-ai" &&
+        pass "--help shows --skip-ai" ||
+        fail "--help should show --skip-ai"
 }
 
 # =============================================================================
@@ -385,8 +385,8 @@ test_help_shows_skip_ai() {
 # =============================================================================
 test_skip_dotfiles_with_help() {
     bash "${SCRIPT_DIR}/setup_i3_kali.sh" --skip-dotfiles --help >/dev/null 2>&1
-    [[ $? -eq 0 ]] && pass "--skip-dotfiles --help exits 0" \
-        || fail "--skip-dotfiles --help should exit 0"
+    [[ $? -eq 0 ]] && pass "--skip-dotfiles --help exits 0" ||
+        fail "--skip-dotfiles --help should exit 0"
 }
 
 # =============================================================================
@@ -413,9 +413,9 @@ test_parse_args_sets_skip_dotfiles() {
         esac
         echo \"SKIP_DOTFILES=\${SKIP_DOTFILES}\"
     " 2>&1)
-    [[ "${output}" == *"SKIP_DOTFILES=1" ]] \
-        && pass "parse_args sets SKIP_DOTFILES=1" \
-        || fail "parse_args should set SKIP_DOTFILES=1"
+    [[ "${output}" == *"SKIP_DOTFILES=1" ]] &&
+        pass "parse_args sets SKIP_DOTFILES=1" ||
+        fail "parse_args should set SKIP_DOTFILES=1"
 }
 
 # =============================================================================
@@ -434,9 +434,9 @@ test_parse_args_sets_skip_shell() {
         esac
         echo \"SKIP_SHELL=\${SKIP_SHELL}\"
     " 2>&1)
-    [[ "${output}" == *"SKIP_SHELL=1" ]] \
-        && pass "parse_args sets SKIP_SHELL=1" \
-        || fail "parse_args should set SKIP_SHELL=1"
+    [[ "${output}" == *"SKIP_SHELL=1" ]] &&
+        pass "parse_args sets SKIP_SHELL=1" ||
+        fail "parse_args should set SKIP_SHELL=1"
 }
 
 # =============================================================================
@@ -455,9 +455,9 @@ test_parse_args_sets_skip_tmux() {
         esac
         echo \"SKIP_TMUX=\${SKIP_TMUX}\"
     " 2>&1)
-    [[ "${output}" == *"SKIP_TMUX=1" ]] \
-        && pass "parse_args sets SKIP_TMUX=1" \
-        || fail "parse_args should set SKIP_TMUX=1"
+    [[ "${output}" == *"SKIP_TMUX=1" ]] &&
+        pass "parse_args sets SKIP_TMUX=1" ||
+        fail "parse_args should set SKIP_TMUX=1"
 }
 
 # =============================================================================
@@ -476,9 +476,9 @@ test_parse_args_sets_skip_ai() {
         esac
         echo \"SKIP_AI=\${SKIP_AI}\"
     " 2>&1)
-    [[ "${output}" == *"SKIP_AI=1" ]] \
-        && pass "parse_args sets SKIP_AI=1" \
-        || fail "parse_args should set SKIP_AI=1"
+    [[ "${output}" == *"SKIP_AI=1" ]] &&
+        pass "parse_args sets SKIP_AI=1" ||
+        fail "parse_args should set SKIP_AI=1"
 }
 
 # =============================================================================
@@ -487,15 +487,15 @@ test_parse_args_sets_skip_ai() {
 test_no_skip_flags_all_steps_present() {
     local steps
     steps=$(build_all_steps 0 0 0 0 0 0 0 0)
-    has_step "step_deploy_dotfiles" "${steps}" \
-        && pass "baseline: step_deploy_dotfiles present" \
-        || fail "baseline: step_deploy_dotfiles should be present"
-    has_step "step_install_zsh_omz" "${steps}" \
-        && pass "baseline: step_install_zsh_omz present" \
-        || fail "baseline: step_install_zsh_omz should be present"
-    has_step "step_setup_tmux_neon" "${steps}" \
-        && pass "baseline: step_setup_tmux_neon present" \
-        || fail "baseline: step_setup_tmux_neon should be present"
+    has_step "step_deploy_dotfiles" "${steps}" &&
+        pass "baseline: step_deploy_dotfiles present" ||
+        fail "baseline: step_deploy_dotfiles should be present"
+    has_step "step_install_zsh_omz" "${steps}" &&
+        pass "baseline: step_install_zsh_omz present" ||
+        fail "baseline: step_install_zsh_omz should be present"
+    has_step "step_setup_tmux_neon" "${steps}" &&
+        pass "baseline: step_setup_tmux_neon present" ||
+        fail "baseline: step_setup_tmux_neon should be present"
 }
 
 # Run all tests

@@ -29,9 +29,9 @@ HELPERS="${SCRIPT_DIR}/lib/test-helpers.sh"
 # Test: test-helpers.sh can be sourced without errors
 # =============================================================================
 test_helpers_source() {
-    bash -c "source '${HELPERS}'" 2>/dev/null \
-        && pass "test-helpers.sh sources without error" \
-        || fail "test-helpers.sh failed to source"
+    bash -c "source '${HELPERS}'" 2>/dev/null &&
+        pass "test-helpers.sh sources without error" ||
+        fail "test-helpers.sh failed to source"
 }
 
 # =============================================================================
@@ -66,9 +66,9 @@ test_color_constants() {
         source '${HELPERS}'
         # Test that RED, GREEN, NC are defined
         [[ -n \"\${RED}\" && -n \"\${GREEN}\" && -n \"\${NC}\" ]] && exit 0 || exit 1
-    " 2>/dev/null \
-        && pass "Color constants (RED, GREEN, NC) are defined" \
-        || fail "Color constants should be defined"
+    " 2>/dev/null &&
+        pass "Color constants (RED, GREEN, NC) are defined" ||
+        fail "Color constants should be defined"
 }
 
 # =============================================================================
@@ -79,9 +79,9 @@ test_counters() {
         source '${HELPERS}'
         # Test that counters are initialized
         [[ \"\${TESTS_RUN}\" -eq 0 && \"\${TESTS_PASS}\" -eq 0 && \"\${TESTS_FAIL}\" -eq 0 ]] && exit 0 || exit 1
-    " 2>/dev/null \
-        && pass "Counter variables are initialized to 0" \
-        || fail "Counters should start at 0"
+    " 2>/dev/null &&
+        pass "Counter variables are initialized to 0" ||
+        fail "Counters should start at 0"
 }
 
 # Run all tests

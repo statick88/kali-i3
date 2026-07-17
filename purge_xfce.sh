@@ -28,14 +28,14 @@ parse_args() {
     local -a remaining=()
     while [[ $# -gt 0 ]]; do
         case "$1" in
-            --lang)
-                shift
-                [[ $# -gt 0 ]] || die "Missing value for --lang"
-                I18N_LANG="$1"
-                ;;
-            *)
-                remaining+=("$1")
-                ;;
+        --lang)
+            shift
+            [[ $# -gt 0 ]] || die "Missing value for --lang"
+            I18N_LANG="$1"
+            ;;
+        *)
+            remaining+=("$1")
+            ;;
         esac
         shift
     done
@@ -45,19 +45,19 @@ parse_args() {
     set -- "${remaining[@]}"
     while [[ $# -gt 0 ]]; do
         case "$1" in
-            --version)
-                local version
-                version=$(grep '## \[' "${SCRIPT_DIR}/CHANGELOG.md" | grep -v 'Unreleased' | head -1 | sed 's/## \[\([^]]*\)\].*/\1/')
-                echo "${SCRIPT_NAME} ${version}"
-                exit 0
-                ;;
-            -h|--help)
-                echo "Usage: sudo ${SCRIPT_NAME} [--lang en|es] [--version]"
-                echo "  --lang LANG     $(msg HELP_LANG)"
-                echo "  --version       $(msg HELP_VERSION)"
-                exit 0
-                ;;
-            *) die "Unknown option: $1" ;;
+        --version)
+            local version
+            version=$(grep '## \[' "${SCRIPT_DIR}/CHANGELOG.md" | grep -v 'Unreleased' | head -1 | sed 's/## \[\([^]]*\)\].*/\1/')
+            echo "${SCRIPT_NAME} ${version}"
+            exit 0
+            ;;
+        -h | --help)
+            echo "Usage: sudo ${SCRIPT_NAME} [--lang en|es] [--version]"
+            echo "  --lang LANG     $(msg HELP_LANG)"
+            echo "  --version       $(msg HELP_VERSION)"
+            exit 0
+            ;;
+        *) die "Unknown option: $1" ;;
         esac
         shift
     done
@@ -162,7 +162,10 @@ purge_meta_packages() {
         fi
     done
 
-    [[ ${#to_purge[@]} -gt 0 ]] || { ok "No meta-packages to purge (idempotent)"; return 0; }
+    [[ ${#to_purge[@]} -gt 0 ]] || {
+        ok "No meta-packages to purge (idempotent)"
+        return 0
+    }
 
     run_as_root "DEBIAN_FRONTEND=noninteractive apt-get purge -y --auto-remove --allow-remove-essential ${to_purge[*]}"
     ok "Purged meta-packages: ${to_purge[*]}"
@@ -183,7 +186,10 @@ purge_display_managers() {
         fi
     done
 
-    [[ ${#to_purge[@]} -gt 0 ]] || { ok "No display manager packages to purge (idempotent)"; return 0; }
+    [[ ${#to_purge[@]} -gt 0 ]] || {
+        ok "No display manager packages to purge (idempotent)"
+        return 0
+    }
 
     run_as_root "DEBIAN_FRONTEND=noninteractive apt-get purge -y --auto-remove ${to_purge[*]}"
     ok "Purged display managers: ${to_purge[*]}"
@@ -205,7 +211,10 @@ purge_xfce_packages() {
         fi
     done
 
-    [[ ${#to_purge[@]} -gt 0 ]] || { ok "No XFCE packages to purge (idempotent)"; return 0; }
+    [[ ${#to_purge[@]} -gt 0 ]] || {
+        ok "No XFCE packages to purge (idempotent)"
+        return 0
+    }
 
     run_as_root "DEBIAN_FRONTEND=noninteractive apt-get purge -y --auto-remove ${to_purge[*]}"
     ok "Purged XFCE packages: ${to_purge[*]}"
@@ -226,7 +235,10 @@ purge_gnome_packages() {
         fi
     done
 
-    [[ ${#to_purge[@]} -gt 0 ]] || { ok "No GNOME packages to purge (idempotent)"; return 0; }
+    [[ ${#to_purge[@]} -gt 0 ]] || {
+        ok "No GNOME packages to purge (idempotent)"
+        return 0
+    }
 
     run_as_root "DEBIAN_FRONTEND=noninteractive apt-get purge -y --auto-remove ${to_purge[*]}"
     ok "Purged GNOME packages: ${to_purge[*]}"

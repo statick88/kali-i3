@@ -18,15 +18,15 @@
 
 # ANSI escape constants (terminal 256-color approximations)
 readonly C_RESET='\033[0m'
-readonly C_NEON_TEAL='\033[38;5;30m'      # Accent teal (#008B8B)
-readonly C_NEON_TEAL_BRIGHT='\033[38;5;45m'  # Bright teal (#00A3A6)
-readonly C_NEON_TEAL_DIM='\033[38;5;23m'   # Dim teal (#006B6B)
-readonly C_NEON_CYAN='\033[38;5;37m'       # Cyan complementario (#00BCD4)
-readonly C_NEON_FG='\033[38;5;252m'        # Foreground (#E0E0E0)
-readonly C_NEON_GREEN='\033[38;5;150m'     # Sage green (success/ok)
-readonly C_NEON_YELLOW='\033[38;5;222m'    # Amber (warn)
-readonly C_NEON_RED='\033[38;5;197m'       # Muted red (error/critical)
-readonly C_NEON_MUTED='\033[38;5;241m'     # Muted gray-blue (secondary text)
+readonly C_NEON_TEAL='\033[38;5;30m'        # Accent teal (#008B8B)
+readonly C_NEON_TEAL_BRIGHT='\033[38;5;45m' # Bright teal (#00A3A6)
+readonly C_NEON_TEAL_DIM='\033[38;5;23m'    # Dim teal (#006B6B)
+readonly C_NEON_CYAN='\033[38;5;37m'        # Cyan complementario (#00BCD4)
+readonly C_NEON_FG='\033[38;5;252m'         # Foreground (#E0E0E0)
+readonly C_NEON_GREEN='\033[38;5;150m'      # Sage green (success/ok)
+readonly C_NEON_YELLOW='\033[38;5;222m'     # Amber (warn)
+readonly C_NEON_RED='\033[38;5;197m'        # Muted red (error/critical)
+readonly C_NEON_MUTED='\033[38;5;241m'      # Muted gray-blue (secondary text)
 
 # Hex palette constants — NEON MINIMAL Theme
 readonly NEON_BG='#0A0A10'
@@ -41,8 +41,8 @@ readonly NEON_MUTED='#4A5568'
 readonly NEON_SELECTION='#1E1E2F'
 
 # Legacy aliases (used in i3 config template — will be updated)
-readonly NEON_PINK='#008B8B'      # was #FF006E — now maps to accent teal
-readonly NEON_PURPLE='#006B6B'    # was #7B2CBF — now maps to dim teal
+readonly NEON_PINK='#008B8B'   # was #FF006E — now maps to accent teal
+readonly NEON_PURPLE='#006B6B' # was #7B2CBF — now maps to dim teal
 readonly NEON_WHITE='#FFFFFF'
 readonly NEON_BORDER='#00000000'
 

@@ -27,9 +27,9 @@ SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 # Test: colors.sh can be sourced without errors
 # =============================================================================
 test_colors_source() {
-    bash -c "source '${SCRIPT_DIR}/lib/colors.sh'" 2>/dev/null \
-        && pass "colors.sh sources without error" \
-        || fail "colors.sh failed to source"
+    bash -c "source '${SCRIPT_DIR}/lib/colors.sh'" 2>/dev/null &&
+        pass "colors.sh sources without error" ||
+        fail "colors.sh failed to source"
 }
 
 # =============================================================================
@@ -229,9 +229,9 @@ test_readonly() {
     bash -c "
         source '${SCRIPT_DIR}/lib/colors.sh'
         C_RESET='hacked'
-    " 2>/dev/null \
-        && fail "C_RESET should be readonly" \
-        || pass "Constants are readonly"
+    " 2>/dev/null &&
+        fail "C_RESET should be readonly" ||
+        pass "Constants are readonly"
 }
 
 # =============================================================================
@@ -241,9 +241,9 @@ test_neon_readonly() {
     bash -c "
         source '${SCRIPT_DIR}/lib/colors.sh'
         NEON_BG='hacked'
-    " 2>/dev/null \
-        && fail "NEON_BG should be readonly" \
-        || pass "NEON palette constants are readonly"
+    " 2>/dev/null &&
+        fail "NEON_BG should be readonly" ||
+        pass "NEON palette constants are readonly"
 }
 
 # Run all tests

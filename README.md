@@ -13,6 +13,12 @@ sudo ./setup_i3_kali.sh --lang es          # Spanish output
 sudo ./purge_xfce.sh                       # remove XFCE after verifying i3 works
 ```
 
+## Why i3?
+
+XFCE is a full desktop environment — it manages windows, panels, menus, and workflows for you. i3 is the opposite: a tiling window manager that gives you a keyboard-driven, screen-real-estate-efficient workflow. For pentesting, this means less mouse, more terminals, faster context switching.
+
+**Trade-offs:** you lose XFCE's visual familiarity, right-click desktop menus, and some GNOME integrations. You gain speed, minimal resource usage, and full control over every pixel.
+
 ## What you get
 
 | Component | Detail |

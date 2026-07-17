@@ -1,4 +1,17 @@
 # Troubleshooting — kali-i3 NEON MINIMAL
+## Quick reference
+
+| Problem | Fix |
+|---------|-----|
+| Black screen after i3 login | `echo 'exec i3' >> ~/.xinitrc` |
+| Polybar not showing | `polybar -c ~/.config/polybar/config.ini main` |
+| SDDM breaks lightdm | Re-run: `sudo ./setup_i3_kali.sh --skip-security` |
+| Package not found (arm64) | That package isn't available on arm64 — skip it |
+| Alacritty dir missing | `mkdir -p ~/.config/alacritty` then re-run |
+| gentle-ai path error | Already fixed in latest commit — pull latest |
+| Powerlevel10k wizard appears | Should be fixed — pull latest. If not: `echo 'POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true' >> ~/.zshrc` |
+| TMUX plugins missing | Start tmux, press `Ctrl+B` then `I` (uppercase) |
+
 ## Problemas resueltos durante la instalación
 ### 1. SDDM rompe el display manager (lightdm)
 **Síntoma**: `Failed to enable unit: display-manager.service` y sistema sin GUI.  

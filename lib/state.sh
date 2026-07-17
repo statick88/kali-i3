@@ -20,7 +20,8 @@ _state_find() {
 
 # _state_get — get value for key
 _state_get() {
-    local idx; idx=$(_state_find "$1")
+    local idx
+    idx=$(_state_find "$1")
     [[ "$idx" -ge 0 ]] && echo "${COMPLETED_STEPS_VALS[$idx]}" || echo ""
 }
 
@@ -72,7 +73,7 @@ load_state() {
                 step=$(echo "${line}" | sed 's/.*"\(.*\)".*/\1/')
                 [[ -n "${step}" ]] && _state_set "${step}" 1
             fi
-        done < "${STATE_FILE}"
+        done <"${STATE_FILE}"
     fi
 }
 
@@ -95,7 +96,7 @@ save_state() {
         done
         printf '\n  ]\n'
         printf '}\n'
-    } > "${tmpfile}"
+    } >"${tmpfile}"
 
     mv -f "${tmpfile}" "${STATE_FILE}"
     chown "${TARGET_UID}:${TARGET_GID}" "${STATE_FILE}" 2>/dev/null || true
@@ -122,13 +123,13 @@ show_progress() {
     fi
 
     # Calculate percentage and bar
-    local percent=$(( current * 100 / total ))
-    local filled=$(( percent / 5 ))
+    local percent=$((current * 100 / total))
+    local filled=$((percent / 5))
     [[ ${filled} -gt 20 ]] && filled=20
-    local empty=$(( 20 - filled ))
+    local empty=$((20 - filled))
     local bar=""
-    for ((i=0; i<filled; i++)); do bar+="▓"; done
-    for ((i=0; i<empty; i++)); do bar+="░"; done
+    for ((i = 0; i < filled; i++)); do bar+="▓"; done
+    for ((i = 0; i < empty; i++)); do bar+="░"; done
 
     # Color gradient: teal <50%, yellow 50-80%, bright teal >80%
     local color
@@ -143,10 +144,10 @@ show_progress() {
     # Elapsed time MM:SS
     local elapsed=0
     if [[ ${start_time} -gt 0 ]]; then
-        elapsed=$(( $(date +%s) - start_time ))
+        elapsed=$(($(date +%s) - start_time))
     fi
-    local mins=$(( elapsed / 60 ))
-    local secs=$(( elapsed % 60 ))
+    local mins=$((elapsed / 60))
+    local secs=$((elapsed % 60))
     local elapsed_fmt
     elapsed_fmt=$(printf "%02d:%02d" "${mins}" "${secs}")
 

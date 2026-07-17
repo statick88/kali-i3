@@ -24,7 +24,7 @@ TODAY=$(date +%Y-%m-%d)
 sed -i "s/\[Unreleased\]/[$VERSION_NUM] - $TODAY/" CHANGELOG.md
 
 echo "[Unreleased]
-------" >> CHANGELOG.md
+------" >>CHANGELOG.md
 
 git add CHANGELOG.md
 git commit -m "docs: changelog for $VERSION"
