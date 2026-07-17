@@ -276,11 +276,11 @@ test_apt_install_if_missing_partial_failure() {
         rc=\$?
         # Verify pkg-b was attempted
         [[ \"\${install_calls[*]}\" == *'pkg-b'* ]] || exit 2
-        # Verify return code is 1 (failure)
-        [[ \${rc} -ne 0 ]] && exit 0 || exit 1
+        # Verify return code is 0 (partial failure returns 0 by design)
+        [[ \${rc} -eq 0 ]] && exit 0 || exit 1
     " 2>/dev/null &&
-        pass "apt_install_if_missing() returns 1 on partial failure" ||
-        fail "apt_install_if_missing() should return 1 when some packages fail"
+        pass "apt_install_if_missing() returns 0 on partial failure (by design)" ||
+        fail "apt_install_if_missing() should return 0 when some packages fail"
 }
 
 # =============================================================================

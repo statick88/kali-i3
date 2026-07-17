@@ -161,6 +161,8 @@ run_all_vm_tests() {
     # Run tests in order
     test_vm_reachable || return 1
     test_ssh_connection || return 1
+    # Brief delay between SSH connections to avoid rapid reconnection failures
+    sleep 2
     test_copy_script || return 1
     test_execute_phases || return 1
     
